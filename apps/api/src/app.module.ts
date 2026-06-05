@@ -14,6 +14,8 @@ import { FollowupsModule } from './followups/followups.module';
 import { ActionPlansModule } from './action-plans/action-plans.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { AlertsModule } from './alerts/alerts.module';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -21,6 +23,10 @@ import { AlertsModule } from './alerts/alerts.module';
       isGlobal: true,
       validate: validateEnv,
     }),
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 60,
+    }]),
     PrismaModule,
     AuthModule,
     HealthModule,
@@ -34,6 +40,12 @@ import { AlertsModule } from './alerts/alerts.module';
     ActionPlansModule,
     DashboardModule,
     AlertsModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

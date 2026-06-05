@@ -11,15 +11,18 @@ import {
 import { DeliverableTypesService } from './deliverable-types.service';
 import { CreateDeliverableTypeDto } from './dto/create-deliverable-type.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
 
 @Controller('deliverable-types')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class DeliverableTypesController {
   constructor(
     private readonly deliverableTypesService: DeliverableTypesService,
   ) {}
 
   @Post()
+  @Roles('admin', 'diretoria', 'gerencia')
   create(@Body() createDeliverableTypeDto: CreateDeliverableTypeDto) {
     return this.deliverableTypesService.create(createDeliverableTypeDto);
   }
@@ -36,6 +39,7 @@ export class DeliverableTypesController {
   }
 
   @Patch(':id')
+  @Roles('admin', 'diretoria', 'gerencia')
   update(
     @Param('id') id: string,
     @Body() updateDto: Partial<CreateDeliverableTypeDto>,

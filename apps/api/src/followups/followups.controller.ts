@@ -5,26 +5,34 @@ import {
   Body,
   Query,
   UseGuards,
-  Request,
+  Req,
 } from '@nestjs/common';
 import { FollowupsService } from './followups.service';
 import { CreateFollowupDto } from './dto/create-followup.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { ClientAccessPolicy } from '../common/policies/client-access.policy';
 
 @Controller('followups')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class FollowupsController {
-  constructor(private readonly followupsService: FollowupsService) {}
+  constructor(
+    private readonly followupsService: FollowupsService,
+    private readonly clientAccessPolicy: ClientAccessPolicy,
+  ) {}
 
   @Post()
-  create(@Request() req: any, @Body() createFollowupDto: CreateFollowupDto) {
-    // Inject the logged-in user id as the manager id
+  async create(@Req() req: any, @Body() createFollowupDto: CreateFollowupDto) {
+    await this.clientAccessPolicy.assertCanOperateClient(req.user.id, req.user.role, createFollowupDto.clientId);
     const managerId = req.user.id;
     return this.followupsService.create(managerId, createFollowupDto);
   }
 
   @Get()
-  findAll(@Query('clientId') clientId?: string) {
-    return this.followupsService.findAll(clientId);
+  async findAll(@Query('clientId') clientId: string | undefined, @Req() req: any) {
+    if (clientId) {
+      await this.clientAccessPolicy.assertCanViewClient(req.user.id, req.user.role, clientId);
+    }
+    return this.followupsService.findAll(clientId, req.user);
   }
 }

@@ -9,8 +9,12 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
+  const configService = app.get(ConfigService);
+  const corsOrigins = configService.get<string>('CORS_ORIGINS') || '';
+  const allowedOrigins = corsOrigins.split(',').map((o) => o.trim()).filter((o) => o !== '');
+
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: allowedOrigins.length > 0 ? allowedOrigins : ['http://localhost:3000', 'http://localhost:3001'],
     credentials: true,
   });
 
@@ -22,7 +26,6 @@ async function bootstrap() {
     }),
   );
 
-  const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || 3001;
   await app.listen(port);
   console.log(`🚀 UP Gestão Operacional API rodando na porta ${port}`);

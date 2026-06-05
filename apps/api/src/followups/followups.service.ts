@@ -140,10 +140,25 @@ export class FollowupsService {
     });
   }
 
-  async findAll(clientId?: string) {
+  async findAll(clientId: string | undefined, user: { id: string; role: string }) {
     const where: any = {};
     if (clientId) {
       where.clientId = clientId;
+    }
+
+    if (!['admin', 'diretoria', 'gerencia'].includes(user.role)) {
+      const memberships = await this.prisma.squadMember.findMany({
+        where: { userId: user.id },
+        select: { squadId: true },
+      });
+      const squadIds = memberships.map((m) => m.squadId);
+
+      where.client = {
+        OR: [
+          { managerId: user.id },
+          { squadId: { in: squadIds } },
+        ],
+      };
     }
 
     return this.prisma.weeklyFollowup.findMany({

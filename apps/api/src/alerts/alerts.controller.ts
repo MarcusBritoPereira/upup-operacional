@@ -5,25 +5,37 @@ import {
   Param,
   Query,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { AlertsService } from './alerts.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { ClientAccessPolicy } from '../common/policies/client-access.policy';
 
 @Controller('alerts')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class AlertsController {
-  constructor(private readonly alertsService: AlertsService) {}
+  constructor(
+    private readonly alertsService: AlertsService,
+    private readonly clientAccessPolicy: ClientAccessPolicy,
+  ) {}
 
   @Get()
-  findAll(
-    @Query('clientId') clientId?: string,
-    @Query('status') status?: string,
+  async findAll(
+    @Query('clientId') clientId: string | undefined,
+    @Query('status') status: string | undefined,
+    @Req() req: any,
   ) {
-    return this.alertsService.findAll(clientId, status);
+    if (clientId) {
+      await this.clientAccessPolicy.assertCanViewClient(req.user.id, req.user.role, clientId);
+    }
+    return this.alertsService.findAll(clientId, status, req.user);
   }
 
   @Patch(':id/resolve')
-  resolve(@Param('id') id: string) {
-    return this.alertsService.resolve(id);
+  async resolve(@Param('id') id: string, @Req() req: any) {
+    const alert = await this.alertsService.findOne(id);
+    await this.clientAccessPolicy.assertCanOperateClient(req.user.id, req.user.role, alert.clientId);
+    return this.alertsService.resolve(id, req.user.id);
   }
 }

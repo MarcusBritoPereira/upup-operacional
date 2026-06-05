@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
@@ -9,6 +9,14 @@ export class ClientsService {
 
   async create(createClientDto: CreateClientDto) {
     const { entryDate, exitDate, ...rest } = createClientDto;
+
+    if (entryDate && exitDate) {
+      const entry = new Date(entryDate);
+      const exit = new Date(exitDate);
+      if (exit < entry) {
+        throw new BadRequestException('A data de saída (exitDate) deve ser maior ou igual à data de entrada (entryDate).');
+      }
+    }
 
     return this.prisma.client.create({
       data: {
@@ -119,16 +127,25 @@ export class ClientsService {
 
   async update(id: string, updateClientDto: UpdateClientDto) {
     // Check if client exists
-    await this.findOne(id);
+    const existing = await this.findOne(id);
 
     const { entryDate, exitDate, ...rest } = updateClientDto;
 
+    const finalEntryDate = entryDate ? new Date(entryDate) : existing.entryDate;
+    const finalExitDate = exitDate !== undefined ? (exitDate ? new Date(exitDate) : null) : existing.exitDate;
+
+    if (finalEntryDate && finalExitDate) {
+      if (finalExitDate < finalEntryDate) {
+        throw new BadRequestException('A data de saída (exitDate) deve ser maior ou igual à data de entrada (entryDate).');
+      }
+    }
+
     const data: any = { ...rest };
     if (entryDate) {
-      data.entryDate = new Date(entryDate);
+      data.entryDate = finalEntryDate;
     }
     if (exitDate !== undefined) {
-      data.exitDate = exitDate ? new Date(exitDate) : null;
+      data.exitDate = finalExitDate;
     }
 
     return this.prisma.client.update({

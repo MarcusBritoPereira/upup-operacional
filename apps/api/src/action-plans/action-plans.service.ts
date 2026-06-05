@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateActionPlanDto } from './dto/create-action-plan.dto';
 import { UpdateActionPlanDto } from './dto/update-action-plan.dto';
@@ -18,6 +18,20 @@ export class ActionPlansService {
       });
       if (!client) {
         throw new NotFoundException(`Cliente com ID "${clientId}" não encontrado.`);
+      }
+
+      // Verify cycle-client link
+      if (monthlyCycleId) {
+        const cycle = await tx.monthlyCycle.findUnique({
+          where: { id: monthlyCycleId },
+          select: { clientId: true },
+        });
+        if (!cycle) {
+          throw new NotFoundException('Ciclo mensal não encontrado.');
+        }
+        if (cycle.clientId !== clientId) {
+          throw new BadRequestException('O ciclo mensal não pertence ao cliente informado.');
+        }
       }
 
       // Create the Action Plan
@@ -54,11 +68,26 @@ export class ActionPlansService {
     });
   }
 
-  async findAll(clientId?: string, responsibleId?: string, status?: string) {
+  async findAll(clientId?: string, responsibleId?: string, status?: string, user?: { id: string; role: string }) {
     const where: any = {};
     if (clientId) where.clientId = clientId;
     if (responsibleId) where.responsibleId = responsibleId;
     if (status) where.status = status;
+
+    if (user && !['admin', 'diretoria', 'gerencia'].includes(user.role)) {
+      const memberships = await this.prisma.squadMember.findMany({
+        where: { userId: user.id },
+        select: { squadId: true },
+      });
+      const squadIds = memberships.map((m) => m.squadId);
+
+      where.client = {
+        OR: [
+          { managerId: user.id },
+          { squadId: { in: squadIds } },
+        ],
+      };
+    }
 
     return this.prisma.actionPlan.findMany({
       where,
@@ -129,6 +158,20 @@ export class ActionPlansService {
       const actionPlan = await tx.actionPlan.findUnique({ where: { id } });
       if (!actionPlan) {
         throw new NotFoundException(`Plano de ação com ID "${id}" não encontrado.`);
+      }
+
+      // Verify cycle-client link
+      if (rest.monthlyCycleId) {
+        const cycle = await tx.monthlyCycle.findUnique({
+          where: { id: rest.monthlyCycleId },
+          select: { clientId: true },
+        });
+        if (!cycle) {
+          throw new NotFoundException('Ciclo mensal não encontrado.');
+        }
+        if (cycle.clientId !== actionPlan.clientId) {
+          throw new BadRequestException('O ciclo mensal não pertence ao cliente informado.');
+        }
       }
 
       const updated = await tx.actionPlan.update({

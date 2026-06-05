@@ -8,50 +8,78 @@ import {
   Delete,
   Query,
   UseGuards,
-  Request,
+  Req,
 } from '@nestjs/common';
 import { ActionPlansService } from './action-plans.service';
 import { CreateActionPlanDto } from './dto/create-action-plan.dto';
 import { UpdateActionPlanDto } from './dto/update-action-plan.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { ClientAccessPolicy } from '../common/policies/client-access.policy';
 
 @Controller('action-plans')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ActionPlansController {
-  constructor(private readonly actionPlansService: ActionPlansService) {}
+  constructor(
+    private readonly actionPlansService: ActionPlansService,
+    private readonly clientAccessPolicy: ClientAccessPolicy,
+  ) {}
 
   @Post()
-  create(@Request() req: any, @Body() createActionPlanDto: CreateActionPlanDto) {
+  async create(@Req() req: any, @Body() createActionPlanDto: CreateActionPlanDto) {
+    await this.clientAccessPolicy.assertCanOperateClient(req.user.id, req.user.role, createActionPlanDto.clientId);
     const creatorId = req.user.id;
     return this.actionPlansService.create(creatorId, createActionPlanDto);
   }
 
   @Get()
-  findAll(
-    @Query('clientId') clientId?: string,
-    @Query('responsibleId') responsibleId?: string,
-    @Query('status') status?: string,
+  async findAll(
+    @Query('clientId') clientId: string | undefined,
+    @Query('responsibleId') responsibleId: string | undefined,
+    @Query('status') status: string | undefined,
+    @Req() req: any,
   ) {
-    return this.actionPlansService.findAll(clientId, responsibleId, status);
+    if (clientId) {
+      await this.clientAccessPolicy.assertCanViewClient(req.user.id, req.user.role, clientId);
+    }
+    return this.actionPlansService.findAll(clientId, responsibleId, status, req.user);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.actionPlansService.findOne(id);
+  async findOne(@Param('id') id: string, @Req() req: any) {
+    const plan = await this.actionPlansService.findOne(id);
+    await this.clientAccessPolicy.assertCanViewClient(req.user.id, req.user.role, plan.clientId);
+    return plan;
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
-    @Request() req: any,
+    @Req() req: any,
     @Body() updateActionPlanDto: UpdateActionPlanDto,
   ) {
+    const plan = await this.actionPlansService.findOne(id);
+    
+    // Se for cancelamento, exige perfil de gerência/gestor responsável
+    if (updateActionPlanDto.status === 'cancelled') {
+      await this.clientAccessPolicy.assertCanManageClient(req.user.id, req.user.role, plan.clientId);
+    } else {
+      // Se não for o criador nem o responsável, precisa de autorização de gerenciamento
+      if (plan.responsibleId !== req.user.id && plan.createdById !== req.user.id) {
+        await this.clientAccessPolicy.assertCanManageClient(req.user.id, req.user.role, plan.clientId);
+      } else {
+        await this.clientAccessPolicy.assertCanOperateClient(req.user.id, req.user.role, plan.clientId);
+      }
+    }
+
     const updaterId = req.user.id;
     return this.actionPlansService.update(id, updaterId, updateActionPlanDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string, @Req() req: any) {
+    const plan = await this.actionPlansService.findOne(id);
+    await this.clientAccessPolicy.assertCanManageClient(req.user.id, req.user.role, plan.clientId);
     return this.actionPlansService.remove(id);
   }
 }

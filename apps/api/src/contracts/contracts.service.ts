@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
@@ -17,8 +17,8 @@ export class ContractsService {
     });
 
     const totalValue = activeContracts.reduce(
-      (sum, contract) => sum + Number(contract.monthlyValue),
-      0,
+      (sum, contract) => sum.plus(new Prisma.Decimal(contract.monthlyValue)),
+      new Prisma.Decimal(0),
     );
 
     await tx.client.update({
@@ -31,6 +31,14 @@ export class ContractsService {
 
   async create(createContractDto: CreateContractDto) {
     const { startDate, endDate, ...rest } = createContractDto;
+
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      if (end < start) {
+        throw new BadRequestException('A data de término (endDate) deve ser maior ou igual à data de início (startDate).');
+      }
+    }
 
     return this.prisma.$transaction(async (tx) => {
       const contract = await tx.contract.create({
@@ -98,12 +106,21 @@ export class ContractsService {
         throw new NotFoundException(`Contrato com ID "${id}" não encontrado.`);
       }
 
+      const finalStartDate = startDate ? new Date(startDate) : existing.startDate;
+      const finalEndDate = endDate !== undefined ? (endDate ? new Date(endDate) : null) : existing.endDate;
+
+      if (finalStartDate && finalEndDate) {
+        if (finalEndDate < finalStartDate) {
+          throw new BadRequestException('A data de término (endDate) deve ser maior ou igual à data de início (startDate).');
+        }
+      }
+
       const data: any = { ...rest };
       if (startDate) {
-        data.startDate = new Date(startDate);
+        data.startDate = finalStartDate;
       }
       if (endDate !== undefined) {
-        data.endDate = endDate ? new Date(endDate) : null;
+        data.endDate = finalEndDate;
       }
 
       const updated = await tx.contract.update({

@@ -37,4 +37,23 @@ export class AuthService {
       },
     };
   }
+
+  async getUserSession(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        department: true,
+        position: true,
+        isActive: true,
+      },
+    });
+    if (!user || !user.isActive) {
+      throw new UnauthorizedException('Usuário não encontrado ou inativo');
+    }
+    return user;
+  }
 }

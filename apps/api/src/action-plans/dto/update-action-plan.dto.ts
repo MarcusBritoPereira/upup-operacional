@@ -11,10 +11,6 @@ import { ActionPlanPriority, ActionPlanStatus } from '@prisma/client';
 export class UpdateActionPlanDto {
   @IsUUID()
   @IsOptional()
-  clientId?: string;
-
-  @IsUUID()
-  @IsOptional()
   monthlyCycleId?: string;
 
   @IsString()

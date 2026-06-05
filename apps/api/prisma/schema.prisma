@@ -28,6 +28,7 @@ model User {
   actionPlans     ActionPlan[]  @relation("ActionPlanResponsible")
   createdPlans    ActionPlan[]  @relation("ActionPlanCreator")
   timelineEvents  ClientTimeline[]
+  resolvedAlerts  Alert[]       @relation("ResolvedAlerts")
 
   @@map("users")
 }
@@ -256,8 +257,10 @@ model Alert {
   status      AlertStatus   @default(open)
   createdAt   DateTime      @default(now()) @map("created_at")
   resolvedAt  DateTime?     @map("resolved_at")
+  resolvedById String?       @map("resolved_by_id") @db.Uuid
 
   client      Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  resolvedBy  User?         @relation("ResolvedAlerts", fields: [resolvedById], references: [id], onDelete: SetNull)
 
   @@index([clientId, status, createdAt])
   @@map("alerts")

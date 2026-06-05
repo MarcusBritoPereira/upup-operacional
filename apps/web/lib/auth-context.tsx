@@ -26,16 +26,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const stored = localStorage.getItem('upup_user');
-    if (stored) {
+    async function initAuth() {
       try {
-        setUser(JSON.parse(stored));
-      } catch {
+        const response = await api.get<{ user: AuthUser }>('/auth/me');
+        setUser(response.user);
+        localStorage.setItem('upup_user', JSON.stringify(response.user));
+        if (window.location.pathname === '/login') {
+          router.push('/dashboard');
+        }
+      } catch (err) {
+        setUser(null);
         localStorage.removeItem('upup_user');
-        localStorage.removeItem('upup_token');
+      } finally {
+        setLoading(false);
       }
     }
-    setLoading(false);
+    initAuth();
   }, []);
 
   const login = async (email: string, password: string) => {

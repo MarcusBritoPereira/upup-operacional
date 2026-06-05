@@ -28,21 +28,21 @@ export class ContractsController {
 
   private async assertAccessToContractClient(contractId: string, user: any) {
     const contract = await this.contractsService.findOne(contractId);
-    await this.clientAccessPolicy.assertCanAccess(user.id, user.role, contract.clientId);
+    await this.clientAccessPolicy.assertCanViewClient(user.id, user.role, contract.clientId);
     return contract;
   }
 
   @Post()
   @Roles('admin', 'diretoria', 'gerencia')
   async create(@Body() createContractDto: CreateContractDto, @Req() req: any) {
-    await this.clientAccessPolicy.assertCanAccess(req.user.id, req.user.role, createContractDto.clientId);
+    await this.clientAccessPolicy.assertCanManageClient(req.user.id, req.user.role, createContractDto.clientId);
     return this.contractsService.create(createContractDto);
   }
 
   @Get()
   async findAll(@Query('clientId') clientId: string | undefined, @Req() req: any) {
     if (clientId) {
-      await this.clientAccessPolicy.assertCanAccess(req.user.id, req.user.role, clientId);
+      await this.clientAccessPolicy.assertCanViewClient(req.user.id, req.user.role, clientId);
     }
     return this.contractsService.findAll(clientId, req.user);
   }
@@ -59,7 +59,8 @@ export class ContractsController {
     @Body() updateContractDto: UpdateContractDto,
     @Req() req: any,
   ) {
-    await this.assertAccessToContractClient(id, req.user);
+    const contract = await this.assertAccessToContractClient(id, req.user);
+    await this.clientAccessPolicy.assertCanManageClient(req.user.id, req.user.role, contract.clientId);
     return this.contractsService.update(id, updateContractDto);
   }
 
@@ -67,6 +68,7 @@ export class ContractsController {
   @Roles('admin', 'diretoria')
   async remove(@Param('id') id: string, @Req() req: any) {
     await this.assertAccessToContractClient(id, req.user);
+    await this.clientAccessPolicy.assertCanArchiveClient(req.user.role);
     return this.contractsService.remove(id);
   }
 }

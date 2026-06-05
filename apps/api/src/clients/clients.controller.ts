@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   Req,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -44,7 +45,7 @@ export class ClientsController {
 
   @Get(':id')
   async findOne(@Param('id') id: string, @Req() req: any) {
-    await this.clientAccessPolicy.assertCanAccess(req.user.id, req.user.role, id);
+    await this.clientAccessPolicy.assertCanViewClient(req.user.id, req.user.role, id);
     return this.clientsService.findOne(id);
   }
 
@@ -54,20 +55,28 @@ export class ClientsController {
     @Body() updateClientDto: UpdateClientDto,
     @Req() req: any,
   ) {
-    await this.clientAccessPolicy.assertCanAccess(req.user.id, req.user.role, id);
+    await this.clientAccessPolicy.assertCanManageClient(req.user.id, req.user.role, id);
+
+    if (updateClientDto.managerId || updateClientDto.squadId) {
+      const canAssign = await this.clientAccessPolicy.canAssignManagerOrSquad(req.user.role);
+      if (!canAssign) {
+        throw new ForbiddenException('Apenas a gerência ou cargos superiores podem alterar o gestor ou o squad do cliente.');
+      }
+    }
+
     return this.clientsService.update(id, updateClientDto);
   }
 
   @Delete(':id')
   @Roles('admin', 'diretoria')
   async remove(@Param('id') id: string, @Req() req: any) {
-    await this.clientAccessPolicy.assertCanAccess(req.user.id, req.user.role, id);
+    await this.clientAccessPolicy.assertCanArchiveClient(req.user.role);
     return this.clientsService.remove(id);
   }
 
   @Get(':id/timeline')
   async getTimeline(@Param('id') id: string, @Req() req: any) {
-    await this.clientAccessPolicy.assertCanAccess(req.user.id, req.user.role, id);
+    await this.clientAccessPolicy.assertCanViewClient(req.user.id, req.user.role, id);
     return this.clientsService.getTimeline(id);
   }
 }

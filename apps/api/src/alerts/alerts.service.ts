@@ -6,10 +6,25 @@ import { AlertSeverity } from '@prisma/client';
 export class AlertsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(clientId?: string, status?: string) {
+  async findAll(clientId: string | undefined, status: string | undefined, user: { id: string; role: string }) {
     const where: any = {};
     if (clientId) where.clientId = clientId;
     if (status) where.status = status;
+
+    if (!['admin', 'diretoria', 'gerencia'].includes(user.role)) {
+      const memberships = await this.prisma.squadMember.findMany({
+        where: { userId: user.id },
+        select: { squadId: true },
+      });
+      const squadIds = memberships.map((m) => m.squadId);
+
+      where.client = {
+        OR: [
+          { managerId: user.id },
+          { squadId: { in: squadIds } },
+        ],
+      };
+    }
 
     return this.prisma.alert.findMany({
       where,
@@ -29,7 +44,7 @@ export class AlertsService {
     });
   }
 
-  async resolve(id: string) {
+  async findOne(id: string) {
     const alert = await this.prisma.alert.findUnique({
       where: { id },
     });
@@ -38,11 +53,18 @@ export class AlertsService {
       throw new NotFoundException(`Alerta com ID "${id}" não encontrado.`);
     }
 
+    return alert;
+  }
+
+  async resolve(id: string, resolvedById: string) {
+    await this.findOne(id);
+
     return this.prisma.alert.update({
       where: { id },
       data: {
         status: 'resolved',
         resolvedAt: new Date(),
+        resolvedById,
       },
     });
   }
