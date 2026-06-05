@@ -3,7 +3,9 @@ import {
   IsOptional,
   IsNumber,
   IsDateString,
+  IsEnum,
 } from 'class-validator';
+import { ContractStatus } from '@prisma/client';
 
 export class UpdateContractDto {
   @IsDateString()
@@ -18,9 +20,9 @@ export class UpdateContractDto {
   @IsOptional()
   monthlyValue?: number;
 
-  @IsString()
+  @IsEnum(ContractStatus)
   @IsOptional()
-  status?: string;
+  status?: ContractStatus;
 
   @IsString()
   @IsOptional()

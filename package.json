@@ -13,6 +13,16 @@
     "build:web": "npm run build --workspace=apps/web",
     "build:api": "npm run build --workspace=apps/api",
     "db:up": "docker-compose up -d",
-    "db:down": "docker-compose down"
+    "db:down": "docker-compose down",
+    "db:generate": "npm exec --workspace=apps/api -- prisma generate",
+    "postinstall": "npm run db:generate"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
   }
 }

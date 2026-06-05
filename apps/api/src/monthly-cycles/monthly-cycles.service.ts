@@ -27,75 +27,69 @@ export class MonthlyCyclesService {
   async initialize(initializeCycleDto: InitializeCycleDto) {
     const { clientId, month, year } = initializeCycleDto;
 
-    // Check if client exists
-    const client = await this.prisma.client.findUnique({
-      where: { id: clientId },
-    });
-    if (!client) {
-      throw new NotFoundException(`Cliente com ID "${clientId}" não encontrado.`);
-    }
+    return this.prisma.$transaction(async (tx) => {
+      // Check if client exists
+      const client = await tx.client.findUnique({
+        where: { id: clientId },
+      });
+      if (!client) {
+        throw new NotFoundException(`Cliente com ID "${clientId}" não encontrado.`);
+      }
 
-    // Check if cycle already exists
-    let cycle = await this.prisma.monthlyCycle.findUnique({
-      where: {
-        clientId_month_year: {
+      // Check if cycle already exists
+      const cycle = await tx.monthlyCycle.findUnique({
+        where: {
+          clientId_month_year: {
+            clientId,
+            month,
+            year,
+          },
+        },
+        include: {
+          monthlyDeliverables: {
+            include: {
+              deliverableType: true,
+            },
+          },
+        },
+      });
+
+      if (cycle) {
+        return cycle;
+      }
+
+      // Create new cycle
+      const newCycle = await tx.monthlyCycle.create({
+        data: {
           clientId,
           month,
           year,
+          managerId: client.managerId,
+          status: 'open',
+          healthStatus: 'gray',
         },
-      },
-      include: {
-        monthlyDeliverables: {
-          include: {
-            deliverableType: true,
-          },
-        },
-      },
-    });
-
-    if (cycle) {
-      return cycle;
-    }
-
-    // Create new cycle
-    const newCycle = await this.prisma.monthlyCycle.create({
-      data: {
-        clientId,
-        month,
-        year,
-        managerId: client.managerId,
-        status: 'open',
-        healthStatus: 'gray',
-      },
-      include: {
-        monthlyDeliverables: {
-          include: {
-            deliverableType: true,
-          },
-        },
-      },
-    });
-
-    // Instantiate active deliverables
-    const deliverableTypes = await this.prisma.deliverableType.findMany({
-      where: { isActive: true },
-    });
-
-    if (deliverableTypes.length > 0) {
-      await this.prisma.monthlyDeliverable.createMany({
-        data: deliverableTypes.map((type) => ({
-          monthlyCycleId: newCycle.id,
-          deliverableTypeId: type.id,
-          contractedQuantity: 0,
-          deliveredQuantity: 0,
-          inProgressQuantity: 0,
-          delayedQuantity: 0,
-          status: 'pending',
-        })),
       });
 
-      // Fetch again with newly created deliverables
-      const updatedCycle = await this.prisma.monthlyCycle.findUnique({
+      // Instantiate active deliverables
+      const deliverableTypes = await tx.deliverableType.findMany({
+        where: { isActive: true },
+      });
+
+      if (deliverableTypes.length > 0) {
+        await tx.monthlyDeliverable.createMany({
+          data: deliverableTypes.map((type) => ({
+            monthlyCycleId: newCycle.id,
+            deliverableTypeId: type.id,
+            contractedQuantity: 0,
+            deliveredQuantity: 0,
+            inProgressQuantity: 0,
+            delayedQuantity: 0,
+            status: 'pending',
+          })),
+        });
+      }
+
+      const completeCycle = await tx.monthlyCycle.findUnique({
         where: { id: newCycle.id },
         include: {
           monthlyDeliverables: {
@@ -105,10 +99,9 @@ export class MonthlyCyclesService {
           },
         },
       });
-      return updatedCycle!;
-    }
 
-    return newCycle;
+      return completeCycle!;
+    });
   }
 
   async updateDeliverable(id: string, updateDeliverableDto: UpdateDeliverableDto) {
@@ -122,7 +115,7 @@ export class MonthlyCyclesService {
 
     return this.prisma.monthlyDeliverable.update({
       where: { id },
-      data: updateDeliverableDto,
+      data: updateDeliverableDto as any,
       include: {
         deliverableType: true,
       },

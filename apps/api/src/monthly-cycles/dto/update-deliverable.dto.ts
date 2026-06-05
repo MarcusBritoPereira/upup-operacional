@@ -1,4 +1,5 @@
-import { IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsInt, IsOptional, IsString, Min, IsEnum } from 'class-validator';
+import { DeliverableStatus } from '@prisma/client';
 
 export class UpdateDeliverableDto {
   @IsInt()
@@ -21,9 +22,9 @@ export class UpdateDeliverableDto {
   @IsOptional()
   delayedQuantity?: number;
 
-  @IsString()
+  @IsEnum(DeliverableStatus)
   @IsOptional()
-  status?: string;
+  status?: DeliverableStatus;
 
   @IsString()
   @IsOptional()

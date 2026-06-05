@@ -5,7 +5,9 @@ import {
   IsNumber,
   IsUUID,
   IsDateString,
+  IsEnum,
 } from 'class-validator';
+import { ContractStatus } from '@prisma/client';
 
 export class CreateContractDto {
   @IsUUID()
@@ -24,9 +26,9 @@ export class CreateContractDto {
   @IsNotEmpty()
   monthlyValue: number;
 
-  @IsString()
+  @IsEnum(ContractStatus)
   @IsOptional()
-  status?: string;
+  status?: ContractStatus;
 
   @IsString()
   @IsOptional()

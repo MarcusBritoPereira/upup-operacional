@@ -4,7 +4,9 @@ import {
   IsBoolean,
   IsUUID,
   IsDateString,
+  IsEnum,
 } from 'class-validator';
+import { ActionPlanPriority, ActionPlanStatus } from '@prisma/client';
 
 export class UpdateActionPlanDto {
   @IsUUID()
@@ -35,13 +37,13 @@ export class UpdateActionPlanDto {
   @IsOptional()
   dueDate?: string;
 
-  @IsString()
+  @IsEnum(ActionPlanPriority)
   @IsOptional()
-  priority?: string;
+  priority?: ActionPlanPriority;
 
-  @IsString()
+  @IsEnum(ActionPlanStatus)
   @IsOptional()
-  status?: string;
+  status?: ActionPlanStatus;
 
   @IsString()
   @IsOptional()

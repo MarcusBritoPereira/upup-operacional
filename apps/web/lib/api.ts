@@ -19,9 +19,20 @@ async function request<T>(
   }
 
   const response = await fetch(`${API_URL}${path}`, {
+    credentials: 'include',
     ...options,
     headers,
   });
+
+  if (response.status === 401) {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('upup_user');
+      localStorage.removeItem('upup_token');
+      if (!window.location.pathname.startsWith('/login')) {
+        window.location.href = '/login';
+      }
+    }
+  }
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'Erro desconhecido' }));

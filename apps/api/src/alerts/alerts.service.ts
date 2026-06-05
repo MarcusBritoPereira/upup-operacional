@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { AlertSeverity } from '@prisma/client';
 
 @Injectable()
 export class AlertsService {
@@ -46,7 +47,7 @@ export class AlertsService {
     });
   }
 
-  async createAlert(clientId: string, type: string, severity: string, title: string, description?: string) {
+  async createAlert(clientId: string, type: string, severity: AlertSeverity, title: string, description?: string) {
     return this.prisma.alert.create({
       data: {
         clientId,

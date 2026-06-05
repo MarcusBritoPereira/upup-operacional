@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateActionPlanDto } from './dto/create-action-plan.dto';
 import { UpdateActionPlanDto } from './dto/update-action-plan.dto';
+import { ActionPlanPriority, ActionPlanStatus } from '@prisma/client';
 
 @Injectable()
 export class ActionPlansService {
@@ -10,38 +11,47 @@ export class ActionPlansService {
   async create(creatorId: string, dto: CreateActionPlanDto) {
     const { clientId, monthlyCycleId, responsibleId, dueDate, ...rest } = dto;
 
-    // Verify client exists
-    const client = await this.prisma.client.findUnique({
-      where: { id: clientId },
-    });
-    if (!client) {
-      throw new NotFoundException(`Cliente com ID "${clientId}" não encontrado.`);
-    }
+    return this.prisma.$transaction(async (tx) => {
+      // Verify client exists
+      const client = await tx.client.findUnique({
+        where: { id: clientId },
+      });
+      if (!client) {
+        throw new NotFoundException(`Cliente com ID "${clientId}" não encontrado.`);
+      }
 
-    // Create the Action Plan
-    const actionPlan = await this.prisma.actionPlan.create({
-      data: {
-        ...rest,
-        clientId,
-        monthlyCycleId: monthlyCycleId || null,
-        responsibleId: responsibleId || null,
-        createdById: creatorId,
-        dueDate: dueDate ? new Date(dueDate) : null,
-      },
-    });
+      // Create the Action Plan
+      const actionPlan = await tx.actionPlan.create({
+        data: {
+          problem: rest.problem,
+          probableCause: rest.probableCause,
+          action: rest.action,
+          priority: rest.priority || ActionPlanPriority.medium,
+          status: rest.status || ActionPlanStatus.open,
+          result: rest.result,
+          learning: rest.learning,
+          canBecomePlaybook: rest.canBecomePlaybook || false,
+          clientId,
+          monthlyCycleId: monthlyCycleId || null,
+          responsibleId: responsibleId || null,
+          createdById: creatorId,
+          dueDate: dueDate ? new Date(dueDate) : null,
+        },
+      });
 
-    // Create a timeline event
-    await this.prisma.clientTimeline.create({
-      data: {
-        clientId,
-        eventType: 'action_plan_created',
-        title: 'Plano de Ação Criado',
-        description: `Problema: ${dto.problem}\nAção: ${dto.action}`,
-        createdById: creatorId,
-      },
-    });
+      // Create a timeline event
+      await tx.clientTimeline.create({
+        data: {
+          clientId,
+          eventType: 'action_plan_created',
+          title: 'Plano de Ação Criado',
+          description: `Problema: ${dto.problem}\nAção: ${dto.action}`,
+          createdById: creatorId,
+        },
+      });
 
-    return actionPlan;
+      return actionPlan;
+    });
   }
 
   async findAll(clientId?: string, responsibleId?: string, status?: string) {
@@ -113,47 +123,61 @@ export class ActionPlansService {
   }
 
   async update(id: string, updaterId: string, dto: UpdateActionPlanDto) {
-    const actionPlan = await this.findOne(id);
-
     const { dueDate, ...rest } = dto;
 
-    const updated = await this.prisma.actionPlan.update({
-      where: { id },
-      data: {
-        ...rest,
-        dueDate: dueDate ? new Date(dueDate) : undefined,
-      },
-    });
-
-    // If status changed to completed or cancelled, log on timeline
-    if (dto.status && dto.status !== actionPlan.status) {
-      let title = `Plano de Ação ${dto.status}`;
-      let description = '';
-
-      if (dto.status === 'completed') {
-        title = 'Plano de Ação Concluído';
-        description = `Resultado: ${dto.result || ''}\nAprendizado: ${dto.learning || ''}`;
-      } else if (dto.status === 'cancelled') {
-        title = 'Plano de Ação Cancelado';
-        description = `Motivo: ${dto.result || 'Não informado'}`;
+    return this.prisma.$transaction(async (tx) => {
+      const actionPlan = await tx.actionPlan.findUnique({ where: { id } });
+      if (!actionPlan) {
+        throw new NotFoundException(`Plano de ação com ID "${id}" não encontrado.`);
       }
 
-      await this.prisma.clientTimeline.create({
+      const updated = await tx.actionPlan.update({
+        where: { id },
         data: {
-          clientId: actionPlan.clientId,
-          eventType: 'action_plan_status_changed',
-          title,
-          description: description || `Status alterado de ${actionPlan.status} para ${dto.status}`,
-          createdById: updaterId,
+          problem: rest.problem,
+          probableCause: rest.probableCause,
+          action: rest.action,
+          priority: rest.priority,
+          status: rest.status,
+          result: rest.result,
+          learning: rest.learning,
+          canBecomePlaybook: rest.canBecomePlaybook,
+          monthlyCycleId: rest.monthlyCycleId,
+          responsibleId: rest.responsibleId,
+          dueDate: dueDate ? new Date(dueDate) : undefined,
         },
       });
-    }
 
-    return updated;
+      // If status changed to completed or cancelled, log on timeline
+      if (dto.status && dto.status !== actionPlan.status) {
+        let title = `Plano de Ação ${dto.status}`;
+        let description = '';
+
+        if (dto.status === 'completed') {
+          title = 'Plano de Ação Concluído';
+          description = `Resultado: ${dto.result || ''}\nAprendizado: ${dto.learning || ''}`;
+        } else if (dto.status === 'cancelled') {
+          title = 'Plano de Ação Cancelado';
+          description = `Motivo: ${dto.result || 'Não informado'}`;
+        }
+
+        await tx.clientTimeline.create({
+          data: {
+            clientId: actionPlan.clientId,
+            eventType: 'action_plan_status_changed',
+            title,
+            description: description || `Status alterado de ${actionPlan.status} para ${dto.status}`,
+            createdById: updaterId,
+          },
+        });
+      }
+
+      return updated;
+    });
   }
 
   async remove(id: string) {
-    await this.findOne(id);
+    const actionPlan = await this.findOne(id);
     return this.prisma.actionPlan.delete({
       where: { id },
     });

@@ -35,7 +35,10 @@ export class ClientsService {
     });
   }
 
-  async findAll(filters: { status?: string; managerId?: string; squadId?: string }) {
+  async findAll(
+    filters: { status?: string; managerId?: string; squadId?: string },
+    user: { id: string; role: string },
+  ) {
     const where: any = {};
 
     if (filters.status) {
@@ -46,6 +49,20 @@ export class ClientsService {
     }
     if (filters.squadId) {
       where.squadId = filters.squadId;
+    }
+
+    // Aplicar escopo para usuários que não são admin/diretoria/gerência
+    if (!['admin', 'diretoria', 'gerencia'].includes(user.role)) {
+      const memberships = await this.prisma.squadMember.findMany({
+        where: { userId: user.id },
+        select: { squadId: true },
+      });
+      const squadIds = memberships.map((m) => m.squadId);
+
+      where.OR = [
+        { managerId: user.id },
+        { squadId: { in: squadIds } },
+      ];
     }
 
     return this.prisma.client.findMany({
@@ -140,8 +157,11 @@ export class ClientsService {
     // Check if client exists
     await this.findOne(id);
 
-    return this.prisma.client.delete({
+    return this.prisma.client.update({
       where: { id },
+      data: {
+        status: 'churned',
+      },
     });
   }
 

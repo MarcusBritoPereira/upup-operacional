@@ -2,13 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ContractsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async updateClientValue(clientId: string) {
-    const activeContracts = await this.prisma.contract.findMany({
+  private async updateClientValue(clientId: string, tx: Prisma.TransactionClient) {
+    const activeContracts = await tx.contract.findMany({
       where: {
         clientId,
         status: 'active',
@@ -20,7 +21,7 @@ export class ContractsService {
       0,
     );
 
-    await this.prisma.client.update({
+    await tx.client.update({
       where: { id: clientId },
       data: {
         monthlyContractValue: totalValue,
@@ -31,23 +32,41 @@ export class ContractsService {
   async create(createContractDto: CreateContractDto) {
     const { startDate, endDate, ...rest } = createContractDto;
 
-    const contract = await this.prisma.contract.create({
-      data: {
-        ...rest,
-        startDate: new Date(startDate),
-        endDate: endDate ? new Date(endDate) : null,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const contract = await tx.contract.create({
+        data: {
+          ...rest,
+          startDate: new Date(startDate),
+          endDate: endDate ? new Date(endDate) : null,
+          status: rest.status || 'active',
+        },
+      });
+
+      await this.updateClientValue(contract.clientId, tx);
+
+      return contract;
     });
-
-    await this.updateClientValue(contract.clientId);
-
-    return contract;
   }
 
-  async findAll(clientId?: string) {
+  async findAll(clientId?: string, user?: { id: string; role: string }) {
     const where: any = {};
     if (clientId) {
       where.clientId = clientId;
+    }
+
+    if (user && !['admin', 'diretoria', 'gerencia'].includes(user.role)) {
+      const memberships = await this.prisma.squadMember.findMany({
+        where: { userId: user.id },
+        select: { squadId: true },
+      });
+      const squadIds = memberships.map((m) => m.squadId);
+
+      where.client = {
+        OR: [
+          { managerId: user.id },
+          { squadId: { in: squadIds } },
+        ],
+      };
     }
 
     return this.prisma.contract.findMany({
@@ -71,37 +90,49 @@ export class ContractsService {
   }
 
   async update(id: string, updateContractDto: UpdateContractDto) {
-    const existing = await this.findOne(id);
     const { startDate, endDate, ...rest } = updateContractDto;
 
-    const data: any = { ...rest };
-    if (startDate) {
-      data.startDate = new Date(startDate);
-    }
-    if (endDate !== undefined) {
-      data.endDate = endDate ? new Date(endDate) : null;
-    }
+    return this.prisma.$transaction(async (tx) => {
+      const existing = await tx.contract.findUnique({ where: { id } });
+      if (!existing) {
+        throw new NotFoundException(`Contrato com ID "${id}" não encontrado.`);
+      }
 
-    const updated = await this.prisma.contract.update({
-      where: { id },
-      data,
+      const data: any = { ...rest };
+      if (startDate) {
+        data.startDate = new Date(startDate);
+      }
+      if (endDate !== undefined) {
+        data.endDate = endDate ? new Date(endDate) : null;
+      }
+
+      const updated = await tx.contract.update({
+        where: { id },
+        data,
+      });
+
+      await this.updateClientValue(existing.clientId, tx);
+      if (updated.clientId !== existing.clientId) {
+        await this.updateClientValue(updated.clientId, tx);
+      }
+
+      return updated;
     });
-
-    await this.updateClientValue(existing.clientId);
-    if (updated.clientId !== existing.clientId) {
-      await this.updateClientValue(updated.clientId);
-    }
-
-    return updated;
   }
 
   async remove(id: string) {
-    const existing = await this.findOne(id);
-    await this.prisma.contract.delete({
-      where: { id },
-    });
+    return this.prisma.$transaction(async (tx) => {
+      const existing = await tx.contract.findUnique({ where: { id } });
+      if (!existing) {
+        throw new NotFoundException(`Contrato com ID "${id}" não encontrado.`);
+      }
 
-    await this.updateClientValue(existing.clientId);
-    return { success: true };
+      await tx.contract.delete({
+        where: { id },
+      });
+
+      await this.updateClientValue(existing.clientId, tx);
+      return { success: true };
+    });
   }
 }

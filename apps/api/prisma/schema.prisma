@@ -13,7 +13,7 @@ model User {
   email           String        @unique @db.VarChar(150)
   passwordHash    String        @map("password_hash") @db.Text
   phone           String?       @db.VarChar(30)
-  role            String        @db.VarChar(50)
+  role            UserRole
   department      String?       @db.VarChar(80)
   position        String?       @db.VarChar(100)
   isActive        Boolean       @default(true) @map("is_active")
@@ -56,38 +56,39 @@ model SquadMember {
   squad     Squad    @relation(fields: [squadId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([squadId, userId])
   @@map("squad_members")
 }
 
 model Client {
-  id                  String         @id @default(uuid()) @db.Uuid
-  tradeName           String         @map("trade_name") @db.VarChar(150)
-  legalName           String?        @map("legal_name") @db.VarChar(180)
-  segment             String?        @db.VarChar(100)
-  status              String         @default("active") @db.VarChar(40)
-  entryDate           DateTime       @map("entry_date") @db.Date
-  exitDate            DateTime?      @map("exit_date") @db.Date
-  exitReason          String?        @map("exit_reason") @db.Text
-  monthlyContractValue Decimal        @default(0) @map("monthly_contract_value") @db.Decimal(12, 2)
-  managerId           String?        @map("manager_id") @db.Uuid
-  squadId             String?        @map("squad_id") @db.Uuid
-  decisionMakerName   String?        @map("decision_maker_name") @db.VarChar(150)
-  decisionMakerPhone  String?        @map("decision_maker_phone") @db.VarChar(30)
-  decisionMakerEmail  String?        @map("decision_maker_email") @db.VarChar(150)
-  city                String?        @db.VarChar(100)
-  state               String?        @db.VarChar(50)
-  instagramUrl        String?        @map("instagram_url") @db.Text
-  driveUrl            String?        @map("drive_url") @db.Text
-  clickupUrl          String?        @map("clickup_url") @db.Text
-  whatsappGroupUrl    String?        @map("whatsapp_group_url") @db.Text
-  clientProfile       String?        @map("client_profile") @db.VarChar(80)
-  marketingMaturity   String?        @map("marketing_maturity") @db.VarChar(40)
-  strategicNotes      String?        @map("strategic_notes") @db.Text
-  createdAt           DateTime       @default(now()) @map("created_at")
-  updatedAt           DateTime       @updatedAt @map("updated_at")
+  id                  String                 @id @default(uuid()) @db.Uuid
+  tradeName           String                 @map("trade_name") @db.VarChar(150)
+  legalName           String?                @map("legal_name") @db.VarChar(180)
+  segment             String?                @db.VarChar(100)
+  status              ClientStatus           @default(active)
+  entryDate           DateTime               @map("entry_date") @db.Date
+  exitDate            DateTime?              @map("exit_date") @db.Date
+  exitReason          String?                @map("exit_reason") @db.Text
+  monthlyContractValue Decimal                @default(0) @map("monthly_contract_value") @db.Decimal(12, 2)
+  managerId           String?                @map("manager_id") @db.Uuid
+  squadId             String?                @map("squad_id") @db.Uuid
+  decisionMakerName   String?                @map("decision_maker_name") @db.VarChar(150)
+  decisionMakerPhone  String?                @map("decision_maker_phone") @db.VarChar(30)
+  decisionMakerEmail  String?                @map("decision_maker_email") @db.VarChar(150)
+  city                String?                @db.VarChar(100)
+  state               String?                @db.VarChar(50)
+  instagramUrl        String?                @map("instagram_url") @db.Text
+  driveUrl            String?                @map("drive_url") @db.Text
+  clickupUrl          String?                @map("clickup_url") @db.Text
+  whatsappGroupUrl    String?                @map("whatsapp_group_url") @db.Text
+  clientProfile       String?                @map("client_profile") @db.VarChar(80)
+  marketingMaturity   String?                @map("marketing_maturity") @db.VarChar(40)
+  strategicNotes      String?                @map("strategic_notes") @db.Text
+  createdAt           DateTime               @default(now()) @map("created_at")
+  updatedAt           DateTime               @updatedAt @map("updated_at")
 
-  manager             User?          @relation("ClientManager", fields: [managerId], references: [id], onDelete: SetNull)
-  squad               Squad?         @relation(fields: [squadId], references: [id], onDelete: SetNull)
+  manager             User?                  @relation("ClientManager", fields: [managerId], references: [id], onDelete: SetNull)
+  squad               Squad?                 @relation(fields: [squadId], references: [id], onDelete: SetNull)
   contracts           Contract[]
   monthlyCycles       MonthlyCycle[]
   weeklyFollowups     WeeklyFollowup[]
@@ -97,28 +98,31 @@ model Client {
   timelineEvents      ClientTimeline[]
   churnReasons        ChurnReason[]
 
+  @@index([status, managerId])
+  @@index([status, squadId])
   @@map("clients")
 }
 
 model Contract {
-  id           String    @id @default(uuid()) @db.Uuid
-  clientId     String    @map("client_id") @db.Uuid
-  startDate    DateTime  @map("start_date") @db.Date
-  endDate      DateTime? @map("end_date") @db.Date
-  monthlyValue Decimal   @map("monthly_value") @db.Decimal(12, 2)
-  status       String    @default("active") @db.VarChar(40)
-  notes        String?   @db.Text
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  id           String         @id @default(uuid()) @db.Uuid
+  clientId     String         @map("client_id") @db.Uuid
+  startDate    DateTime       @map("start_date") @db.Date
+  endDate      DateTime?      @map("end_date") @db.Date
+  monthlyValue Decimal        @map("monthly_value") @db.Decimal(12, 2)
+  status       ContractStatus @default(active)
+  notes        String?        @db.Text
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
 
-  client       Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client       Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
+  @@index([clientId, status])
   @@map("contracts")
 }
 
 model DeliverableType {
   id                 String               @id @default(uuid()) @db.Uuid
-  name               String               @db.VarChar(120)
+  name               String               @unique @db.VarChar(120)
   description        String?              @db.Text
   isActive           Boolean              @default(true) @map("is_active")
   createdAt          DateTime             @default(now()) @map("created_at")
@@ -128,20 +132,20 @@ model DeliverableType {
 }
 
 model MonthlyCycle {
-  id           String   @id @default(uuid()) @db.Uuid
-  clientId     String   @map("client_id") @db.Uuid
+  id           String                 @id @default(uuid()) @db.Uuid
+  clientId     String                 @map("client_id") @db.Uuid
   month        Int
   year         Int
-  managerId    String?  @map("manager_id") @db.Uuid
-  status       String   @default("open") @db.VarChar(40)
-  healthScore  Int?     @map("health_score")
-  healthStatus String   @default("gray") @map("health_status") @db.VarChar(30)
-  closingNotes String?  @map("closing_notes") @db.Text
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  managerId    String?                @map("manager_id") @db.Uuid
+  status       CycleStatus            @default(open)
+  healthScore  Int?                   @map("health_score")
+  healthStatus HealthStatus           @default(gray) @map("health_status")
+  closingNotes String?                @map("closing_notes") @db.Text
+  createdAt    DateTime               @default(now()) @map("created_at")
+  updatedAt    DateTime               @updatedAt @map("updated_at")
 
-  client              Client               @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  manager             User?                @relation(fields: [managerId], references: [id], onDelete: SetNull)
+  client              Client                 @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  manager             User?                  @relation(fields: [managerId], references: [id], onDelete: SetNull)
   monthlyDeliverables MonthlyDeliverable[]
   weeklyFollowups     WeeklyFollowup[]
   healthSnapshots     ClientHealthSnapshot[]
@@ -152,21 +156,22 @@ model MonthlyCycle {
 }
 
 model MonthlyDeliverable {
-  id                String   @id @default(uuid()) @db.Uuid
-  monthlyCycleId    String   @map("monthly_cycle_id") @db.Uuid
-  deliverableTypeId String   @map("deliverable_type_id") @db.Uuid
-  contractedQuantity Int     @default(0) @map("contracted_quantity")
-  deliveredQuantity  Int     @default(0) @map("delivered_quantity")
-  inProgressQuantity Int     @default(0) @map("in_progress_quantity")
-  delayedQuantity    Int     @default(0) @map("delayed_quantity")
-  status            String   @default("pending") @db.VarChar(40)
-  notes             String?  @db.Text
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
+  id                String            @id @default(uuid()) @db.Uuid
+  monthlyCycleId    String            @map("monthly_cycle_id") @db.Uuid
+  deliverableTypeId String            @map("deliverable_type_id") @db.Uuid
+  contractedQuantity Int               @default(0) @map("contracted_quantity")
+  deliveredQuantity  Int               @default(0) @map("delivered_quantity")
+  inProgressQuantity Int               @default(0) @map("in_progress_quantity")
+  delayedQuantity    Int               @default(0) @map("delayed_quantity")
+  status            DeliverableStatus @default(pending)
+  notes             String?           @db.Text
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
 
-  monthlyCycle      MonthlyCycle    @relation(fields: [monthlyCycleId], references: [id], onDelete: Cascade)
-  deliverableType   DeliverableType @relation(fields: [deliverableTypeId], references: [id], onDelete: Restrict)
+  monthlyCycle      MonthlyCycle      @relation(fields: [monthlyCycleId], references: [id], onDelete: Cascade)
+  deliverableType   DeliverableType   @relation(fields: [deliverableTypeId], references: [id], onDelete: Restrict)
 
+  @@unique([monthlyCycleId, deliverableTypeId])
   @@map("monthly_deliverables")
 }
 
@@ -194,6 +199,8 @@ model WeeklyFollowup {
   monthlyCycle               MonthlyCycle @relation(fields: [monthlyCycleId], references: [id], onDelete: Cascade)
   manager                    User         @relation(fields: [managerId], references: [id], onDelete: Restrict)
 
+  @@unique([monthlyCycleId, weekStart])
+  @@index([clientId, monthlyCycleId, weekStart])
   @@map("weekly_followups")
 }
 
@@ -202,7 +209,7 @@ model ClientHealthSnapshot {
   clientId       String       @map("client_id") @db.Uuid
   monthlyCycleId String       @map("monthly_cycle_id") @db.Uuid
   score          Int
-  status         String       @db.VarChar(30)
+  status         HealthStatus
   reason         String?      @db.Text
   createdAt      DateTime     @default(now()) @map("created_at")
 
@@ -213,44 +220,46 @@ model ClientHealthSnapshot {
 }
 
 model ActionPlan {
-  id                String        @id @default(uuid()) @db.Uuid
-  clientId          String        @map("client_id") @db.Uuid
-  monthlyCycleId    String?       @map("monthly_cycle_id") @db.Uuid
-  problem           String        @db.Text
-  probableCause     String?       @map("probable_cause") @db.Text
-  action            String        @db.Text
-  responsibleId     String?       @map("responsible_id") @db.Uuid
-  dueDate           DateTime?     @map("due_date") @db.Date
-  priority          String        @default("medium") @db.VarChar(30)
-  status            String        @default("open") @db.VarChar(40)
-  result            String?       @db.Text
-  learning          String?       @db.Text
-  canBecomePlaybook Boolean       @default(false) @map("can_become_playbook")
-  createdById       String?       @map("created_by") @db.Uuid
-  createdAt         DateTime      @default(now()) @map("created_at")
-  updatedAt         DateTime      @updatedAt @map("updated_at")
+  id                String             @id @default(uuid()) @db.Uuid
+  clientId          String             @map("client_id") @db.Uuid
+  monthlyCycleId    String?            @map("monthly_cycle_id") @db.Uuid
+  problem           String             @db.Text
+  probableCause     String?            @map("probable_cause") @db.Text
+  action            String             @db.Text
+  responsibleId     String?            @map("responsible_id") @db.Uuid
+  dueDate           DateTime?          @map("due_date") @db.Date
+  priority          ActionPlanPriority @default(medium)
+  status            ActionPlanStatus   @default(open)
+  result            String?            @db.Text
+  learning          String?            @db.Text
+  canBecomePlaybook Boolean            @default(false) @map("can_become_playbook")
+  createdById       String?            @map("created_by") @db.Uuid
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
 
-  client            Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  monthlyCycle      MonthlyCycle? @relation(fields: [monthlyCycleId], references: [id], onDelete: SetNull)
-  responsible       User?         @relation("ActionPlanResponsible", fields: [responsibleId], references: [id], onDelete: SetNull)
-  creator           User?         @relation("ActionPlanCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  client            Client             @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  monthlyCycle      MonthlyCycle?      @relation(fields: [monthlyCycleId], references: [id], onDelete: SetNull)
+  responsible       User?              @relation("ActionPlanResponsible", fields: [responsibleId], references: [id], onDelete: SetNull)
+  creator           User?              @relation("ActionPlanCreator", fields: [createdById], references: [id], onDelete: SetNull)
 
+  @@index([clientId, responsibleId, status, dueDate])
   @@map("action_plans")
 }
 
 model Alert {
-  id          String    @id @default(uuid()) @db.Uuid
-  clientId    String    @map("client_id") @db.Uuid
-  alertType   String    @map("alert_type") @db.VarChar(80)
-  severity    String    @db.VarChar(30)
-  title       String    @db.VarChar(180)
-  description String?   @db.Text
-  status      String    @default("open") @db.VarChar(40)
-  createdAt   DateTime  @default(now()) @map("created_at")
-  resolvedAt  DateTime? @map("resolved_at")
+  id          String        @id @default(uuid()) @db.Uuid
+  clientId    String        @map("client_id") @db.Uuid
+  alertType   String        @map("alert_type") @db.VarChar(80)
+  severity    AlertSeverity
+  title       String        @db.VarChar(180)
+  description String?       @db.Text
+  status      AlertStatus   @default(open)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  resolvedAt  DateTime?     @map("resolved_at")
 
-  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client      Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
+  @@index([clientId, status, createdAt])
   @@map("alerts")
 }
 
@@ -266,6 +275,7 @@ model ClientTimeline {
   client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   creator     User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
 
+  @@index([clientId, createdAt])
   @@map("client_timeline")
 }
 
@@ -282,4 +292,68 @@ model ChurnReason {
   client                 Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   @@map("churn_reasons")
+}
+
+enum UserRole {
+  admin
+  diretoria
+  gerencia
+  gestor_cliente
+  colaborador
+}
+
+enum ClientStatus {
+  active
+  inactive
+  churned
+}
+
+enum ContractStatus {
+  active
+  inactive
+  suspended
+}
+
+enum CycleStatus {
+  open
+  closed
+}
+
+enum HealthStatus {
+  green
+  yellow
+  red
+  gray
+}
+
+enum DeliverableStatus {
+  pending
+  delivered
+  in_progress
+  delayed
+}
+
+enum ActionPlanStatus {
+  open
+  in_progress
+  completed
+  cancelled
+}
+
+enum ActionPlanPriority {
+  low
+  medium
+  high
+}
+
+enum AlertSeverity {
+  low
+  medium
+  high
+  critical
+}
+
+enum AlertStatus {
+  open
+  resolved
 }

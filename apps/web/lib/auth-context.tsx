@@ -15,7 +15,7 @@ interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -27,8 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const stored = localStorage.getItem('upup_user');
-    const token = localStorage.getItem('upup_token');
-    if (stored && token) {
+    if (stored) {
       try {
         setUser(JSON.parse(stored));
       } catch {
@@ -40,19 +39,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await api.post<{ access_token: string; user: AuthUser }>(
+    const response = await api.post<{ user: AuthUser }>(
       '/auth/login',
       { email, password },
     );
-    localStorage.setItem('upup_token', response.access_token);
     localStorage.setItem('upup_user', JSON.stringify(response.user));
     setUser(response.user);
     router.push('/dashboard');
   };
 
-  const logout = () => {
-    localStorage.removeItem('upup_token');
+  const logout = async () => {
+    try {
+      await api.post('/auth/logout', {});
+    } catch (err) {
+      console.error('Erro ao realizar logout no servidor:', err);
+    }
     localStorage.removeItem('upup_user');
+    localStorage.removeItem('upup_token');
     setUser(null);
     router.push('/login');
   };

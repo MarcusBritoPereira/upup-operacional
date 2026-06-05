@@ -6,10 +6,9 @@ import {
   IsUUID,
   IsDateString,
   IsEmail,
-  IsUrl,
-  Max,
-  Min,
+  IsEnum,
 } from 'class-validator';
+import { ClientStatus } from '@prisma/client';
 
 export class CreateClientDto {
   @IsString()
@@ -24,9 +23,9 @@ export class CreateClientDto {
   @IsOptional()
   segment?: string;
 
-  @IsString()
+  @IsEnum(ClientStatus)
   @IsOptional()
-  status?: string;
+  status?: ClientStatus;
 
   @IsDateString()
   @IsNotEmpty()

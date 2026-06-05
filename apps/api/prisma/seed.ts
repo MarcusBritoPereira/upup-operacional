@@ -6,6 +6,12 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Seeding database...');
 
+  // Verificar ambiente antes de rodar seed destrutivo
+  if (process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test') {
+    console.warn('⚠️ Seed cancelado: Apenas executável em ambiente de "development" ou "test". NODE_ENV atual:', process.env.NODE_ENV);
+    return;
+  }
+
   // Clean old data
   await prisma.squadMember.deleteMany({});
   await prisma.squad.deleteMany({});
