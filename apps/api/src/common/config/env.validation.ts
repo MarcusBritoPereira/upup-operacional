@@ -1,24 +1,114 @@
-import { z } from 'zod';
+export type CookieSameSite = 'lax' | 'strict' | 'none';
+export type NodeEnvironment = 'development' | 'production' | 'test';
 
-export const envSchema = z.object({
-  DATABASE_URL: z.string().url('DATABASE_URL must be a valid URL'),
-  JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters long'),
-  JWT_EXPIRES_IN: z.string().default('1h'),
-  PORT: z.coerce.number().default(3001),
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  CORS_ORIGINS: z.string().default('http://localhost:3000,http://localhost:3001'),
-});
+export interface Env {
+  DATABASE_URL: string;
+  JWT_SECRET: string;
+  JWT_EXPIRES_IN: string;
+  PORT: number;
+  NODE_ENV: NodeEnvironment;
+  CORS_ORIGINS: string;
+  COOKIE_SAME_SITE: CookieSameSite;
+  COOKIE_SECURE: boolean;
+  COOKIE_DOMAIN?: string;
+}
 
-export type Env = z.infer<typeof envSchema>;
+function requireString(
+  config: Record<string, unknown>,
+  key: string,
+  fallback?: string,
+): string {
+  const value = config[key] ?? fallback;
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw new Error(`${key} is required`);
+  }
+  return value.trim();
+}
 
-export function validateEnv(config: Record<string, unknown>) {
-  const result = envSchema.safeParse(config);
+function parseBoolean(value: unknown, key: string, fallback: boolean): boolean {
+  if (value === undefined) return fallback;
+  if (value === true || value === 'true') return true;
+  if (value === false || value === 'false') return false;
+  throw new Error(`${key} must be true or false`);
+}
 
-  if (!result.success) {
-    console.error('❌ Invalid environment configuration:');
-    console.error(JSON.stringify(result.error.format(), null, 2));
+export function validateEnv(config: Record<string, unknown>): Env {
+  try {
+    const databaseUrl = requireString(config, 'DATABASE_URL');
+    if (!URL.canParse(databaseUrl)) {
+      throw new Error('DATABASE_URL must be a valid URL');
+    }
+
+    const jwtSecret = requireString(config, 'JWT_SECRET');
+    if (jwtSecret.length < 32) {
+      throw new Error('JWT_SECRET must be at least 32 characters long');
+    }
+
+    const jwtExpiresIn = requireString(config, 'JWT_EXPIRES_IN', '1h');
+    if (!/^\d+[mhd]$/.test(jwtExpiresIn)) {
+      throw new Error('JWT_EXPIRES_IN must use m, h, or d');
+    }
+
+    const nodeEnv = requireString(
+      config,
+      'NODE_ENV',
+      'development',
+    ) as NodeEnvironment;
+    if (!['development', 'production', 'test'].includes(nodeEnv)) {
+      throw new Error('NODE_ENV must be development, production, or test');
+    }
+
+    const port = Number(config.PORT ?? 3001);
+    if (!Number.isInteger(port) || port <= 0) {
+      throw new Error('PORT must be a positive integer');
+    }
+
+    const corsOrigins = requireString(
+      config,
+      'CORS_ORIGINS',
+      'http://localhost:3000,http://localhost:3001',
+    );
+    const origins = corsOrigins.split(',').map((origin) => origin.trim());
+    if (nodeEnv === 'production' && origins.some((origin) => !origin.startsWith('https://'))) {
+      throw new Error('All production CORS origins must use HTTPS');
+    }
+
+    const cookieSameSite = requireString(
+      config,
+      'COOKIE_SAME_SITE',
+      'lax',
+    ) as CookieSameSite;
+    if (!['lax', 'strict', 'none'].includes(cookieSameSite)) {
+      throw new Error('COOKIE_SAME_SITE must be lax, strict, or none');
+    }
+
+    const cookieSecure = parseBoolean(config.COOKIE_SECURE, 'COOKIE_SECURE', false);
+    if (nodeEnv === 'production' && !cookieSecure) {
+      throw new Error('COOKIE_SECURE must be true in production');
+    }
+    if (cookieSameSite === 'none' && !cookieSecure) {
+      throw new Error('COOKIE_SECURE must be true when COOKIE_SAME_SITE is none');
+    }
+
+    const cookieDomain =
+      typeof config.COOKIE_DOMAIN === 'string' && config.COOKIE_DOMAIN.trim()
+        ? config.COOKIE_DOMAIN.trim()
+        : undefined;
+
+    return {
+      DATABASE_URL: databaseUrl,
+      JWT_SECRET: jwtSecret,
+      JWT_EXPIRES_IN: jwtExpiresIn,
+      PORT: port,
+      NODE_ENV: nodeEnv,
+      CORS_ORIGINS: corsOrigins,
+      COOKIE_SAME_SITE: cookieSameSite,
+      COOKIE_SECURE: cookieSecure,
+      ...(cookieDomain ? { COOKIE_DOMAIN: cookieDomain } : {}),
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown validation error';
+    console.error(`❌ Invalid environment configuration: ${message}`);
     throw new Error('Invalid environment configuration');
   }
-
-  return result.data;
 }

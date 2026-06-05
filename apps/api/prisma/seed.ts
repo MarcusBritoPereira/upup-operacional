@@ -18,8 +18,10 @@ async function main() {
   await prisma.user.deleteMany({});
 
   const saltRounds = 10;
-  const adminPasswordHash = await bcrypt.hash('admin123', saltRounds);
-  const managerPasswordHash = await bcrypt.hash('gestor123', saltRounds);
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD || 'admin123';
+  const managerPassword = process.env.SEED_MANAGER_PASSWORD || 'gestor123';
+  const adminPasswordHash = await bcrypt.hash(adminPassword, saltRounds);
+  const managerPasswordHash = await bcrypt.hash(managerPassword, saltRounds);
 
   // 1. Create Users
   const admin = await prisma.user.create({

@@ -2,7 +2,6 @@ import {
   IsString,
   IsOptional,
   IsNotEmpty,
-  IsNumber,
   IsUUID,
   IsDateString,
   IsEmail,
@@ -39,9 +38,6 @@ export class UpdateClientDto {
   @IsOptional()
   exitReason?: string;
 
-  @IsNumber()
-  @IsOptional()
-  monthlyContractValue?: number;
 
   @IsUUID()
   @IsOptional()
