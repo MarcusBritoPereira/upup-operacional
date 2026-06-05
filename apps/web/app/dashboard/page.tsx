@@ -43,13 +43,6 @@ interface TodayData {
   }[];
 }
 
-const GREETINGS = ['Bom dia', 'Boa tarde', 'Boa noite'];
-function getGreeting() {
-  const h = new Date().getHours();
-  if (h < 12) return GREETINGS[0];
-  if (h < 18) return GREETINGS[1];
-  return GREETINGS[2];
-}
 
 function formatCurrency(val?: number) {
   if (!val) return 'R$ 0,00';
@@ -81,8 +74,18 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [animated, setAnimated] = useState(false);
+  const [greeting, setGreeting] = useState('');
+  const [dateDay, setDateDay] = useState('');
+  const [dateFull, setDateFull] = useState('');
 
   useEffect(() => {
+    // Set date/greeting on client only to avoid hydration mismatch
+    const now = new Date();
+    const h = now.getHours();
+    setGreeting(h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite');
+    setDateDay(now.toLocaleDateString('pt-BR', { weekday: 'long' }));
+    setDateFull(now.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' }));
+
     async function load() {
       try {
         const [ov, td] = await Promise.all([
@@ -176,18 +179,16 @@ export default function DashboardPage() {
         <div className={`dash-header ${animated ? 'dash-anim' : ''}`}>
           <div>
             <div className="dash-greeting">
-              {getGreeting()}, <span className="dash-name">{user?.name?.split(' ')[0] || 'gestor'}</span> 👋
+              {greeting}, <span className="dash-name">{user?.name?.split(' ')[0] || 'gestor'}</span> 👋
             </div>
             <h1 className="dash-title">Painel Operacional</h1>
           </div>
-          <div className="dash-date">
-            <div className="dash-date-day">
-              {new Date().toLocaleDateString('pt-BR', { weekday: 'long' })}
+          {dateFull && (
+            <div className="dash-date">
+              <div className="dash-date-day">{dateDay}</div>
+              <div className="dash-date-full">{dateFull}</div>
             </div>
-            <div className="dash-date-full">
-              {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
-            </div>
-          </div>
+          )}
         </div>
 
         {loading ? (
