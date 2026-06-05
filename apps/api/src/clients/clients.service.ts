@@ -8,7 +8,7 @@ export class ClientsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createClientDto: CreateClientDto) {
-    const { entryDate, exitDate, ...rest } = createClientDto;
+    const { entryDate, exitDate, monthlyContractValue = 0, ...rest } = createClientDto;
 
     if (entryDate && exitDate) {
       const entry = new Date(entryDate);
@@ -18,28 +18,45 @@ export class ClientsService {
       }
     }
 
-    return this.prisma.client.create({
-      data: {
-        ...rest,
-        entryDate: new Date(entryDate),
-        exitDate: exitDate ? new Date(exitDate) : null,
-      },
-      include: {
-        manager: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            role: true,
+    return this.prisma.$transaction(async (tx) => {
+      const client = await tx.client.create({
+        data: {
+          ...rest,
+          entryDate: new Date(entryDate),
+          exitDate: exitDate ? new Date(exitDate) : null,
+          monthlyContractValue,
+        },
+        include: {
+          manager: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              role: true,
+            },
+          },
+          squad: {
+            select: {
+              id: true,
+              name: true,
+            },
           },
         },
-        squad: {
-          select: {
-            id: true,
-            name: true,
+      });
+
+      if (monthlyContractValue > 0) {
+        await tx.contract.create({
+          data: {
+            clientId: client.id,
+            startDate: new Date(entryDate),
+            monthlyValue: monthlyContractValue,
+            status: 'active',
+            notes: 'Contrato inicial cadastrado com o cliente.',
           },
-        },
-      },
+        });
+      }
+
+      return client;
     });
   }
 
@@ -130,6 +147,7 @@ export class ClientsService {
     const existing = await this.findOne(id);
 
     const { entryDate, exitDate, ...rest } = updateClientDto;
+    delete rest.monthlyContractValue;
 
     const finalEntryDate = entryDate ? new Date(entryDate) : existing.entryDate;
     const finalExitDate = exitDate !== undefined ? (exitDate ? new Date(exitDate) : null) : existing.exitDate;

@@ -2,11 +2,12 @@ import {
   IsString,
   IsOptional,
   IsNotEmpty,
-  IsNumber,
   IsUUID,
   IsDateString,
   IsEmail,
   IsEnum,
+  IsNumber,
+  Min,
 } from 'class-validator';
 import { ClientStatus } from '@prisma/client';
 
@@ -40,6 +41,7 @@ export class UpdateClientDto {
   exitReason?: string;
 
   @IsNumber()
+  @Min(0)
   @IsOptional()
   monthlyContractValue?: number;
 
