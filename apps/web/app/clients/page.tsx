@@ -29,7 +29,6 @@ export default function ClientsPage() {
   const [segment, setSegment] = useState('');
   const [status, setStatus] = useState<ClientStatus>('active');
   const [entryDate, setEntryDate] = useState(new Date().toISOString().split('T')[0]);
-  const [monthlyContractValue, setMonthlyContractValue] = useState('');
   const [managerId, setManagerId] = useState('');
   const [squadId, setSquadId] = useState('');
   const [decisionMakerName, setDecisionMakerName] = useState('');
@@ -81,7 +80,6 @@ export default function ClientsPage() {
       segment: segment || undefined,
       status,
       entryDate,
-      monthlyContractValue: monthlyContractValue ? parseFloat(monthlyContractValue) : 0,
       managerId: managerId || undefined,
       squadId: squadId || undefined,
       decisionMakerName: decisionMakerName || undefined,
@@ -106,7 +104,6 @@ export default function ClientsPage() {
       setSegment('');
       setStatus('active');
       setEntryDate(new Date().toISOString().split('T')[0]);
-      setMonthlyContractValue('');
       setManagerId('');
       setSquadId('');
       setDecisionMakerName('');
@@ -482,17 +479,6 @@ export default function ClientsPage() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="form-label">Valor Mensal do Contrato (R$)</label>
-                            <input
-                              type="number"
-                              step="0.01"
-                              value={monthlyContractValue}
-                              onChange={(e) => setMonthlyContractValue(e.target.value)}
-                              placeholder="Ex: 5000"
-                              className="form-input"
-                            />
-                          </div>
                           <div>
                             <label className="form-label">Data de Entrada *</label>
                             <input

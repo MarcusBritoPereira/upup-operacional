@@ -1,20 +1,24 @@
-import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { AppModule } from './app.module';
-import cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import cookieParser from 'cookie-parser';
+import { AppModule } from './app.module';
+import { createOriginValidationMiddleware } from './common/middleware/origin-validation.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+  const allowedOrigins = configService
+    .getOrThrow<string>('CORS_ORIGINS')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
   app.use(cookieParser());
-
-  const configService = app.get(ConfigService);
-  const corsOrigins = configService.get<string>('CORS_ORIGINS') || '';
-  const allowedOrigins = corsOrigins.split(',').map((o) => o.trim()).filter((o) => o !== '');
+  app.use(createOriginValidationMiddleware(allowedOrigins));
 
   app.enableCors({
-    origin: allowedOrigins.length > 0 ? allowedOrigins : ['http://localhost:3000', 'http://localhost:3001'],
+    origin: allowedOrigins,
     credentials: true,
   });
 
@@ -26,8 +30,8 @@ async function bootstrap() {
     }),
   );
 
-  const port = configService.get<number>('PORT') || 3001;
+  const port = configService.getOrThrow<number>('PORT');
   await app.listen(port);
   console.log(`🚀 UP Gestão Operacional API rodando na porta ${port}`);
 }
-bootstrap();
+void bootstrap();

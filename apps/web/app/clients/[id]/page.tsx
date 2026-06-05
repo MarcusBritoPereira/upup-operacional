@@ -74,7 +74,6 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   const [entryDate, setEntryDate] = useState('');
   const [exitDate, setExitDate] = useState('');
   const [exitReason, setExitReason] = useState('');
-  const [monthlyContractValue, setMonthlyContractValue] = useState('');
   const [managerId, setManagerId] = useState('');
   const [squadId, setSquadId] = useState('');
   const [decisionMakerName, setDecisionMakerName] = useState('');
@@ -170,7 +169,6 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       setEntryDate(clientData.entryDate ? new Date(clientData.entryDate).toISOString().split('T')[0] : '');
       setExitDate(clientData.exitDate ? new Date(clientData.exitDate).toISOString().split('T')[0] : '');
       setExitReason(clientData.exitReason || '');
-      setMonthlyContractValue(clientData.monthlyContractValue?.toString() || '');
       setManagerId(clientData.managerId || '');
       setSquadId(clientData.squadId || '');
       setDecisionMakerName(clientData.decisionMakerName || '');
@@ -214,7 +212,6 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       entryDate,
       exitDate: exitDate || null,
       exitReason: exitReason || null,
-      monthlyContractValue: monthlyContractValue ? parseFloat(monthlyContractValue) : 0,
       managerId: managerId || null,
       squadId: squadId || null,
       decisionMakerName: decisionMakerName || null,

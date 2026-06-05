@@ -1,23 +1,13 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-function getToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem('upup_token');
-}
-
 async function request<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
-  const token = getToken();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
   };
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
   const response = await fetch(`${API_URL}${path}`, {
     credentials: 'include',
     ...options,
@@ -27,7 +17,6 @@ async function request<T>(
   if (response.status === 401) {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('upup_user');
-      localStorage.removeItem('upup_token');
       if (!window.location.pathname.startsWith('/login')) {
         window.location.href = '/login';
       }

@@ -61,7 +61,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Erro ao realizar logout no servidor:', err);
     }
     localStorage.removeItem('upup_user');
-    localStorage.removeItem('upup_token');
     setUser(null);
     router.push('/login');
   };

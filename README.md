@@ -6,7 +6,7 @@ Sistema interno da agência Up&Up para centralizar o acompanhamento de clientes,
 
 | Camada | Tecnologia |
 |--------|-----------|
-| Frontend | Next.js 15 + TypeScript + Tailwind CSS |
+| Frontend | Next.js 16 + TypeScript + Tailwind CSS |
 | Backend | NestJS + TypeScript |
 | Banco | PostgreSQL 15 |
 | ORM | Prisma |
@@ -62,15 +62,13 @@ cp apps/web/.env.local.example apps/web/.env.local
 npm run db:up
 ```
 
-Isso inicia um container PostgreSQL local na porta `5432`.
+Isso inicia um container PostgreSQL local na porta `5436` por padrão.
 
 ### 4. Rode as migrações do Prisma
 
 ```bash
-cd apps/api
-npx prisma migrate dev --name init
-npx prisma generate
-cd ../..
+npm run db:migrate
+npm run db:generate
 ```
 
 ### 5. Inicie o backend
@@ -81,7 +79,9 @@ npm run dev:api
 
 A API estará disponível em: `http://localhost:3001`
 
-Health check: `http://localhost:3001/health`
+Liveness: `http://localhost:3001/health/live`
+
+Readiness: `http://localhost:3001/health/ready`
 
 ### 6. Inicie o frontend
 
@@ -92,6 +92,24 @@ npm run dev:web
 O app estará disponível em: `http://localhost:3000`
 
 ---
+
+## Verificações de qualidade
+
+```bash
+npm run migration:check
+npm run lint
+npm run typecheck
+npm test
+npm run test:e2e
+npm run build
+```
+
+A pipeline em `.github/workflows/ci.yml` executa essas verificações com PostgreSQL 15 e também valida drift entre as migrations e o schema Prisma.
+
+## Health checks
+
+- `GET /health/live` — processo da API está vivo.
+- `GET /health/ready` — API está pronta e o PostgreSQL responde.
 
 ## Rotas da API
 

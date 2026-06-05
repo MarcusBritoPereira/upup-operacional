@@ -1,10 +1,20 @@
-import { Body, Controller, Post, HttpCode, HttpStatus, Res, Get, UseGuards, Req } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { IsEmail, IsString, MinLength } from 'class-validator';
-import type { Response } from 'express';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
+import { IsEmail, IsString, MinLength } from 'class-validator';
+import type { CookieOptions, Response } from 'express';
+import { AuthService } from './auth.service';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 export class LoginDto {
   @IsEmail()
@@ -18,23 +28,33 @@ export class LoginDto {
 @Controller('auth')
 export class AuthController {
   constructor(
-    private authService: AuthService,
-    private configService: ConfigService,
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
   ) {}
 
   private getCookieMaxAge(): number {
-    const expires = this.configService.get<string>('JWT_EXPIRES_IN') || '1h';
-    const value = parseInt(expires, 10);
-    if (expires.endsWith('d')) {
-      return value * 24 * 60 * 60 * 1000;
-    }
-    if (expires.endsWith('h')) {
-      return value * 60 * 60 * 1000;
-    }
-    if (expires.endsWith('m')) {
-      return value * 60 * 1000;
-    }
-    return 60 * 60 * 1000; // 1 hora
+    const expires = this.configService.get<string>('JWT_EXPIRES_IN') ?? '1h';
+    const value = Number.parseInt(expires, 10);
+    const multipliers = {
+      m: 60 * 1000,
+      h: 60 * 60 * 1000,
+      d: 24 * 60 * 60 * 1000,
+    };
+
+    return value * multipliers[expires.at(-1) as keyof typeof multipliers];
+  }
+
+  private getCookieOptions(): CookieOptions {
+    const domain = this.configService.get<string>('COOKIE_DOMAIN');
+
+    return {
+      httpOnly: true,
+      secure: this.configService.get<boolean>('COOKIE_SECURE') ?? false,
+      sameSite: this.configService.get<'lax' | 'strict' | 'none'>('COOKIE_SAME_SITE') ?? 'lax',
+      maxAge: this.getCookieMaxAge(),
+      path: '/',
+      ...(domain ? { domain } : {}),
+    };
   }
 
   @Post('login')
@@ -45,35 +65,22 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const result = await this.authService.login(loginDto.email, loginDto.password);
-    
-    res.cookie('upup_token', result.access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: this.getCookieMaxAge(),
-      path: '/',
-    });
+    res.cookie('upup_token', result.access_token, this.getCookieOptions());
 
-    return {
-      user: result.user,
-    };
+    return { user: result.user };
   }
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  async logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('upup_token', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-    });
+  logout(@Res({ passthrough: true }) res: Response) {
+    const { maxAge: _maxAge, ...clearOptions } = this.getCookieOptions();
+    res.clearCookie('upup_token', clearOptions);
     return { success: true };
   }
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  async me(@Req() req: any) {
+  async me(@Req() req: { user: { id: string } }) {
     const user = await this.authService.getUserSession(req.user.id);
     return { user };
   }
