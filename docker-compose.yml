@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: upup-postgres
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_USER: upup_admin
+      POSTGRES_PASSWORD: upup_secure_password
+      POSTGRES_DB: upup_operacional
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
