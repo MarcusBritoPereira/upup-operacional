@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/lib/auth-context';
 import api from '@/lib/api';
+import Link from 'next/link';
 
 interface OverviewData {
   totalActiveClients: number;
@@ -30,10 +31,7 @@ interface TodayData {
     description?: string;
     status: string;
     createdAt: string;
-    client?: {
-      id: string;
-      tradeName: string;
-    };
+    client?: { id: string; tradeName: string };
   }[];
   pendingActionPlans: {
     id: string;
@@ -41,160 +39,40 @@ interface TodayData {
     action: string;
     dueDate?: string;
     priority: string;
-    client: {
-      id: string;
-      tradeName: string;
-    };
+    client: { id: string; tradeName: string };
   }[];
 }
 
-function StatCard({
-  label,
-  value,
-  color,
-  icon,
-}: {
-  label: string;
-  value: string | number;
-  color: 'blue' | 'green' | 'yellow' | 'red' | 'gray';
-  icon: React.ReactNode;
-}) {
-  const colors = {
-    blue: { bg: '#eff6ff', text: '#2563eb', iconBg: '#dbeafe' },
-    green: { bg: '#f0fdf4', text: '#15803d', iconBg: '#dcfce7' },
-    yellow: { bg: '#fefce8', text: '#a16207', iconBg: '#fef9c3' },
-    red: { bg: '#fff1f2', text: '#be123c', iconBg: '#fee2e2' },
-    gray: { bg: '#f8fafc', text: '#475569', iconBg: '#f1f5f9' },
-  };
-  const c = colors[color];
-
-  return (
-    <div className="stat-card" style={{ backgroundColor: c.bg }}>
-      <div className="stat-icon" style={{ backgroundColor: c.iconBg, color: c.text }}>
-        {icon}
-      </div>
-      <div className="stat-info">
-        <p className="stat-value" style={{ color: c.text }}>{value}</p>
-        <p className="stat-label">{label}</p>
-      </div>
-      <style jsx>{`
-        .stat-card {
-          border-radius: 14px;
-          padding: 18px;
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          border: 1px solid rgba(0,0,0,0.04);
-          transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-        .stat-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-        .stat-icon {
-          width: 46px;
-          height: 46px;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-        }
-        .stat-value {
-          font-size: 1.6rem;
-          font-weight: 800;
-          line-height: 1;
-        }
-        .stat-label {
-          font-size: 0.78rem;
-          color: #64748b;
-          margin-top: 3px;
-          font-weight: 500;
-        }
-      `}</style>
-    </div>
-  );
+const GREETINGS = ['Bom dia', 'Boa tarde', 'Boa noite'];
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return GREETINGS[0];
+  if (h < 18) return GREETINGS[1];
+  return GREETINGS[2];
 }
 
-function TodayCard({
-  title,
-  items,
-  emptyMsg,
-}: {
-  title: string;
-  items: { label: string; badge?: string; badgeColor?: string }[];
-  emptyMsg: string;
-}) {
-  return (
-    <div className="today-card card">
-      <h3 className="today-card-title">{title}</h3>
-      {items.length === 0 ? (
-        <p className="today-empty">{emptyMsg}</p>
-      ) : (
-        <ul className="today-list">
-          {items.map((item, i) => (
-            <li key={i} className="today-item">
-              <span className="today-dot" />
-              <span className="today-item-label">{item.label}</span>
-              {item.badge && (
-                <span
-                  className="badge"
-                  style={{
-                    background: item.badgeColor === 'red' ? '#fee2e2' : item.badgeColor === 'yellow' ? '#fef9c3' : '#dcfce7',
-                    color: item.badgeColor === 'red' ? '#b91c1c' : item.badgeColor === 'yellow' ? '#a16207' : '#15803d',
-                    borderColor: item.badgeColor === 'red' ? '#fca5a5' : item.badgeColor === 'yellow' ? '#fde047' : '#bbf7d0',
-                    marginLeft: 'auto',
-                  }}
-                >
-                  {item.badge}
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
-      <style jsx>{`
-        .today-card { margin-bottom: 0; }
-        .today-card-title {
-          font-size: 0.85rem;
-          font-weight: 700;
-          color: #0f172a;
-          margin-bottom: 12px;
-          padding-bottom: 10px;
-          border-bottom: 1px solid #f1f5f9;
-        }
-        .today-empty {
-          font-size: 0.82rem;
-          color: #94a3b8;
-          font-style: italic;
-        }
-        .today-list {
-          list-style: none;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-        .today-item {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 0.83rem;
-          color: #374151;
-        }
-        .today-dot {
-          width: 7px;
-          height: 7px;
-          border-radius: 50%;
-          background: #06b6d4;
-          flex-shrink: 0;
-        }
-        .today-item-label {
-          flex: 1;
-        }
-      `}</style>
-    </div>
-  );
+function formatCurrency(val?: number) {
+  if (!val) return 'R$ 0,00';
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 }
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+}
+
+const PRIORITY_MAP: Record<string, { label: string; color: string }> = {
+  critical: { label: 'Crítico', color: '#ef4444' },
+  high: { label: 'Alto', color: '#f97316' },
+  medium: { label: 'Médio', color: '#f59e0b' },
+  low: { label: 'Baixo', color: '#22c55e' },
+};
+
+const SEVERITY_MAP: Record<string, { label: string; color: string }> = {
+  critical: { label: 'Crítico', color: '#ef4444' },
+  high: { label: 'Alto', color: '#f97316' },
+  medium: { label: 'Médio', color: '#f59e0b' },
+  low: { label: 'Baixo', color: '#22c55e' },
+};
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -202,356 +80,705 @@ export default function DashboardPage() {
   const [today, setToday] = useState<TodayData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [animated, setAnimated] = useState(false);
 
   useEffect(() => {
-    async function loadDashboardData() {
+    async function load() {
       try {
-        setLoading(true);
-        const [overviewRes, todayRes] = await Promise.all([
+        const [ov, td] = await Promise.all([
           api.get<OverviewData>('/dashboard/overview'),
           api.get<TodayData>('/dashboard/today'),
         ]);
-        setOverview(overviewRes);
-        setToday(todayRes);
-      } catch (err: any) {
-        console.error(err);
-        setError('Erro ao carregar os dados do painel.');
+        setOverview(ov);
+        setToday(td);
+      } catch {
+        setError('Não foi possível carregar os dados.');
       } finally {
         setLoading(false);
+        setTimeout(() => setAnimated(true), 50);
       }
     }
-
-    loadDashboardData();
+    load();
   }, []);
 
-  const formatCurrency = (val?: number) => {
-    if (val === undefined || val === null) return 'R$ 0,00';
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(val);
-  };
-
-  const riskClientsItems = overview?.riskClientsList.map((c) => ({
-    label: `${c.tradeName} (Score: ${c.healthScore || 0})`,
-    badge: c.healthStatus === 'red' ? 'Risco' : 'Atenção',
-    badgeColor: c.healthStatus === 'red' ? 'red' : 'yellow',
-  })) || [];
-
-  const pendingPlansItems = today?.pendingActionPlans.map((p) => ({
-    label: `${p.client.tradeName}: ${p.action}`,
-    badge: p.dueDate ? new Date(p.dueDate).toLocaleDateString('pt-BR') : 'Sem prazo',
-    badgeColor: p.priority === 'critical' || p.priority === 'high' ? 'red' : 'yellow',
-  })) || [];
-
-  const alertItems = today?.alerts.map((a) => ({
-    label: `${a.client?.tradeName || 'Alerta'}: ${a.title}`,
-    badge: a.severity === 'high' ? 'Crítico' : 'Médio',
-    badgeColor: a.severity === 'high' ? 'red' : 'yellow',
-  })) || [];
+  const stats = [
+    {
+      label: 'Clientes ativos',
+      value: overview?.totalActiveClients ?? 0,
+      accent: '#0ea5e9',
+      accentBg: 'rgba(14,165,233,0.1)',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Saudáveis',
+      value: overview?.clientsHealthy ?? 0,
+      accent: '#22c55e',
+      accentBg: 'rgba(34,197,94,0.1)',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Em risco',
+      value: overview?.clientsAtRisk ?? 0,
+      accent: '#ef4444',
+      accentBg: 'rgba(239,68,68,0.1)',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Sem follow-up',
+      value: overview?.clientsWithoutFollowup ?? 0,
+      accent: '#94a3b8',
+      accentBg: 'rgba(148,163,184,0.1)',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Planos vencidos',
+      value: overview?.overdueActionPlans ?? 0,
+      accent: '#f59e0b',
+      accentBg: 'rgba(245,158,11,0.1)',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+      ),
+    },
+  ];
 
   return (
     <DashboardLayout>
-      <div className="dashboard">
-        {/* Header */}
-        <div className="dashboard-header">
+      <div className="dash">
+        {/* ── TOP BAR ── */}
+        <div className={`dash-header ${animated ? 'dash-anim' : ''}`}>
           <div>
-            <h1 className="dashboard-title">Dashboard</h1>
-            <p className="dashboard-greeting">
-              Bom dia, {user?.name?.split(' ')[0] || 'gestor'} 👋 — Aqui está o resumo de hoje.
-            </p>
+            <div className="dash-greeting">
+              {getGreeting()}, <span className="dash-name">{user?.name?.split(' ')[0] || 'gestor'}</span> 👋
+            </div>
+            <h1 className="dash-title">Painel Operacional</h1>
           </div>
-          <div className="dashboard-date">
-            {new Date().toLocaleDateString('pt-BR', {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'long',
-            })}
+          <div className="dash-date">
+            <div className="dash-date-day">
+              {new Date().toLocaleDateString('pt-BR', { weekday: 'long' })}
+            </div>
+            <div className="dash-date-full">
+              {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </div>
           </div>
         </div>
 
         {loading ? (
-          <div className="loading-state">
-            <div className="spinner" />
-            <p>Carregando métricas...</p>
+          <div className="dash-loading">
+            <div className="dash-skeleton" />
+            <div className="dash-skeleton" style={{ width: '70%' }} />
+            <div className="dash-skeleton" style={{ width: '85%' }} />
           </div>
         ) : error ? (
-          <div className="error-state">
+          <div className="dash-error">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="15" y1="9" x2="9" y2="15" />
+              <line x1="9" y1="9" x2="15" y2="15" />
+            </svg>
             <p>{error}</p>
+            <button onClick={() => window.location.reload()}>Tentar novamente</button>
           </div>
         ) : (
           <>
-            {/* Stats grid */}
-            <div className="stats-grid">
-              <StatCard
-                label="Clientes ativos"
-                value={overview?.totalActiveClients ?? 0}
-                color="blue"
-                icon={
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                }
-              />
-              <StatCard
-                label="Clientes saudáveis"
-                value={overview?.clientsHealthy ?? 0}
-                color="green"
-                icon={
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                }
-              />
-              <StatCard
-                label="Clientes em risco"
-                value={overview?.clientsAtRisk ?? 0}
-                color="red"
-                icon={
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="15" y1="9" x2="9" y2="15" />
-                    <line x1="9" y1="9" x2="15" y2="15" />
-                  </svg>
-                }
-              />
-              <StatCard
-                label="Sem follow-up"
-                value={overview?.clientsWithoutFollowup ?? 0}
-                color="gray"
-                icon={
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="12" y1="8" x2="12" y2="12" />
-                    <line x1="12" y1="16" x2="12.01" y2="16" />
-                  </svg>
-                }
-              />
-              <StatCard
-                label="Planos pendentes"
-                value={overview?.overdueActionPlans ?? 0}
-                color="yellow"
-                icon={
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                }
-              />
+            {/* ── STATS ── */}
+            <div className={`stats-grid ${animated ? 'dash-anim' : ''}`} style={{ animationDelay: '60ms' }}>
+              {stats.map((s, i) => (
+                <div
+                  key={i}
+                  className="stat-card"
+                  style={{ '--accent': s.accent, '--accent-bg': s.accentBg, animationDelay: `${80 + i * 40}ms` } as React.CSSProperties}
+                >
+                  <div className="stat-icon-wrap">{s.icon}</div>
+                  <div className="stat-body">
+                    <div className="stat-value">{s.value}</div>
+                    <div className="stat-label">{s.label}</div>
+                  </div>
+                  <div className="stat-bar" />
+                </div>
+              ))}
             </div>
 
-            {/* Portfolio value */}
-            <div className="portfolio-card card">
-              <p className="portfolio-label">Valor total da carteira ativa</p>
-              <p className="portfolio-value">{formatCurrency(overview?.totalPortfolioValue)}</p>
+            {/* ── PORTFOLIO STRIP ── */}
+            <div className={`portfolio-strip ${animated ? 'dash-anim' : ''}`} style={{ animationDelay: '280ms' }}>
+              <div className="portfolio-inner">
+                <div className="portfolio-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="portfolio-label">Valor total da carteira ativa</div>
+                  <div className="portfolio-value">{formatCurrency(overview?.totalPortfolioValue)}</div>
+                </div>
+              </div>
+              <Link href="/clients" className="portfolio-cta">
+                Ver carteira
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </Link>
             </div>
 
-            {/* Today section */}
-            <div className="today-section">
+            {/* ── TODAY SECTION ── */}
+            <div className={`today-section ${animated ? 'dash-anim' : ''}`} style={{ animationDelay: '320ms' }}>
               <div className="today-header">
-                <div className="today-title-wrap">
-                  <span className="today-pulse" />
+                <div className="today-title-row">
+                  <span className="today-pulse" aria-hidden />
                   <h2 className="today-title">Hoje preciso olhar</h2>
                 </div>
-                <a href="/today" className="today-link">Ver tudo →</a>
+                <Link href="/today" className="today-link">
+                  Ver tudo
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </Link>
               </div>
 
               <div className="today-grid">
-                <TodayCard
-                  title="🔴 Clientes com Saúde Crítica/Atenção"
-                  items={riskClientsItems}
-                  emptyMsg="Nenhum cliente em risco ou atenção."
-                />
-                <TodayCard
-                  title="⚠️ Planos de Ação Pendentes"
-                  items={pendingPlansItems}
-                  emptyMsg="Nenhum plano pendente de sua responsabilidade."
-                />
-                <TodayCard
-                  title="🕐 Alertas Operacionais Recentes"
-                  items={alertItems}
-                  emptyMsg="Nenhum alerta pendente no sistema."
-                />
+                {/* Clientes em risco */}
+                <div className="today-card">
+                  <div className="today-card-head today-card-head--red">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                      <line x1="12" y1="9" x2="12" y2="13" />
+                      <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                    Clientes em risco
+                  </div>
+                  <div className="today-card-body">
+                    {(overview?.riskClientsList.length ?? 0) === 0 ? (
+                      <EmptyState label="Nenhum cliente em risco no momento" />
+                    ) : (
+                      <ul className="item-list">
+                        {overview?.riskClientsList.map((c) => (
+                          <li key={c.id} className="item-row">
+                            <div className="item-dot" style={{ background: c.healthStatus === 'red' ? '#ef4444' : '#f59e0b' }} />
+                            <Link href={`/clients/${c.id}`} className="item-link">{c.tradeName}</Link>
+                            <span className="item-badge" style={{ background: c.healthStatus === 'red' ? 'rgba(239,68,68,0.12)' : 'rgba(245,158,11,0.12)', color: c.healthStatus === 'red' ? '#ef4444' : '#f59e0b' }}>
+                              {c.healthStatus === 'red' ? 'Crítico' : 'Atenção'}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+
+                {/* Planos pendentes */}
+                <div className="today-card">
+                  <div className="today-card-head today-card-head--amber">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    Planos pendentes
+                  </div>
+                  <div className="today-card-body">
+                    {(today?.pendingActionPlans.length ?? 0) === 0 ? (
+                      <EmptyState label="Nenhum plano pendente de sua responsabilidade" />
+                    ) : (
+                      <ul className="item-list">
+                        {today?.pendingActionPlans.map((p) => {
+                          const prio = PRIORITY_MAP[p.priority] ?? { label: p.priority, color: '#94a3b8' };
+                          return (
+                            <li key={p.id} className="item-row">
+                              <div className="item-dot" style={{ background: prio.color }} />
+                              <span className="item-link">{p.client.tradeName}</span>
+                              <span className="item-badge" style={{ background: `${prio.color}18`, color: prio.color }}>
+                                {prio.label}
+                              </span>
+                              {p.dueDate && (
+                                <span className="item-date">{formatDate(p.dueDate)}</span>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+
+                {/* Alertas */}
+                <div className="today-card">
+                  <div className="today-card-head today-card-head--sky">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </svg>
+                    Alertas operacionais
+                  </div>
+                  <div className="today-card-body">
+                    {(today?.alerts.length ?? 0) === 0 ? (
+                      <EmptyState label="Nenhum alerta pendente no sistema" />
+                    ) : (
+                      <ul className="item-list">
+                        {today?.alerts.map((a) => {
+                          const sev = SEVERITY_MAP[a.severity] ?? { label: a.severity, color: '#94a3b8' };
+                          return (
+                            <li key={a.id} className="item-row">
+                              <div className="item-dot" style={{ background: sev.color }} />
+                              <span className="item-link">{a.client?.tradeName || 'Sistema'}</span>
+                              <span className="item-badge" style={{ background: `${sev.color}18`, color: sev.color }}>
+                                {sev.label}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </>
         )}
       </div>
 
-      <style jsx>{`
-        .dashboard {
-          padding: 28px 24px;
-          max-width: 1280px;
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        body { font-family: 'Inter', system-ui, sans-serif; }
+
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .dash-anim {
+          animation: fadeUp 0.4s cubic-bezier(0.22,1,0.36,1) both;
+        }
+
+        /* ─── SHELL ─── */
+        .dash {
+          min-height: 100vh;
+          background: #f1f5f9;
+          padding: 32px 32px 40px;
+          max-width: 1300px;
           margin: 0 auto;
         }
 
-        .dashboard-header {
+        /* ─── HEADER ─── */
+        .dash-header {
           display: flex;
-          align-items: flex-start;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 16px;
+          margin-bottom: 32px;
+          flex-wrap: wrap;
+        }
+        .dash-greeting {
+          font-size: 0.8rem;
+          color: #64748b;
+          font-weight: 500;
+          margin-bottom: 4px;
+          letter-spacing: 0.01em;
+        }
+        .dash-name { color: #0ea5e9; font-weight: 700; }
+        .dash-title {
+          font-size: 1.85rem;
+          font-weight: 800;
+          color: #0f172a;
+          letter-spacing: -0.03em;
+          line-height: 1.1;
+        }
+        .dash-date { text-align: right; }
+        .dash-date-day {
+          font-size: 0.7rem;
+          text-transform: capitalize;
+          color: #94a3b8;
+          font-weight: 600;
+          letter-spacing: 0.05em;
+        }
+        .dash-date-full {
+          font-size: 0.825rem;
+          color: #475569;
+          font-weight: 500;
+          text-transform: capitalize;
+          margin-top: 2px;
+        }
+
+        /* ─── STATS ─── */
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 14px;
+          margin-bottom: 18px;
+        }
+        .stat-card {
+          background: white;
+          border-radius: 10px;
+          border: 1px solid #e2e8f0;
+          padding: 18px 16px 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          position: relative;
+          overflow: hidden;
+          transition: transform 0.18s ease, box-shadow 0.18s ease;
+          cursor: default;
+        }
+        .stat-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+        .stat-bar {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 3px;
+          height: 100%;
+          background: var(--accent);
+          border-radius: 10px 0 0 10px;
+        }
+        .stat-icon-wrap {
+          width: 40px;
+          height: 40px;
+          border-radius: 8px;
+          background: var(--accent-bg);
+          color: var(--accent);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .stat-body { padding-left: 4px; }
+        .stat-value {
+          font-size: 2rem;
+          font-weight: 800;
+          color: #0f172a;
+          line-height: 1;
+          letter-spacing: -0.04em;
+        }
+        .stat-label {
+          font-size: 0.73rem;
+          color: #64748b;
+          font-weight: 600;
+          margin-top: 4px;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+
+        /* ─── PORTFOLIO ─── */
+        .portfolio-strip {
+          background: #0f172a;
+          border-radius: 10px;
+          padding: 20px 24px;
+          display: flex;
+          align-items: center;
           justify-content: space-between;
           gap: 16px;
           margin-bottom: 28px;
           flex-wrap: wrap;
         }
-
-        .dashboard-title {
-          font-size: 1.75rem;
-          font-weight: 800;
-          color: #0f172a;
-          line-height: 1.2;
-        }
-
-        .dashboard-greeting {
-          font-size: 0.9rem;
-          color: #64748b;
-          margin-top: 4px;
-        }
-
-        .dashboard-date {
-          font-size: 0.82rem;
-          color: #94a3b8;
-          text-transform: capitalize;
-          padding-top: 6px;
-          white-space: nowrap;
-        }
-
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        .portfolio-inner {
+          display: flex;
+          align-items: center;
           gap: 14px;
-          margin-bottom: 20px;
         }
-
-        .portfolio-card {
-          margin-bottom: 28px;
+        .portfolio-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 8px;
+          background: rgba(14,165,233,0.15);
+          color: #0ea5e9;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
         }
-
         .portfolio-label {
-          font-size: 0.8rem;
+          font-size: 0.73rem;
           color: #64748b;
-          font-weight: 500;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          margin-bottom: 3px;
         }
-
         .portfolio-value {
-          font-size: 2rem;
+          font-size: 1.6rem;
           font-weight: 800;
-          color: #0f172a;
-          margin-top: 4px;
+          color: #f8fafc;
+          letter-spacing: -0.03em;
+        }
+        .portfolio-cta {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          background: rgba(14,165,233,0.15);
+          color: #38bdf8;
+          border: 1px solid rgba(14,165,233,0.25);
+          border-radius: 6px;
+          padding: 9px 16px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-decoration: none;
+          transition: background 0.15s, border-color 0.15s;
+          white-space: nowrap;
+          min-height: 44px;
+        }
+        .portfolio-cta:hover {
+          background: rgba(14,165,233,0.25);
+          border-color: rgba(14,165,233,0.4);
         }
 
-        .today-section {
-          margin-bottom: 28px;
-        }
-
+        /* ─── TODAY ─── */
+        .today-section { margin-bottom: 32px; }
         .today-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
           margin-bottom: 16px;
+          gap: 8px;
         }
-
-        .today-title-wrap {
+        .today-title-row {
           display: flex;
           align-items: center;
           gap: 10px;
         }
-
         .today-pulse {
-          width: 10px;
-          height: 10px;
+          display: block;
+          width: 9px;
+          height: 9px;
           border-radius: 50%;
           background: #ef4444;
-          animation: pulse 1.5s ease-in-out infinite;
+          box-shadow: 0 0 0 0 rgba(239,68,68,0.4);
+          animation: ripple 1.8s ease-out infinite;
         }
-
-        @keyframes pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.5; transform: scale(1.3); }
+        @keyframes ripple {
+          0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+          70%  { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+          100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
         }
-
         .today-title {
-          font-size: 1.15rem;
+          font-size: 1.1rem;
           font-weight: 700;
           color: #0f172a;
+          letter-spacing: -0.02em;
         }
-
         .today-link {
-          font-size: 0.82rem;
-          color: #06b6d4;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.78rem;
           font-weight: 600;
+          color: #0ea5e9;
           text-decoration: none;
-          transition: opacity 0.15s ease;
+          transition: opacity 0.15s;
+          min-height: 44px;
+          padding: 4px 8px;
+          border-radius: 6px;
         }
-
-        .today-link:hover {
-          opacity: 0.75;
-        }
+        .today-link:hover { opacity: 0.75; }
 
         .today-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          grid-template-columns: repeat(3, 1fr);
           gap: 14px;
         }
+        .today-card {
+          background: white;
+          border-radius: 10px;
+          border: 1px solid #e2e8f0;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+        }
+        .today-card-head {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          padding: 12px 16px;
+          font-size: 0.78rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          border-bottom: 1px solid #f1f5f9;
+        }
+        .today-card-head--red   { color: #ef4444; background: rgba(239,68,68,0.05); }
+        .today-card-head--amber { color: #f59e0b; background: rgba(245,158,11,0.05); }
+        .today-card-head--sky   { color: #0ea5e9; background: rgba(14,165,233,0.05); }
 
-        .loading-state, .error-state {
-          padding: 80px 0;
-          text-align: center;
-          color: #64748b;
+        .today-card-body {
+          flex: 1;
+          padding: 12px 16px 16px;
         }
 
-        .spinner {
-          width: 32px;
-          height: 32px;
-          border: 3px solid #f3f3f3;
-          border-top: 3px solid #06b6d4;
+        /* ─── LISTS ─── */
+        .item-list {
+          list-style: none;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .item-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 0.82rem;
+          min-height: 28px;
+        }
+        .item-dot {
+          width: 7px;
+          height: 7px;
           border-radius: 50%;
-          margin: 0 auto 16px;
-          animation: spin 1s linear infinite;
+          flex-shrink: 0;
+        }
+        .item-link {
+          flex: 1;
+          color: #1e293b;
+          font-weight: 500;
+          text-decoration: none;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          transition: color 0.1s;
+        }
+        a.item-link:hover { color: #0ea5e9; }
+        .item-badge {
+          font-size: 0.68rem;
+          font-weight: 700;
+          padding: 2px 7px;
+          border-radius: 4px;
+          flex-shrink: 0;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+        .item-date {
+          font-size: 0.68rem;
+          color: #94a3b8;
+          font-weight: 500;
+          flex-shrink: 0;
         }
 
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+        /* ─── EMPTY STATE ─── */
+        .empty-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+          padding: 16px 0 8px;
+          color: #cbd5e1;
+          text-align: center;
+        }
+        .empty-state p {
+          font-size: 0.78rem;
+          color: #94a3b8;
+          font-style: italic;
         }
 
+        /* ─── LOADING ─── */
+        .dash-loading {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          margin-top: 8px;
+        }
+        .dash-skeleton {
+          height: 80px;
+          background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+          background-size: 200% 100%;
+          border-radius: 10px;
+          animation: shimmer 1.4s infinite;
+        }
+        @keyframes shimmer {
+          0%   { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+
+        /* ─── ERROR ─── */
+        .dash-error {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          padding: 80px 0;
+          color: #64748b;
+          text-align: center;
+        }
+        .dash-error button {
+          margin-top: 4px;
+          padding: 10px 20px;
+          background: #0ea5e9;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-size: 0.85rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: opacity 0.15s;
+          min-height: 44px;
+        }
+        .dash-error button:hover { opacity: 0.85; }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 1200px) {
+          .stats-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 900px) {
+          .today-grid { grid-template-columns: 1fr; }
+        }
         @media (max-width: 768px) {
-          .dashboard {
-            padding: 16px;
-          }
-
-          .dashboard-title {
-            font-size: 1.4rem;
-          }
-
-          .dashboard-date {
-            display: none;
-          }
-
-          .stats-grid {
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-          }
-
-          .today-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .portfolio-value {
-            font-size: 1.6rem;
-          }
+          .dash { padding: 16px 16px 40px; }
+          .dash-title { font-size: 1.4rem; }
+          .dash-date { display: none; }
+          .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+          .portfolio-strip { padding: 16px; }
+          .portfolio-value { font-size: 1.3rem; }
+        }
+        @media (max-width: 480px) {
+          .stats-grid { grid-template-columns: 1fr; }
         }
 
-        @media (max-width: 480px) {
-          .stats-grid {
-            grid-template-columns: 1fr;
-          }
+        /* ─── REDUCED MOTION ─── */
+        @media (prefers-reduced-motion: reduce) {
+          .dash-anim, .dash-skeleton, .today-pulse { animation: none !important; }
+          .stat-card { transition: none !important; }
         }
       `}</style>
     </DashboardLayout>
+  );
+}
+
+function EmptyState({ label }: { label: string }) {
+  return (
+    <div className="empty-state">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M8 15s1.5-2 4-2 4 2 4 2" />
+        <line x1="9" y1="9" x2="9.01" y2="9" />
+        <line x1="15" y1="9" x2="15.01" y2="9" />
+      </svg>
+      <p>{label}</p>
+    </div>
   );
 }

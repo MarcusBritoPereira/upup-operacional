@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import Sidebar from './Sidebar';
-import MobileNav from './MobileNav';
 
 export default function DashboardLayout({
   children,
@@ -23,25 +22,44 @@ export default function DashboardLayout({
   if (loading) {
     return (
       <div className="loading-screen">
-        <div className="loading-spinner" />
+        <div className="loading-ring">
+          <div />
+          <div />
+          <div />
+          <div />
+        </div>
         <style jsx>{`
           .loading-screen {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f1f5f9;
+            background: #0f172a;
           }
-          .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #e2e8f0;
-            border-top-color: #2563eb;
+          .loading-ring {
+            display: inline-block;
+            position: relative;
+            width: 48px;
+            height: 48px;
+          }
+          .loading-ring div {
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            width: 38px;
+            height: 38px;
+            margin: 5px;
+            border: 3px solid transparent;
+            border-top-color: #0ea5e9;
             border-radius: 50%;
-            animation: spin 0.7s linear infinite;
+            animation: spin 1.1s cubic-bezier(0.5,0,0.5,1) infinite;
           }
+          .loading-ring div:nth-child(1) { animation-delay: -0.3s; }
+          .loading-ring div:nth-child(2) { animation-delay: -0.2s; }
+          .loading-ring div:nth-child(3) { animation-delay: -0.1s; }
           @keyframes spin {
-            to { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
           }
         `}</style>
       </div>
@@ -52,55 +70,26 @@ export default function DashboardLayout({
 
   return (
     <div className="app-shell">
-      {/* Desktop sidebar */}
-      <div className="desktop-sidebar">
-        <Sidebar />
-      </div>
-
-      {/* Main content */}
+      <Sidebar />
       <main className="main-content">
         {children}
       </main>
-
-      {/* Mobile bottom nav */}
-      <div className="mobile-bottom-nav">
-        <MobileNav />
-      </div>
-
       <style jsx>{`
         .app-shell {
           display: flex;
           min-height: 100vh;
+          background: #f8fafc;
         }
-
-        .desktop-sidebar {
-          display: none;
-        }
-
         .main-content {
           flex: 1;
           min-width: 0;
-          padding-bottom: 80px; /* space for mobile nav */
+          margin-left: 240px;
+          transition: margin-left 0.25s;
         }
-
-        .mobile-bottom-nav {
-          display: block;
-        }
-
-        @media (min-width: 1024px) {
-          .desktop-sidebar {
-            display: block;
-            width: 260px;
-            flex-shrink: 0;
-          }
-
+        @media (max-width: 768px) {
           .main-content {
-            margin-left: 260px;
-            padding-bottom: 0;
-          }
-
-          .mobile-bottom-nav {
-            display: none;
+            margin-left: 0;
+            padding-top: 56px;
           }
         }
       `}</style>
