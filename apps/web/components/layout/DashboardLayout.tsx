@@ -5,63 +5,26 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import Sidebar from './Sidebar';
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
-    }
+    if (!loading && !user) router.push('/login');
   }, [user, loading, router]);
 
   if (loading) {
     return (
-      <div className="loading-screen">
-        <div className="loading-ring">
-          <div />
-          <div />
-          <div />
-          <div />
-        </div>
-        <style jsx>{`
-          .loading-screen {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #0f172a;
-          }
-          .loading-ring {
-            display: inline-block;
-            position: relative;
-            width: 48px;
-            height: 48px;
-          }
-          .loading-ring div {
-            box-sizing: border-box;
-            display: block;
-            position: absolute;
-            width: 38px;
-            height: 38px;
-            margin: 5px;
-            border: 3px solid transparent;
-            border-top-color: #0ea5e9;
-            border-radius: 50%;
-            animation: spin 1.1s cubic-bezier(0.5,0,0.5,1) infinite;
-          }
-          .loading-ring div:nth-child(1) { animation-delay: -0.3s; }
-          .loading-ring div:nth-child(2) { animation-delay: -0.2s; }
-          .loading-ring div:nth-child(3) { animation-delay: -0.1s; }
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
+      <div style={{
+        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: '#f8fafc',
+      }}>
+        <div style={{
+          width: 36, height: 36, border: '3px solid #e2e8f0',
+          borderTopColor: '#0ea5e9', borderRadius: '50%',
+          animation: 'spin 0.8s linear infinite',
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
@@ -69,28 +32,14 @@ export default function DashboardLayout({
   if (!user) return null;
 
   return (
-    <div className="app-shell">
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
       <Sidebar />
-      <main className="main-content">
+      <main style={{ flex: 1, minWidth: 0, marginLeft: 200 }} className="dashboard-main">
         {children}
       </main>
-      <style jsx>{`
-        .app-shell {
-          display: flex;
-          min-height: 100vh;
-          background: #f8fafc;
-        }
-        .main-content {
-          flex: 1;
-          min-width: 0;
-          margin-left: 240px;
-          transition: margin-left 0.25s;
-        }
+      <style>{`
         @media (max-width: 768px) {
-          .main-content {
-            margin-left: 0;
-            padding-top: 56px;
-          }
+          .dashboard-main { margin-left: 0 !important; padding-top: 56px; }
         }
       `}</style>
     </div>
