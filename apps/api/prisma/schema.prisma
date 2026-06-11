@@ -83,6 +83,7 @@ model Client {
   timelineEvents      ClientTimeline[]
   churnReasons        ChurnReason[]
   credentials         Credential[]
+  credentialAccessLogs CredentialAccessLog[]
 
   @@index([status, managerId])
   @@map("clients")
@@ -133,9 +134,25 @@ model Credential {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  accessLogs  CredentialAccessLog[]
 
   @@index([clientId])
   @@map("credentials")
+}
+
+model CredentialAccessLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  credentialId String   @map("credential_id") @db.Uuid
+  userId       String?  @map("user_id") @db.Uuid
+  action       String   @db.VarChar(80)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
+  user         User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([credentialId, createdAt])
+  @@index([userId, createdAt])
+  @@map("credential_access_logs")
 }
 
 model DeliverableType {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 
 interface Credential {
@@ -9,7 +9,6 @@ interface Credential {
   systemName: string;
   url: string | null;
   username: string | null;
-  password?: string;
   createdAt: string;
 }
 
@@ -26,21 +25,21 @@ export function ClientCredentials({ clientId }: { clientId: string }) {
   const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    fetchCredentials();
-  }, [clientId]);
-
-  async function fetchCredentials() {
+  const fetchCredentials = useCallback(async () => {
     try {
       setLoading(true);
       const data = await api.get<Credential[]>(`/credentials?clientId=${clientId}`);
       setCredentials(data);
-    } catch (err: any) {
-      setError(err.message || 'Erro ao carregar senhas');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Erro ao carregar senhas');
     } finally {
       setLoading(false);
     }
-  }
+  }, [clientId]);
+
+  useEffect(() => {
+    void fetchCredentials();
+  }, [fetchCredentials]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -61,9 +60,9 @@ export function ClientCredentials({ clientId }: { clientId: string }) {
       setUrl('');
       setUsername('');
       setPassword('');
-      fetchCredentials();
-    } catch (err: any) {
-      setFormError(err.message || 'Erro ao salvar senha');
+      void fetchCredentials();
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : 'Erro ao salvar senha');
     } finally {
       setIsSubmitting(false);
     }
@@ -74,8 +73,8 @@ export function ClientCredentials({ clientId }: { clientId: string }) {
     try {
       await api.delete(`/credentials/${id}`);
       setCredentials(prev => prev.filter(c => c.id !== id));
-    } catch (err: any) {
-      alert(err.message || 'Erro ao excluir');
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Erro ao excluir');
     }
   }
 
@@ -133,10 +132,10 @@ export function ClientCredentials({ clientId }: { clientId: string }) {
                   <button 
                     onClick={async () => {
                       try {
-                        const res = await api.get<{password: string}>(`/credentials/${cred.id}`);
+                        const res = await api.get<{password: string}>(`/credentials/${cred.id}/reveal`);
                         navigator.clipboard.writeText(res.password);
                         alert('Senha copiada para a área de transferência!');
-                      } catch(e) {
+                      } catch {
                         alert('Erro ao buscar senha original.');
                       }
                     }}

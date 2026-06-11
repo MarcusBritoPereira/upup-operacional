@@ -11,6 +11,8 @@ export interface Env {
   COOKIE_SAME_SITE: CookieSameSite;
   COOKIE_SECURE: boolean;
   COOKIE_DOMAIN?: string;
+  CREDENTIALS_ENCRYPTION_KEY?: string;
+  REQUIRE_TRUSTED_ORIGIN: boolean;
 }
 
 function requireString(
@@ -68,8 +70,17 @@ export function validateEnv(config: Record<string, unknown>): Env {
       'CORS_ORIGINS',
       'http://localhost:3000,http://localhost:3001',
     );
-    const origins = corsOrigins.split(',').map((origin) => origin.trim());
-    if (nodeEnv === 'production' && origins.some((origin) => !origin.startsWith('https://'))) {
+    const origins = corsOrigins
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean);
+    if (origins.length === 0) {
+      throw new Error('CORS_ORIGINS must include at least one origin');
+    }
+    if (
+      nodeEnv === 'production' &&
+      origins.some((origin) => !origin.startsWith('https://'))
+    ) {
       throw new Error('All production CORS origins must use HTTPS');
     }
 
@@ -82,7 +93,11 @@ export function validateEnv(config: Record<string, unknown>): Env {
       throw new Error('COOKIE_SAME_SITE must be lax, strict, or none');
     }
 
-    const cookieSecure = parseBoolean(config.COOKIE_SECURE, 'COOKIE_SECURE', false);
+    const cookieSecure = parseBoolean(
+      config.COOKIE_SECURE,
+      'COOKIE_SECURE',
+      false,
+    );
     if (nodeEnv === 'production' && !cookieSecure) {
       throw new Error('COOKIE_SECURE must be true in production');
     }
@@ -95,6 +110,27 @@ export function validateEnv(config: Record<string, unknown>): Env {
         ? config.COOKIE_DOMAIN.trim()
         : undefined;
 
+    const credentialsEncryptionKey =
+      typeof config.CREDENTIALS_ENCRYPTION_KEY === 'string' &&
+      config.CREDENTIALS_ENCRYPTION_KEY.trim()
+        ? config.CREDENTIALS_ENCRYPTION_KEY.trim()
+        : undefined;
+
+    if (
+      nodeEnv === 'production' &&
+      (!credentialsEncryptionKey || credentialsEncryptionKey.length < 32)
+    ) {
+      throw new Error(
+        'CREDENTIALS_ENCRYPTION_KEY must be at least 32 characters long in production',
+      );
+    }
+
+    const requireTrustedOrigin = parseBoolean(
+      config.REQUIRE_TRUSTED_ORIGIN,
+      'REQUIRE_TRUSTED_ORIGIN',
+      nodeEnv === 'production',
+    );
+
     return {
       DATABASE_URL: databaseUrl,
       JWT_SECRET: jwtSecret,
@@ -104,10 +140,15 @@ export function validateEnv(config: Record<string, unknown>): Env {
       CORS_ORIGINS: corsOrigins,
       COOKIE_SAME_SITE: cookieSameSite,
       COOKIE_SECURE: cookieSecure,
+      REQUIRE_TRUSTED_ORIGIN: requireTrustedOrigin,
       ...(cookieDomain ? { COOKIE_DOMAIN: cookieDomain } : {}),
+      ...(credentialsEncryptionKey
+        ? { CREDENTIALS_ENCRYPTION_KEY: credentialsEncryptionKey }
+        : {}),
     };
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown validation error';
+    const message =
+      error instanceof Error ? error.message : 'Unknown validation error';
     console.error(`❌ Invalid environment configuration: ${message}`);
     throw new Error('Invalid environment configuration');
   }
