@@ -62,6 +62,12 @@ export function ImportClientsModal({ onClose, onSuccess }: ImportClientsModalPro
                 client[mappedKey] = val;
               }
             }
+
+            // Preencher Data de Entrada padrão (hoje) caso o usuário não tenha enviado na planilha
+            if (!client.entryDate) {
+              client.entryDate = new Date().toISOString().split('T')[0];
+            }
+
             return client;
           });
 
