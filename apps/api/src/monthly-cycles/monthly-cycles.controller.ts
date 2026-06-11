@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { ClientAccessPolicy } from '../common/policies/client-access.policy';
+import type { RequestWithAuth } from '../auth/interfaces/auth-user.interface';
 
 @Controller('monthly-cycles')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -26,8 +27,15 @@ export class MonthlyCyclesController {
   ) {}
 
   @Get()
-  async findAll(@Query('clientId') clientId: string, @Req() req: any) {
-    await this.clientAccessPolicy.assertCanViewClient(req.user.id, req.user.role, clientId);
+  async findAll(
+    @Query('clientId') clientId: string,
+    @Req() req: RequestWithAuth,
+  ) {
+    await this.clientAccessPolicy.assertCanViewClient(
+      req.user.id,
+      req.user.role,
+      clientId,
+    );
     return this.monthlyCyclesService.findAll(clientId);
   }
 
@@ -35,9 +43,13 @@ export class MonthlyCyclesController {
   @Roles('admin', 'diretoria', 'gerencia', 'gestor_cliente')
   async initialize(
     @Body() initializeCycleDto: InitializeCycleDto,
-    @Req() req: any,
+    @Req() req: RequestWithAuth,
   ) {
-    await this.clientAccessPolicy.assertCanOperateClient(req.user.id, req.user.role, initializeCycleDto.clientId);
+    await this.clientAccessPolicy.assertCanOperateClient(
+      req.user.id,
+      req.user.role,
+      initializeCycleDto.clientId,
+    );
     return this.monthlyCyclesService.initialize(initializeCycleDto);
   }
 
@@ -45,10 +57,18 @@ export class MonthlyCyclesController {
   async updateDeliverable(
     @Param('id') id: string,
     @Body() updateDeliverableDto: UpdateDeliverableDto,
-    @Req() req: any,
+    @Req() req: RequestWithAuth,
   ) {
-    const clientId = await this.monthlyCyclesService.getClientIdForDeliverable(id);
-    await this.clientAccessPolicy.assertCanOperateClient(req.user.id, req.user.role, clientId);
-    return this.monthlyCyclesService.updateDeliverable(id, updateDeliverableDto);
+    const clientId =
+      await this.monthlyCyclesService.getClientIdForDeliverable(id);
+    await this.clientAccessPolicy.assertCanOperateClient(
+      req.user.id,
+      req.user.role,
+      clientId,
+    );
+    return this.monthlyCyclesService.updateDeliverable(
+      id,
+      updateDeliverableDto,
+    );
   }
 }

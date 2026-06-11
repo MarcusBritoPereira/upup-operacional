@@ -23,15 +23,15 @@ describe('validateEnv', () => {
   });
 
   it('requires secure cookies for SameSite=None', () => {
-    expect(() =>
-      validateEnv({ ...baseEnv, COOKIE_SAME_SITE: 'none' }),
-    ).toThrow('Invalid environment configuration');
+    expect(() => validateEnv({ ...baseEnv, COOKIE_SAME_SITE: 'none' })).toThrow(
+      'Invalid environment configuration',
+    );
   });
 
   it('requires HTTPS origins and secure cookies in production', () => {
-    expect(() =>
-      validateEnv({ ...baseEnv, NODE_ENV: 'production' }),
-    ).toThrow('Invalid environment configuration');
+    expect(() => validateEnv({ ...baseEnv, NODE_ENV: 'production' })).toThrow(
+      'Invalid environment configuration',
+    );
   });
 
   it('requires an encryption key in production', () => {

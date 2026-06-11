@@ -102,7 +102,9 @@ export function validateEnv(config: Record<string, unknown>): Env {
       throw new Error('COOKIE_SECURE must be true in production');
     }
     if (cookieSameSite === 'none' && !cookieSecure) {
-      throw new Error('COOKIE_SECURE must be true when COOKIE_SAME_SITE is none');
+      throw new Error(
+        'COOKIE_SECURE must be true when COOKIE_SAME_SITE is none',
+      );
     }
 
     const cookieDomain =

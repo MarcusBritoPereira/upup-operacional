@@ -50,7 +50,9 @@ export class AuthController {
     return {
       httpOnly: true,
       secure: this.configService.get<boolean>('COOKIE_SECURE') ?? false,
-      sameSite: this.configService.get<'lax' | 'strict' | 'none'>('COOKIE_SAME_SITE') ?? 'lax',
+      sameSite:
+        this.configService.get<'lax' | 'strict' | 'none'>('COOKIE_SAME_SITE') ??
+        'lax',
       maxAge: this.getCookieMaxAge(),
       path: '/',
       ...(domain ? { domain } : {}),
@@ -64,7 +66,10 @@ export class AuthController {
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const result = await this.authService.login(loginDto.email, loginDto.password);
+    const result = await this.authService.login(
+      loginDto.email,
+      loginDto.password,
+    );
     res.cookie('upup_token', result.access_token, this.getCookieOptions());
 
     return { user: result.user };
@@ -73,7 +78,8 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   logout(@Res({ passthrough: true }) res: Response) {
-    const { maxAge: _maxAge, ...clearOptions } = this.getCookieOptions();
+    const clearOptions = { ...this.getCookieOptions() };
+    delete clearOptions.maxAge;
     res.clearCookie('upup_token', clearOptions);
     return { success: true };
   }

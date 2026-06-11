@@ -17,7 +17,9 @@ function createService(cycleClientId: string) {
     },
   };
   const prisma = {
-    $transaction: jest.fn((callback: (client: typeof tx) => unknown) => callback(tx)),
+    $transaction: jest.fn((callback: (client: typeof tx) => unknown) =>
+      callback(tx),
+    ),
   };
 
   return {

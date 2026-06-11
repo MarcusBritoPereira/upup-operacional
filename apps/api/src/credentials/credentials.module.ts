@@ -5,6 +5,6 @@ import { CredentialEncryptionService } from './credential-encryption.service';
 
 @Module({
   controllers: [CredentialsController],
-  providers: [CredentialsService, CredentialEncryptionService]
+  providers: [CredentialsService, CredentialEncryptionService],
 })
 export class CredentialsModule {}

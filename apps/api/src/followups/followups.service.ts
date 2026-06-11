@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateFollowupDto } from './dto/create-followup.dto';
 import { Prisma, AlertSeverity, HealthStatus } from '@prisma/client';
@@ -20,7 +24,10 @@ export class FollowupsService {
     return score;
   }
 
-  private async updateMonthlyCycleHealth(cycleId: string, tx: Prisma.TransactionClient) {
+  private async updateMonthlyCycleHealth(
+    cycleId: string,
+    tx: Prisma.TransactionClient,
+  ) {
     const currentCycle = await tx.monthlyCycle.findUnique({
       where: { id: cycleId },
     });
@@ -70,7 +77,8 @@ export class FollowupsService {
         data: {
           clientId: currentCycle.clientId,
           alertType: 'health_drop',
-          severity: status === 'yellow' ? AlertSeverity.medium : AlertSeverity.high,
+          severity:
+            status === 'yellow' ? AlertSeverity.medium : AlertSeverity.high,
           title: `Saúde do Cliente mudou para ${status === 'yellow' ? 'Atenção' : 'Crítica'}!`,
           description: `A saúde do cliente no ciclo mensal caiu de ${oldStatus} para ${status} com o score de ${averageScore}.`,
           status: 'open',
@@ -89,7 +97,8 @@ export class FollowupsService {
   }
 
   async create(managerId: string, createFollowupDto: CreateFollowupDto) {
-    const { clientId, monthlyCycleId, weekStart, weekEnd, ...rest } = createFollowupDto;
+    const { clientId, monthlyCycleId, weekStart, weekEnd, ...rest } =
+      createFollowupDto;
 
     return this.prisma.$transaction(async (tx) => {
       // Check if client exists
@@ -97,7 +106,9 @@ export class FollowupsService {
         where: { id: clientId },
       });
       if (!client) {
-        throw new NotFoundException(`Cliente com ID "${clientId}" não encontrado.`);
+        throw new NotFoundException(
+          `Cliente com ID "${clientId}" não encontrado.`,
+        );
       }
 
       // Check if cycle exists
@@ -105,19 +116,25 @@ export class FollowupsService {
         where: { id: monthlyCycleId },
       });
       if (!cycle) {
-        throw new NotFoundException(`Ciclo mensal com ID "${monthlyCycleId}" não encontrado.`);
+        throw new NotFoundException(
+          `Ciclo mensal com ID "${monthlyCycleId}" não encontrado.`,
+        );
       }
 
       // Validate cycle-client relationship
       if (cycle.clientId !== clientId) {
-        throw new BadRequestException('O ciclo mensal não pertence ao cliente informado.');
+        throw new BadRequestException(
+          'O ciclo mensal não pertence ao cliente informado.',
+        );
       }
 
       // Check date ordering rules
       const start = new Date(weekStart);
       const end = new Date(weekEnd);
       if (end < start) {
-        throw new BadRequestException('A data de fim da semana deve ser maior ou igual à data de início.');
+        throw new BadRequestException(
+          'A data de fim da semana deve ser maior ou igual à data de início.',
+        );
       }
 
       const score = this.calculateScore(createFollowupDto);
@@ -140,8 +157,11 @@ export class FollowupsService {
     });
   }
 
-  async findAll(clientId: string | undefined, user: { id: string; role: string }) {
-    const where: any = {};
+  async findAll(
+    clientId: string | undefined,
+    user: { id: string; role: string },
+  ) {
+    const where: Prisma.WeeklyFollowupWhereInput = {};
     if (clientId) {
       where.clientId = clientId;
     }
@@ -154,10 +174,7 @@ export class FollowupsService {
       const clientIds = memberships.map((m) => m.clientId);
 
       where.client = {
-        OR: [
-          { managerId: user.id },
-          { id: { in: clientIds } },
-        ],
+        OR: [{ managerId: user.id }, { id: { in: clientIds } }],
       };
     }
 

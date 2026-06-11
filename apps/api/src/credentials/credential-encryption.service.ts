@@ -27,7 +27,8 @@ export class CredentialEncryptionService {
     }
 
     this.key = this.normalizeKey(
-      configuredKey ?? 'development-only-credential-key-change-before-production',
+      configuredKey ??
+        'development-only-credential-key-change-before-production',
     );
   }
 

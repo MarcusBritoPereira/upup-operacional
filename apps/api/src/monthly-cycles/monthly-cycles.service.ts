@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { InitializeCycleDto } from './dto/initialize-cycle.dto';
 import { UpdateDeliverableDto } from './dto/update-deliverable.dto';
@@ -17,10 +18,7 @@ export class MonthlyCyclesService {
           },
         },
       },
-      orderBy: [
-        { year: 'desc' },
-        { month: 'desc' },
-      ],
+      orderBy: [{ year: 'desc' }, { month: 'desc' }],
     });
   }
 
@@ -34,7 +32,9 @@ export class MonthlyCyclesService {
           where: { id: clientId },
         });
         if (!client) {
-          throw new NotFoundException(`Cliente com ID "${clientId}" não encontrado.`);
+          throw new NotFoundException(
+            `Cliente com ID "${clientId}" não encontrado.`,
+          );
         }
 
         // Check if cycle already exists
@@ -103,8 +103,11 @@ export class MonthlyCyclesService {
 
         return completeCycle!;
       });
-    } catch (error: any) {
-      if (error.code === 'P2002') {
+    } catch (error: unknown) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
         const cycle = await this.prisma.monthlyCycle.findUnique({
           where: {
             clientId_month_year: {
@@ -129,18 +132,23 @@ export class MonthlyCyclesService {
     }
   }
 
-  async updateDeliverable(id: string, updateDeliverableDto: UpdateDeliverableDto) {
+  async updateDeliverable(
+    id: string,
+    updateDeliverableDto: UpdateDeliverableDto,
+  ) {
     const deliverable = await this.prisma.monthlyDeliverable.findUnique({
       where: { id },
     });
 
     if (!deliverable) {
-      throw new NotFoundException(`Entregável mensal com ID "${id}" não encontrado.`);
+      throw new NotFoundException(
+        `Entregável mensal com ID "${id}" não encontrado.`,
+      );
     }
 
     return this.prisma.monthlyDeliverable.update({
       where: { id },
-      data: updateDeliverableDto as any,
+      data: updateDeliverableDto as any, // eslint-disable-line @typescript-eslint/no-unsafe-assignment
       include: {
         deliverableType: true,
       },
@@ -157,7 +165,9 @@ export class MonthlyCyclesService {
       },
     });
     if (!deliverable) {
-      throw new NotFoundException(`Entregável com ID "${deliverableId}" não encontrado.`);
+      throw new NotFoundException(
+        `Entregável com ID "${deliverableId}" não encontrado.`,
+      );
     }
     return deliverable.monthlyCycle.clientId;
   }

@@ -4,7 +4,9 @@ import { UpdateCredentialDto } from './dto/update-credential.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { CredentialEncryptionService } from './credential-encryption.service';
 
-type CredentialRecord = Awaited<ReturnType<PrismaService['credential']['findUnique']>>;
+type CredentialRecord = Awaited<
+  ReturnType<PrismaService['credential']['findUnique']>
+>;
 
 @Injectable()
 export class CredentialsService {
@@ -89,6 +91,7 @@ export class CredentialsService {
   }
 
   private sanitizeCredential(credential: NonNullable<CredentialRecord>) {
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     const { password: _password, ...safeCredential } = credential;
     return safeCredential;
   }

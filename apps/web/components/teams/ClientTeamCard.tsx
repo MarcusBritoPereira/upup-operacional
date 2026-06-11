@@ -13,55 +13,89 @@ interface TeamMember {
   user: User;
 }
 
+interface ServiceProvider {
+  id: string;
+  name: string;
+  email: string;
+  whatsapp?: string;
+  role?: string;
+}
+
+interface ClientServiceProvider {
+  id: string;
+  role: string;
+  serviceProvider: ServiceProvider;
+}
+
 interface ClientTeamCardProps {
   client: {
     id: string;
     tradeName: string;
     manager?: User | null;
     teamMembers: TeamMember[];
+    serviceProviders?: ClientServiceProvider[];
   };
   users: User[];
+  serviceProviders: ServiceProvider[];
   onUpdate: () => void;
 }
 
 const DEFAULT_ROLES = ['Filmmaker', 'Designer', 'Editor', 'GEE'];
 
-export function ClientTeamCard({ client, users, onUpdate }: ClientTeamCardProps) {
+export function ClientTeamCard({ client, users, serviceProviders, onUpdate }: ClientTeamCardProps) {
   const [loading, setLoading] = useState(false);
 
   const getMemberForRole = (roleName: string) => {
     return client.teamMembers.find((m) => m.role === roleName);
   };
 
-  const handleAssignMember = async (roleName: string, userId: string) => {
-    if (!userId) return;
+  const getProviderForRole = (roleName: string) => {
+    return client.serviceProviders?.find((m) => m.role === roleName);
+  };
+
+  const isServiceProviderRole = (roleName: string) => {
+    return ['Filmmaker', 'Designer', 'Editor'].includes(roleName);
+  };
+
+  const handleAssignMember = async (roleName: string, id: string) => {
+    if (!id) return;
     setLoading(true);
     try {
-      // If there is already a member in this role, remove them first
-      const existing = getMemberForRole(roleName);
-      if (existing) {
-        await api.delete(`/clients/${client.id}/team/${existing.user.id}/${roleName}`);
+      if (isServiceProviderRole(roleName)) {
+        const existing = getProviderForRole(roleName);
+        if (existing) {
+          await api.delete(`/clients/${client.id}/service-providers/${existing.serviceProvider.id}/${roleName}`);
+        }
+        await api.post(`/clients/${client.id}/service-providers`, { serviceProviderId: id, role: roleName });
+      } else {
+        const existing = getMemberForRole(roleName);
+        if (existing) {
+          await api.delete(`/clients/${client.id}/team/${existing.user.id}/${roleName}`);
+        }
+        await api.post(`/clients/${client.id}/team`, { userId: id, role: roleName });
       }
-      // Add the new member
-      await api.post(`/clients/${client.id}/team`, { userId, role: roleName });
       onUpdate();
     } catch (error) {
-      console.error('Erro ao atribuir membro:', error);
+      console.error('Erro ao atribuir membro/prestador:', error);
       alert('Erro ao atribuir membro à equipe.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRemoveMember = async (roleName: string, userId: string) => {
-    if (!confirm('Deseja remover este membro da equipe do cliente?')) return;
+  const handleRemoveMember = async (roleName: string, id: string) => {
+    if (!confirm('Deseja remover da equipe do cliente?')) return;
     setLoading(true);
     try {
-      await api.delete(`/clients/${client.id}/team/${userId}/${roleName}`);
+      if (isServiceProviderRole(roleName)) {
+        await api.delete(`/clients/${client.id}/service-providers/${id}/${roleName}`);
+      } else {
+        await api.delete(`/clients/${client.id}/team/${id}/${roleName}`);
+      }
       onUpdate();
     } catch (error) {
-      console.error('Erro ao remover membro:', error);
-      alert('Erro ao remover membro da equipe.');
+      console.error('Erro ao remover membro/prestador:', error);
+      alert('Erro ao remover da equipe.');
     } finally {
       setLoading(false);
     }
@@ -101,19 +135,27 @@ export function ClientTeamCard({ client, users, onUpdate }: ClientTeamCardProps)
 
         {/* Roles Flexíveis */}
         {DEFAULT_ROLES.map((role) => {
-          const member = getMemberForRole(role);
+          const isProvider = isServiceProviderRole(role);
+          const member = isProvider ? null : getMemberForRole(role);
+          const provider = isProvider ? getProviderForRole(role) : null;
+          
+          const hasAssignment = !!(member || provider);
+          const entityName = provider ? provider.serviceProvider.name : (member ? member.user.name : '');
+          const entityId = provider ? provider.serviceProvider.id : (member ? member.user.id : '');
+          const optionsList = isProvider ? serviceProviders.filter(sp => sp.role === role || !sp.role) : users;
+
           return (
             <div key={role} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', border: '1px solid #f1f5f9', borderRadius: '8px' }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.8rem', color: '#a1a1aa', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>{role}</div>
-                {member ? (
+                <label htmlFor={`select-${client.id}-${role}`} style={{ display: 'block', fontSize: '0.8rem', color: '#a1a1aa', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>{role}</label>
+                {hasAssignment ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#27272a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a1a1aa', fontWeight: 600, fontSize: '0.7rem' }}>
-                      {member.user.name.substring(0, 2).toUpperCase()}
+                      {entityName.substring(0, 2).toUpperCase()}
                     </div>
-                    <span style={{ fontSize: '0.9rem', color: '#fafafa', fontWeight: 500 }}>{member.user.name}</span>
+                    <span style={{ fontSize: '0.9rem', color: '#fafafa', fontWeight: 500 }}>{entityName}</span>
                     <button 
-                      onClick={() => handleRemoveMember(role, member.user.id)}
+                      onClick={() => handleRemoveMember(role, entityId)}
                       disabled={loading}
                       style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '0.75rem', cursor: 'pointer', padding: '0 4px', textDecoration: 'underline' }}>
                       Remover
@@ -121,6 +163,7 @@ export function ClientTeamCard({ client, users, onUpdate }: ClientTeamCardProps)
                   </div>
                 ) : (
                   <select
+                    id={`select-${client.id}-${role}`}
                     disabled={loading}
                     onChange={(e) => handleAssignMember(role, e.target.value)}
                     value=""
@@ -132,11 +175,12 @@ export function ClientTeamCard({ client, users, onUpdate }: ClientTeamCardProps)
                       fontSize: '0.85rem',
                       color: '#a1a1aa',
                       outline: 'none',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      backgroundColor: '#18181b'
                     }}
                   >
                     <option value="" disabled>Selecionar {role}...</option>
-                    {users.map((u) => (
+                    {optionsList.map((u) => (
                       <option key={u.id} value={u.id}>{u.name}</option>
                     ))}
                   </select>

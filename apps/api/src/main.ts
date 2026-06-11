@@ -8,6 +8,8 @@ import { createRequestContextMiddleware } from './common/middleware/request-cont
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   app.getHttpAdapter().getInstance().set('trust proxy', 1);
   const configService = app.get(ConfigService);
   const allowedOrigins = configService

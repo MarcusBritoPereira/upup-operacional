@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { Prisma, ClientStatus } from '@prisma/client';
 
 @Injectable()
 export class ClientsService {
@@ -14,7 +19,9 @@ export class ClientsService {
       const entry = new Date(entryDate);
       const exit = new Date(exitDate);
       if (exit < entry) {
-        throw new BadRequestException('A data de saída (exitDate) deve ser maior ou igual à data de entrada (entryDate).');
+        throw new BadRequestException(
+          'A data de saída (exitDate) deve ser maior ou igual à data de entrada (entryDate).',
+        );
       }
     }
 
@@ -46,6 +53,21 @@ export class ClientsService {
             },
           },
         },
+        serviceProviders: {
+          select: {
+            id: true,
+            role: true,
+            serviceProvider: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                whatsapp: true,
+                role: true,
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -55,12 +77,14 @@ export class ClientsService {
     for (const dto of createClientDtos) {
       if (dto.entryDate && dto.exitDate) {
         if (new Date(dto.exitDate) < new Date(dto.entryDate)) {
-          throw new BadRequestException(`A data de saída (exitDate) deve ser maior ou igual à data de entrada para o cliente: ${dto.tradeName}.`);
+          throw new BadRequestException(
+            `A data de saída (exitDate) deve ser maior ou igual à data de entrada para o cliente: ${dto.tradeName}.`,
+          );
         }
       }
     }
 
-    const data = createClientDtos.map(dto => {
+    const data = createClientDtos.map((dto) => {
       const { entryDate, exitDate, ...rest } = dto;
       return {
         ...rest,
@@ -80,10 +104,10 @@ export class ClientsService {
     filters: { status?: string; managerId?: string },
     user: { id: string; role: string },
   ) {
-    const where: any = {};
+    const where: Prisma.ClientWhereInput = {};
 
     if (filters.status) {
-      where.status = filters.status;
+      where.status = filters.status as ClientStatus;
     }
     if (filters.managerId) {
       where.managerId = filters.managerId;
@@ -97,10 +121,7 @@ export class ClientsService {
       });
       const clientIds = memberships.map((m) => m.clientId);
 
-      where.OR = [
-        { managerId: user.id },
-        { id: { in: clientIds } },
-      ];
+      where.OR = [{ managerId: user.id }, { id: { in: clientIds } }];
     }
 
     return this.prisma.client.findMany({
@@ -123,6 +144,21 @@ export class ClientsService {
                 id: true,
                 name: true,
                 email: true,
+              },
+            },
+          },
+        },
+        serviceProviders: {
+          select: {
+            id: true,
+            role: true,
+            serviceProvider: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                whatsapp: true,
+                role: true,
               },
             },
           },
@@ -159,6 +195,21 @@ export class ClientsService {
             },
           },
         },
+        serviceProviders: {
+          select: {
+            id: true,
+            role: true,
+            serviceProvider: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                whatsapp: true,
+                role: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -176,15 +227,22 @@ export class ClientsService {
     const { entryDate, exitDate, ...rest } = updateClientDto;
 
     const finalEntryDate = entryDate ? new Date(entryDate) : existing.entryDate;
-    const finalExitDate = exitDate !== undefined ? (exitDate ? new Date(exitDate) : null) : existing.exitDate;
+    const finalExitDate =
+      exitDate !== undefined
+        ? exitDate
+          ? new Date(exitDate)
+          : null
+        : existing.exitDate;
 
     if (finalEntryDate && finalExitDate) {
       if (finalExitDate < finalEntryDate) {
-        throw new BadRequestException('A data de saída (exitDate) deve ser maior ou igual à data de entrada (entryDate).');
+        throw new BadRequestException(
+          'A data de saída (exitDate) deve ser maior ou igual à data de entrada (entryDate).',
+        );
       }
     }
 
-    const data: any = { ...rest };
+    const data: Prisma.ClientUpdateInput = { ...rest };
     if (entryDate) {
       data.entryDate = finalEntryDate;
     }
@@ -213,6 +271,21 @@ export class ClientsService {
                 id: true,
                 name: true,
                 email: true,
+              },
+            },
+          },
+        },
+        serviceProviders: {
+          select: {
+            id: true,
+            role: true,
+            serviceProvider: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                whatsapp: true,
+                role: true,
               },
             },
           },
@@ -261,7 +334,9 @@ export class ClientsService {
     });
 
     if (existing) {
-      throw new BadRequestException('Usuário já possui este papel neste cliente.');
+      throw new BadRequestException(
+        'Usuário já possui este papel neste cliente.',
+      );
     }
 
     return this.prisma.clientTeamMember.create({
@@ -286,6 +361,44 @@ export class ClientsService {
     }
 
     return this.prisma.clientTeamMember.delete({
+      where: { id: existing.id },
+    });
+  }
+
+  async addServiceProvider(clientId: string, serviceProviderId: string, role: string) {
+    await this.findOne(clientId);
+
+    const existing = await this.prisma.clientServiceProvider.findFirst({
+      where: { clientId, serviceProviderId, role },
+    });
+
+    if (existing) {
+      throw new BadRequestException(
+        'Prestador já possui este papel neste cliente.',
+      );
+    }
+
+    return this.prisma.clientServiceProvider.create({
+      data: {
+        clientId,
+        serviceProviderId,
+        role,
+      },
+    });
+  }
+
+  async removeServiceProvider(clientId: string, serviceProviderId: string, role: string) {
+    await this.findOne(clientId);
+
+    const existing = await this.prisma.clientServiceProvider.findFirst({
+      where: { clientId, serviceProviderId, role },
+    });
+
+    if (!existing) {
+      throw new NotFoundException('Prestador não encontrado neste papel da equipe.');
+    }
+
+    return this.prisma.clientServiceProvider.delete({
       where: { id: existing.id },
     });
   }

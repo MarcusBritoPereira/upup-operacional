@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
@@ -8,7 +12,10 @@ import { Prisma } from '@prisma/client';
 export class ContractsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async updateClientValue(clientId: string, tx: Prisma.TransactionClient) {
+  private async updateClientValue(
+    clientId: string,
+    tx: Prisma.TransactionClient,
+  ) {
     const activeContracts = await tx.contract.findMany({
       where: {
         clientId,
@@ -36,7 +43,9 @@ export class ContractsService {
       const start = new Date(startDate);
       const end = new Date(endDate);
       if (end < start) {
-        throw new BadRequestException('A data de término (endDate) deve ser maior ou igual à data de início (startDate).');
+        throw new BadRequestException(
+          'A data de término (endDate) deve ser maior ou igual à data de início (startDate).',
+        );
       }
     }
 
@@ -57,7 +66,7 @@ export class ContractsService {
   }
 
   async findAll(clientId?: string, user?: { id: string; role: string }) {
-    const where: any = {};
+    const where: Prisma.ContractWhereInput = {};
     if (clientId) {
       where.clientId = clientId;
     }
@@ -70,10 +79,7 @@ export class ContractsService {
       const clientIds = memberships.map((m) => m.clientId);
 
       where.client = {
-        OR: [
-          { managerId: user.id },
-          { id: { in: clientIds } },
-        ],
+        OR: [{ managerId: user.id }, { id: { in: clientIds } }],
       };
     }
 
@@ -106,16 +112,25 @@ export class ContractsService {
         throw new NotFoundException(`Contrato com ID "${id}" não encontrado.`);
       }
 
-      const finalStartDate = startDate ? new Date(startDate) : existing.startDate;
-      const finalEndDate = endDate !== undefined ? (endDate ? new Date(endDate) : null) : existing.endDate;
+      const finalStartDate = startDate
+        ? new Date(startDate)
+        : existing.startDate;
+      const finalEndDate =
+        endDate !== undefined
+          ? endDate
+            ? new Date(endDate)
+            : null
+          : existing.endDate;
 
       if (finalStartDate && finalEndDate) {
         if (finalEndDate < finalStartDate) {
-          throw new BadRequestException('A data de término (endDate) deve ser maior ou igual à data de início (startDate).');
+          throw new BadRequestException(
+            'A data de término (endDate) deve ser maior ou igual à data de início (startDate).',
+          );
         }
       }
 
-      const data: any = { ...rest };
+      const data: Prisma.ContractUpdateInput = { ...rest };
       if (startDate) {
         data.startDate = finalStartDate;
       }

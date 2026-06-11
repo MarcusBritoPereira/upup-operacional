@@ -5,8 +5,7 @@ describe('CredentialEncryptionService', () => {
   function createService() {
     const config = new ConfigService({
       NODE_ENV: 'test',
-      CREDENTIALS_ENCRYPTION_KEY:
-        'test-secret-with-at-least-32-characters',
+      CREDENTIALS_ENCRYPTION_KEY: 'test-secret-with-at-least-32-characters',
     });
     return new CredentialEncryptionService(config);
   }

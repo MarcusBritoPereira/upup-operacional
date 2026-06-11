@@ -22,7 +22,8 @@ export function createOriginValidationMiddleware(
       return;
     }
 
-    const origin = req.get('origin') ?? getOriginFromReferer(req.get('referer'));
+    const origin =
+      req.get('origin') ?? getOriginFromReferer(req.get('referer'));
 
     if (!origin && requireTrustedOrigin) {
       res.status(403).json({ message: 'Origem obrigatória para mutações.' });

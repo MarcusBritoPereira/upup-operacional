@@ -14,7 +14,9 @@ function createPolicy(options: {
     clientTeamMember: {
       findFirst: jest
         .fn()
-        .mockResolvedValue(options.isTeamMember ? { id: 'membership-id' } : null),
+        .mockResolvedValue(
+          options.isTeamMember ? { id: 'membership-id' } : null,
+        ),
     },
   };
 

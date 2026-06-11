@@ -9,8 +9,13 @@ const request = { user };
 describe('client-scoped controllers', () => {
   it('checks client operation access before creating a follow-up', async () => {
     const service = { create: jest.fn() };
-    const policy = { assertCanOperateClient: jest.fn().mockResolvedValue(undefined) };
-    const controller = new FollowupsController(service as never, policy as never);
+    const policy = {
+      assertCanOperateClient: jest.fn().mockResolvedValue(undefined),
+    };
+    const controller = new FollowupsController(
+      service as never,
+      policy as never,
+    );
     const dto = {
       clientId: 'client-id',
       monthlyCycleId: 'cycle-id',
@@ -33,10 +38,19 @@ describe('client-scoped controllers', () => {
       getClientIdForDeliverable: jest.fn().mockResolvedValue('client-id'),
       updateDeliverable: jest.fn(),
     };
-    const policy = { assertCanOperateClient: jest.fn().mockResolvedValue(undefined) };
-    const controller = new MonthlyCyclesController(service as never, policy as never);
+    const policy = {
+      assertCanOperateClient: jest.fn().mockResolvedValue(undefined),
+    };
+    const controller = new MonthlyCyclesController(
+      service as never,
+      policy as never,
+    );
 
-    await controller.updateDeliverable('deliverable-id', { deliveredQuantity: 1 }, request);
+    await controller.updateDeliverable(
+      'deliverable-id',
+      { deliveredQuantity: 1 },
+      request,
+    );
 
     expect(policy.assertCanOperateClient).toHaveBeenCalledWith(
       user.id,
@@ -47,10 +61,14 @@ describe('client-scoped controllers', () => {
 
   it('checks the alert client before resolving it', async () => {
     const service = {
-      findOne: jest.fn().mockResolvedValue({ id: 'alert-id', clientId: 'client-id' }),
+      findOne: jest
+        .fn()
+        .mockResolvedValue({ id: 'alert-id', clientId: 'client-id' }),
       resolve: jest.fn(),
     };
-    const policy = { assertCanOperateClient: jest.fn().mockResolvedValue(undefined) };
+    const policy = {
+      assertCanOperateClient: jest.fn().mockResolvedValue(undefined),
+    };
     const controller = new AlertsController(service as never, policy as never);
 
     await controller.resolve('alert-id', request);
@@ -65,10 +83,17 @@ describe('client-scoped controllers', () => {
 
   it('checks the plan client before returning a plan', async () => {
     const service = {
-      findOne: jest.fn().mockResolvedValue({ id: 'plan-id', clientId: 'client-id' }),
+      findOne: jest
+        .fn()
+        .mockResolvedValue({ id: 'plan-id', clientId: 'client-id' }),
     };
-    const policy = { assertCanViewClient: jest.fn().mockResolvedValue(undefined) };
-    const controller = new ActionPlansController(service as never, policy as never);
+    const policy = {
+      assertCanViewClient: jest.fn().mockResolvedValue(undefined),
+    };
+    const controller = new ActionPlansController(
+      service as never,
+      policy as never,
+    );
 
     await controller.findOne('plan-id', request);
 

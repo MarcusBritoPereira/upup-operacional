@@ -1,15 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { AlertSeverity } from '@prisma/client';
+import { Prisma, AlertSeverity, AlertStatus } from '@prisma/client';
 
 @Injectable()
 export class AlertsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(clientId: string | undefined, status: string | undefined, user: { id: string; role: string }) {
-    const where: any = {};
+  async findAll(
+    clientId: string | undefined,
+    status: string | undefined,
+    user: { id: string; role: string },
+  ) {
+    const where: Prisma.AlertWhereInput = {};
     if (clientId) where.clientId = clientId;
-    if (status) where.status = status;
+    if (status) where.status = status as AlertStatus;
 
     if (!['admin', 'diretoria', 'gerencia'].includes(user.role)) {
       const memberships = await this.prisma.clientTeamMember.findMany({
@@ -19,10 +23,7 @@ export class AlertsService {
       const clientIds = memberships.map((m) => m.clientId);
 
       where.client = {
-        OR: [
-          { managerId: user.id },
-          { id: { in: clientIds } },
-        ],
+        OR: [{ managerId: user.id }, { id: { in: clientIds } }],
       };
     }
 
@@ -68,7 +69,13 @@ export class AlertsService {
     });
   }
 
-  async createAlert(clientId: string, type: string, severity: AlertSeverity, title: string, description?: string) {
+  async createAlert(
+    clientId: string,
+    type: string,
+    severity: AlertSeverity,
+    title: string,
+    description?: string,
+  ) {
     return this.prisma.alert.create({
       data: {
         clientId,

@@ -38,11 +38,9 @@ export class CreateClientDto {
   @IsOptional()
   exitReason?: string;
 
-
   @IsUUID()
   @IsOptional()
   managerId?: string;
-
 
   @IsString()
   @IsOptional()

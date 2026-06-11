@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { ServiceProvidersService } from './service-providers.service';
 import { CreateServiceProviderDto } from './dto/create-service-provider.dto';
 import { UpdateServiceProviderDto } from './dto/update-service-provider.dto';
@@ -9,7 +18,9 @@ import { Roles } from '../common/decorators/roles.decorator';
 @Controller('service-providers')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ServiceProvidersController {
-  constructor(private readonly serviceProvidersService: ServiceProvidersService) {}
+  constructor(
+    private readonly serviceProvidersService: ServiceProvidersService,
+  ) {}
 
   @Post()
   @Roles('admin', 'diretoria', 'gerencia')
@@ -29,7 +40,10 @@ export class ServiceProvidersController {
 
   @Patch(':id')
   @Roles('admin', 'diretoria', 'gerencia')
-  update(@Param('id') id: string, @Body() updateServiceProviderDto: UpdateServiceProviderDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateServiceProviderDto: UpdateServiceProviderDto,
+  ) {
     return this.serviceProvidersService.update(id, updateServiceProviderDto);
   }
 

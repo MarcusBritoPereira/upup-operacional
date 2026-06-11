@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { ConfigService } from '@nestjs/config';
 import type { Response } from 'express';
 import { AuthController } from './auth.controller';
@@ -12,13 +13,14 @@ function createController(config: Record<string, unknown> = {}) {
     getUserSession: jest.fn().mockResolvedValue({ id: 'user-id' }),
   };
   const configService = {
-    get: jest.fn((key: string) =>
-      ({
-        JWT_EXPIRES_IN: '1h',
-        COOKIE_SECURE: false,
-        COOKIE_SAME_SITE: 'lax',
-        ...config,
-      })[key],
+    get: jest.fn(
+      (key: string) =>
+        ({
+          JWT_EXPIRES_IN: '1h',
+          COOKIE_SECURE: false,
+          COOKIE_SAME_SITE: 'lax',
+          ...config,
+        })[key],
     ),
   };
 

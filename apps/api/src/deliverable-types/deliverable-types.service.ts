@@ -27,7 +27,9 @@ export class DeliverableTypesService {
     });
 
     if (!type) {
-      throw new NotFoundException(`Tipo de entregável com ID "${id}" não encontrado.`);
+      throw new NotFoundException(
+        `Tipo de entregável com ID "${id}" não encontrado.`,
+      );
     }
 
     return type;

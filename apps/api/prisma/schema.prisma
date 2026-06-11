@@ -84,6 +84,7 @@ model Client {
   timelineEvents      ClientTimeline[]
   churnReasons        ChurnReason[]
   credentials         Credential[]
+  serviceProviders    ClientServiceProvider[]
 
   @@index([status, managerId])
   @@map("clients")
@@ -119,7 +120,25 @@ model ServiceProvider {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  clientLinks ClientServiceProvider[]
+
   @@map("service_providers")
+}
+
+model ClientServiceProvider {
+  id                String   @id @default(uuid()) @db.Uuid
+  clientId          String   @map("client_id") @db.Uuid
+  serviceProviderId String   @map("service_provider_id") @db.Uuid
+  role              String   @default("ServiceProvider") @db.VarChar(100)
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  serviceProvider ServiceProvider @relation(fields: [serviceProviderId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId, serviceProviderId, role])
+  @@index([clientId])
+  @@index([serviceProviderId])
+  @@map("client_service_providers")
 }
 
 model Credential {

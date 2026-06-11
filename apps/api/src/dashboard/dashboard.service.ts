@@ -56,7 +56,10 @@ export class DashboardService {
         clientsWithoutFollowup++;
       } else if (latestCycle.healthStatus === 'green') {
         clientsHealthy++;
-      } else if (latestCycle.healthStatus === 'red' || latestCycle.healthStatus === 'yellow') {
+      } else if (
+        latestCycle.healthStatus === 'red' ||
+        latestCycle.healthStatus === 'yellow'
+      ) {
         clientsAtRisk++;
       } else {
         clientsWithoutFollowup++;
@@ -65,11 +68,12 @@ export class DashboardService {
 
     // Get overdue action plans
     const now = new Date();
-    const actionPlanFilter = role === 'admin' || role === 'diretoria' || role === 'gerencia'
-      ? {}
-      : role === 'gestor_cliente'
-      ? { client: { managerId: userId } }
-      : { client: { id: { in: await this.getClientIds(userId) } } };
+    const actionPlanFilter =
+      role === 'admin' || role === 'diretoria' || role === 'gerencia'
+        ? {}
+        : role === 'gestor_cliente'
+          ? { client: { managerId: userId } }
+          : { client: { id: { in: await this.getClientIds(userId) } } };
 
     const overdueActionPlans = await this.prisma.actionPlan.count({
       where: {

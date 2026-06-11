@@ -8,17 +8,20 @@ import api from '@/lib/api';
 export default function TeamsPage() {
   const [clients, setClients] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
+  const [serviceProviders, setServiceProviders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
   const fetchData = async () => {
     try {
-      const [clientsRes, usersRes] = await Promise.all<any>([
+      const [clientsRes, usersRes, providersRes] = await Promise.all<any>([
         api.get('/clients?status=active'),
         api.get('/users'),
+        api.get('/service-providers'),
       ]);
       setClients(clientsRes);
       setUsers(usersRes);
+      setServiceProviders(providersRes);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
     } finally {
@@ -74,7 +77,8 @@ export default function TeamsPage() {
               <ClientTeamCard 
                 key={client.id} 
                 client={client} 
-                users={users} 
+                users={users}
+                serviceProviders={serviceProviders}
                 onUpdate={fetchData} 
               />
             ))}

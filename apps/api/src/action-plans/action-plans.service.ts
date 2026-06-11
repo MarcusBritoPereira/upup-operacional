@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateActionPlanDto } from './dto/create-action-plan.dto';
 import { UpdateActionPlanDto } from './dto/update-action-plan.dto';
@@ -17,7 +21,9 @@ export class ActionPlansService {
         where: { id: clientId },
       });
       if (!client) {
-        throw new NotFoundException(`Cliente com ID "${clientId}" não encontrado.`);
+        throw new NotFoundException(
+          `Cliente com ID "${clientId}" não encontrado.`,
+        );
       }
 
       // Verify cycle-client link
@@ -30,7 +36,9 @@ export class ActionPlansService {
           throw new NotFoundException('Ciclo mensal não encontrado.');
         }
         if (cycle.clientId !== clientId) {
-          throw new BadRequestException('O ciclo mensal não pertence ao cliente informado.');
+          throw new BadRequestException(
+            'O ciclo mensal não pertence ao cliente informado.',
+          );
         }
       }
 
@@ -68,8 +76,13 @@ export class ActionPlansService {
     });
   }
 
-  async findAll(clientId?: string, responsibleId?: string, status?: string, user?: { id: string; role: string }) {
-    const where: any = {};
+  async findAll(
+    clientId?: string,
+    responsibleId?: string,
+    status?: string,
+    user?: { id: string; role: string },
+  ) {
+    const where: Record<string, any> = {};
     if (clientId) where.clientId = clientId;
     if (responsibleId) where.responsibleId = responsibleId;
     if (status) where.status = status;
@@ -82,10 +95,7 @@ export class ActionPlansService {
       const clientIds = memberships.map((m) => m.clientId);
 
       where.client = {
-        OR: [
-          { managerId: user.id },
-          { id: { in: clientIds } },
-        ],
+        OR: [{ managerId: user.id }, { id: { in: clientIds } }],
       };
     }
 
@@ -145,7 +155,9 @@ export class ActionPlansService {
     });
 
     if (!actionPlan) {
-      throw new NotFoundException(`Plano de ação com ID "${id}" não encontrado.`);
+      throw new NotFoundException(
+        `Plano de ação com ID "${id}" não encontrado.`,
+      );
     }
 
     return actionPlan;
@@ -157,7 +169,9 @@ export class ActionPlansService {
     return this.prisma.$transaction(async (tx) => {
       const actionPlan = await tx.actionPlan.findUnique({ where: { id } });
       if (!actionPlan) {
-        throw new NotFoundException(`Plano de ação com ID "${id}" não encontrado.`);
+        throw new NotFoundException(
+          `Plano de ação com ID "${id}" não encontrado.`,
+        );
       }
 
       // Verify cycle-client link
@@ -170,7 +184,9 @@ export class ActionPlansService {
           throw new NotFoundException('Ciclo mensal não encontrado.');
         }
         if (cycle.clientId !== actionPlan.clientId) {
-          throw new BadRequestException('O ciclo mensal não pertence ao cliente informado.');
+          throw new BadRequestException(
+            'O ciclo mensal não pertence ao cliente informado.',
+          );
         }
       }
 
@@ -209,7 +225,9 @@ export class ActionPlansService {
             clientId: actionPlan.clientId,
             eventType: 'action_plan_status_changed',
             title,
-            description: description || `Status alterado de ${actionPlan.status} para ${dto.status}`,
+            description:
+              description ||
+              `Status alterado de ${actionPlan.status} para ${dto.status}`,
             createdById: updaterId,
           },
         });
@@ -220,7 +238,7 @@ export class ActionPlansService {
   }
 
   async remove(id: string) {
-    const actionPlan = await this.findOne(id);
+    await this.findOne(id);
     return this.prisma.actionPlan.delete({
       where: { id },
     });

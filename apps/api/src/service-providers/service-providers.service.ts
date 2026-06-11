@@ -24,7 +24,9 @@ export class ServiceProvidersService {
       where: { id },
     });
     if (!provider) {
-      throw new NotFoundException(`Prestador de serviço com ID ${id} não encontrado`);
+      throw new NotFoundException(
+        `Prestador de serviço com ID ${id} não encontrado`,
+      );
     }
     return provider;
   }
