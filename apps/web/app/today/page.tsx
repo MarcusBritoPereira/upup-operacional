@@ -50,7 +50,7 @@ export default function TodayPage() {
       case 'medium':
         return 'bg-yellow-100 text-yellow-700 border-yellow-200';
       default:
-        return 'bg-yellow-100 text-slate-200 border-yellow-200';
+        return 'bg-yellow-100 text-[var(--foreground)] border-yellow-200';
     }
   };
 

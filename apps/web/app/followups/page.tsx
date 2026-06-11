@@ -173,7 +173,7 @@ export default function FollowupsPage() {
           <h1 className="text-2xl font-extrabold tracking-tight text-[var(--foreground)] sm:text-3xl">
             Acompanhamento Semanal
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-[var(--muted-foreground)] mt-1">
             Preencha e visualize o diagnóstico semanal dos seus clientes ativos.
           </p>
         </div>
@@ -181,13 +181,13 @@ export default function FollowupsPage() {
         {/* Current Week Card */}
         <div className="bg-[var(--secondary)] rounded-xl border border-[var(--border)]/60 p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Semana Operacional</span>
-            <span className="text-sm font-semibold text-slate-300 mt-0.5 block">
+            <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider block">Semana Operacional</span>
+            <span className="text-sm font-semibold text-[var(--muted-foreground)] mt-0.5 block">
               {weekStart ? new Date(weekStart).toLocaleDateString('pt-BR') : ''} até{' '}
               {weekEnd ? new Date(weekEnd).toLocaleDateString('pt-BR') : ''}
             </span>
           </div>
-          <span className="text-xs text-slate-400 italic">
+          <span className="text-xs text-[var(--muted-foreground)] italic">
             Os acompanhamentos devem ser atualizados até sexta-feira às 18h.
           </span>
         </div>
@@ -196,7 +196,7 @@ export default function FollowupsPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-            <p className="text-slate-400 text-sm mt-3">Carregando lista de acompanhamento...</p>
+            <p className="text-[var(--muted-foreground)] text-sm mt-3">Carregando lista de acompanhamento...</p>
           </div>
         ) : error ? (
           <div className="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-xl text-sm">
@@ -204,15 +204,15 @@ export default function FollowupsPage() {
           </div>
         ) : clients.length === 0 ? (
           <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-12 text-center">
-            <h3 className="text-slate-200 font-semibold">Nenhum cliente ativo</h3>
-            <p className="text-slate-400 text-sm mt-1">Nenhum cliente ativo foi encontrado na sua carteira.</p>
+            <h3 className="text-[var(--foreground)] font-semibold">Nenhum cliente ativo</h3>
+            <p className="text-[var(--muted-foreground)] text-sm mt-1">Nenhum cliente ativo foi encontrado na sua carteira.</p>
           </div>
         ) : (
           <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-sm">
                 <thead>
-                  <tr className="bg-[var(--secondary)] text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-[var(--border)]">
+                  <tr className="bg-[var(--secondary)] text-[var(--muted-foreground)] text-xs font-semibold uppercase tracking-wider border-b border-[var(--border)]">
                     <th className="px-6 py-4">Cliente</th>
                     <th className="px-6 py-4">Gestor</th>
                     <th className="px-6 py-4">Status da Semana</th>
@@ -220,7 +220,7 @@ export default function FollowupsPage() {
                     <th className="px-6 py-4 text-right">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-300">
+                <tbody className="divide-y divide-slate-100 text-[var(--muted-foreground)]">
                   {clients.map((client) => {
                     const manager = users.find((u) => u.id === client.managerId);
                     const filled = isFilledThisWeek(client.id);
@@ -230,11 +230,11 @@ export default function FollowupsPage() {
                       <tr key={client.id} className="hover:bg-[var(--secondary)]/50 transition">
                         <td className="px-6 py-4 font-semibold text-[var(--foreground)]">
                           {client.tradeName}
-                          <span className="block text-xs font-normal text-slate-400 mt-0.5">
+                          <span className="block text-xs font-normal text-[var(--muted-foreground)] mt-0.5">
                             {client.segment || '—'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-slate-400">
+                        <td className="px-6 py-4 text-[var(--muted-foreground)]">
                           {manager?.name || 'Sem Gestor'}
                         </td>
                         <td className="px-6 py-4">
@@ -254,12 +254,12 @@ export default function FollowupsPage() {
                               {weeklyData.weeklyScore} / 100
                             </span>
                           ) : (
-                            <span className="text-slate-400 font-semibold">—</span>
+                            <span className="text-[var(--muted-foreground)] font-semibold">—</span>
                           )}
                         </td>
                         <td className="px-6 py-4 text-right">
                           {filled ? (
-                            <span className="text-slate-400 font-semibold text-xs">Acompanhamento concluído</span>
+                            <span className="text-[var(--muted-foreground)] font-semibold text-xs">Acompanhamento concluído</span>
                           ) : (
                             <button
                               onClick={() => handleOpenForm(client)}
@@ -287,9 +287,9 @@ export default function FollowupsPage() {
                 <div className="px-6 py-5 bg-[var(--secondary)] border-b border-[var(--border)] flex justify-between items-center">
                   <div>
                     <h3 className="font-bold text-[var(--foreground)]">Diagnóstico Semanal</h3>
-                    <p className="text-xs text-slate-400 mt-0.5">{selectedClient.tradeName}</p>
+                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{selectedClient.tradeName}</p>
                   </div>
-                  <button type="button" onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-slate-650">
+                  <button type="button" onClick={() => setModalOpen(false)} className="text-[var(--muted-foreground)] hover:text-slate-650">
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                   </button>
                 </div>
@@ -309,7 +309,7 @@ export default function FollowupsPage() {
                   </div>
 
                   <hr className="border-[var(--border)]" />
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Perguntas Objetivas</h4>
+                  <h4 className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">Perguntas Objetivas</h4>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -346,7 +346,7 @@ export default function FollowupsPage() {
                   </div>
 
                   <div className="flex flex-col gap-2 pt-2">
-                    <label className="flex items-center gap-2.5 text-sm font-semibold text-slate-300">
+                    <label className="flex items-center gap-2.5 text-sm font-semibold text-[var(--muted-foreground)]">
                       <input
                         type="checkbox"
                         checked={hasDelayedDelivery}
@@ -355,7 +355,7 @@ export default function FollowupsPage() {
                       />
                       Houve atraso em algum entregável contratado?
                     </label>
-                    <label className="flex items-center gap-2.5 text-sm font-semibold text-slate-300">
+                    <label className="flex items-center gap-2.5 text-sm font-semibold text-[var(--muted-foreground)]">
                       <input
                         type="checkbox"
                         checked={clientShowedDissatisfaction}
@@ -367,7 +367,7 @@ export default function FollowupsPage() {
                   </div>
 
                   <hr className="border-[var(--border)]" />
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Diagnóstico de Churn</h4>
+                  <h4 className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">Diagnóstico de Churn</h4>
 
                   <div>
                     <label className="form-label">Risco de Cancelamento (Churn)</label>
@@ -391,7 +391,7 @@ export default function FollowupsPage() {
                 </div>
 
                 <div className="px-6 py-4 bg-[var(--secondary)] border-t border-[var(--border)] flex justify-end gap-3">
-                  <button type="button" onClick={() => setModalOpen(false)} className="text-xs font-semibold text-slate-400 hover:text-slate-300">Cancelar</button>
+                  <button type="button" onClick={() => setModalOpen(false)} className="text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)]">Cancelar</button>
                   <button type="submit" disabled={submitting} className="btn-primary text-xs py-1.5 px-3">Enviar Diagnóstico</button>
                 </div>
               </form>

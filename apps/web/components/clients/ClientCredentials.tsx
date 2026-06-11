@@ -78,17 +78,17 @@ export function ClientCredentials({ clientId }: { clientId: string }) {
     }
   }
 
-  if (loading) return <div className="text-sm text-slate-400 py-4">Carregando senhas...</div>;
+  if (loading) return <div className="text-sm text-[var(--muted-foreground)] py-4">Carregando senhas...</div>;
   if (error) return <div className="text-sm text-rose-500 py-4">{error}</div>;
 
   return (
     <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 shadow-xs">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h3 className="font-bold text-slate-200 text-sm uppercase tracking-wider text-slate-400">
+          <h3 className="font-bold text-[var(--foreground)] text-sm uppercase tracking-wider text-[var(--muted-foreground)]">
             Gerenciador de Senhas
           </h3>
-          <p className="text-xs text-slate-400 mt-1">Visível apenas para Diretoria e Admin</p>
+          <p className="text-xs text-[var(--muted-foreground)] mt-1">Visível apenas para Diretoria e Admin</p>
         </div>
         <button onClick={() => setIsModalOpen(true)} className="btn-primary text-xs py-1.5 px-3">
           Nova Senha
@@ -100,28 +100,28 @@ export function ClientCredentials({ clientId }: { clientId: string }) {
           <div key={cred.id} className="border border-[var(--border)] rounded-lg p-4 bg-[var(--secondary)] relative group">
             <button 
               onClick={() => handleDelete(cred.id)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition"
+              className="absolute top-3 right-3 text-[var(--muted-foreground)] hover:text-rose-500 opacity-0 group-hover:opacity-100 transition"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
             </button>
-            <h4 className="font-bold text-slate-200 mb-2">{cred.systemName}</h4>
-            <div className="space-y-1 text-sm text-slate-400">
+            <h4 className="font-bold text-[var(--foreground)] mb-2">{cred.systemName}</h4>
+            <div className="space-y-1 text-sm text-[var(--muted-foreground)]">
               {cred.url && (
                 <div className="flex justify-between">
-                  <span className="font-semibold text-slate-400 text-xs uppercase">URL:</span>
-                  <a href={cred.url} target="_blank" rel="noreferrer" className="text-[var(--foreground)] hover:text-slate-300 hover:underline truncate ml-2 max-w-[200px]">
+                  <span className="font-semibold text-[var(--muted-foreground)] text-xs uppercase">URL:</span>
+                  <a href={cred.url} target="_blank" rel="noreferrer" className="text-[var(--foreground)] hover:text-[var(--muted-foreground)] hover:underline truncate ml-2 max-w-[200px]">
                     {cred.url}
                   </a>
                 </div>
               )}
               {cred.username && (
                 <div className="flex justify-between">
-                  <span className="font-semibold text-slate-400 text-xs uppercase">Usuário:</span>
+                  <span className="font-semibold text-[var(--muted-foreground)] text-xs uppercase">Usuário:</span>
                   <span className="font-mono text-xs">{cred.username}</span>
                 </div>
               )}
               <div className="flex justify-between items-center pt-1 border-t border-[var(--border)]/50 mt-2">
-                <span className="font-semibold text-slate-400 text-xs uppercase">Senha:</span>
+                <span className="font-semibold text-[var(--muted-foreground)] text-xs uppercase">Senha:</span>
                 <div className="flex items-center gap-2">
                   <input 
                     type="password" 
@@ -139,7 +139,7 @@ export function ClientCredentials({ clientId }: { clientId: string }) {
                         alert('Erro ao buscar senha original.');
                       }
                     }}
-                    className="text-[var(--foreground)] hover:text-slate-300 p-1 bg-[var(--card)] rounded shadow-xs"
+                    className="text-[var(--foreground)] hover:text-[var(--muted-foreground)] p-1 bg-[var(--card)] rounded shadow-xs"
                     title="Copiar Senha"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
@@ -151,7 +151,7 @@ export function ClientCredentials({ clientId }: { clientId: string }) {
         ))}
 
         {credentials.length === 0 && (
-          <div className="col-span-full py-6 text-center text-slate-400 italic">
+          <div className="col-span-full py-6 text-center text-[var(--muted-foreground)] italic">
             Nenhuma senha cadastrada.
           </div>
         )}
@@ -162,7 +162,7 @@ export function ClientCredentials({ clientId }: { clientId: string }) {
           <div className="bg-[var(--card)] rounded-xl w-full max-w-sm shadow-2xl overflow-hidden">
             <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between">
               <h2 className="text-md font-bold text-[var(--foreground)]">Nova Senha</h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-400">
+              <button onClick={() => setIsModalOpen(false)} className="text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)]">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>

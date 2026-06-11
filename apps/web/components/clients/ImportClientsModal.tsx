@@ -96,10 +96,10 @@ export function ImportClientsModal({ onClose, onSuccess }: ImportClientsModalPro
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="bg-[var(--card)] rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
         <div className="flex justify-between items-center p-5 border-b border-[var(--border)]">
-          <h2 className="text-lg font-bold text-slate-200">Importar Clientes</h2>
+          <h2 className="text-lg font-bold text-[var(--foreground)]">Importar Clientes</h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-400 transition-colors"
+            className="text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)] transition-colors"
             title="Fechar"
             disabled={loading}
           >
@@ -111,8 +111,8 @@ export function ImportClientsModal({ onClose, onSuccess }: ImportClientsModalPro
         </div>
 
         <div className="p-6">
-          <div className="mb-6 p-4 bg-[var(--secondary)] border border-[var(--border)] rounded-lg text-sm text-slate-400">
-            <p className="mb-2 font-medium text-slate-300">Instruções:</p>
+          <div className="mb-6 p-4 bg-[var(--secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--muted-foreground)]">
+            <p className="mb-2 font-medium text-[var(--muted-foreground)]">Instruções:</p>
             <ol className="list-decimal pl-4 mb-3 space-y-1">
               <li>Baixe o modelo de planilha abaixo.</li>
               <li>Preencha os dados dos clientes sem alterar os nomes das colunas.</li>
@@ -122,7 +122,7 @@ export function ImportClientsModal({ onClose, onSuccess }: ImportClientsModalPro
             <a
               href="/template-clientes.csv"
               download="template-clientes.csv"
-              className="inline-flex items-center gap-1.5 text-[var(--foreground)] hover:text-slate-300 font-medium"
+              className="inline-flex items-center gap-1.5 text-[var(--foreground)] hover:text-[var(--muted-foreground)] font-medium"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -134,13 +134,13 @@ export function ImportClientsModal({ onClose, onSuccess }: ImportClientsModalPro
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-slate-300 mb-2">Arquivo CSV</label>
+            <label className="block text-sm font-semibold text-[var(--muted-foreground)] mb-2">Arquivo CSV</label>
             <input
               type="file"
               accept=".csv"
               onChange={handleFileChange}
               disabled={loading}
-              className="w-full text-sm text-slate-400
+              className="w-full text-sm text-[var(--muted-foreground)]
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-md file:border-0
                 file:text-sm file:font-semibold
@@ -161,7 +161,7 @@ export function ImportClientsModal({ onClose, onSuccess }: ImportClientsModalPro
           <button
             onClick={onClose}
             disabled={loading}
-            className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-colors"
+            className="px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
           >
             Cancelar
           </button>

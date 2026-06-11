@@ -508,11 +508,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       case 'paused':
         return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'inactive':
-        return 'bg-[var(--border)] text-slate-300 border-[var(--border)]';
+        return 'bg-[var(--border)] text-[var(--muted-foreground)] border-[var(--border)]';
       case 'cancelled':
         return 'bg-rose-50 text-rose-700 border-rose-200';
       default:
-        return 'bg-[var(--secondary)] text-slate-400 border-[var(--border)]';
+        return 'bg-[var(--secondary)] text-[var(--muted-foreground)] border-[var(--border)]';
     }
   };
 
@@ -538,7 +538,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       <DashboardLayout>
         <div className="flex flex-col items-center justify-center py-40">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-          <p className="text-slate-400 text-sm mt-3">Carregando detalhes do cliente...</p>
+          <p className="text-[var(--muted-foreground)] text-sm mt-3">Carregando detalhes do cliente...</p>
         </div>
       </DashboardLayout>
     );
@@ -581,7 +581,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       <div className="p-6 max-w-6xl mx-auto space-y-6">
         {/* Navigation & Header */}
         <div className="space-y-3">
-          <Link href="/clients" className="text-xs font-semibold text-slate-400 hover:text-slate-400 transition flex items-center gap-1">
+          <Link href="/clients" className="text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)] transition flex items-center gap-1">
             ← Voltar para Clientes
           </Link>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -595,13 +595,13 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 </span>
               </div>
               {client.legalName && (
-                <p className="text-sm text-slate-400 mt-1">{client.legalName}</p>
+                <p className="text-sm text-[var(--muted-foreground)] mt-1">{client.legalName}</p>
               )}
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setDrawerOpen(true)}
-                className="px-4 py-2 border border-[var(--border)] bg-[var(--card)] rounded-lg text-slate-300 font-semibold text-sm hover:bg-[var(--secondary)] transition inline-flex items-center gap-2"
+                className="px-4 py-2 border border-[var(--border)] bg-[var(--card)] rounded-lg text-[var(--muted-foreground)] font-semibold text-sm hover:bg-[var(--secondary)] transition inline-flex items-center gap-2"
               >
                 <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
@@ -617,7 +617,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <button
             onClick={() => setActiveTab('cadastro')}
             className={`pb-3 text-sm font-bold border-b-2 transition whitespace-nowrap ${
-              activeTab === 'cadastro' ? 'border-primary text-primary' : 'border-transparent text-slate-400 hover:text-slate-400'
+              activeTab === 'cadastro' ? 'border-primary text-primary' : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)]'
             }`}
           >
             Cadastro & Contatos
@@ -625,7 +625,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <button
             onClick={() => setActiveTab('contratos')}
             className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'contratos' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-slate-400 hover:text-slate-400'
+              activeTab === 'contratos' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)]'
             }`}
           >
             Contratos e Escopo
@@ -633,7 +633,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <button
             onClick={() => setActiveTab('followup')}
             className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'followup' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-slate-400 hover:text-slate-400'
+              activeTab === 'followup' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)]'
             }`}
           >
             Diagnóstico Semanal
@@ -641,7 +641,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <button
             onClick={() => setActiveTab('action-plans')}
             className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'action-plans' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-slate-400 hover:text-slate-400'
+              activeTab === 'action-plans' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)]'
             }`}
           >
             Planos de Ação
@@ -649,7 +649,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <button
             onClick={() => setActiveTab('timeline')}
             className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'timeline' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-slate-400 hover:text-slate-400'
+              activeTab === 'timeline' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)]'
             }`}
           >
             Timeline
@@ -658,7 +658,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             <button
               onClick={() => setActiveTab('senhas')}
               className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === 'senhas' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-slate-400 hover:text-slate-400'
+                activeTab === 'senhas' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)]'
               }`}
             >
               Senhas
@@ -671,39 +671,39 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-5 shadow-xs">
-                <h3 className="font-bold text-slate-200 border-b border-slate-50 pb-3 text-sm uppercase tracking-wider text-slate-400">
+                <h3 className="font-bold text-[var(--foreground)] border-b border-slate-50 pb-3 text-sm uppercase tracking-wider text-[var(--muted-foreground)]">
                   Informações Estratégicas
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className="text-xs text-slate-400 font-medium block">Segmento</span>
-                    <span className="text-sm font-semibold text-slate-200 mt-0.5 block">{client.segment || '—'}</span>
+                    <span className="text-xs text-[var(--muted-foreground)] font-medium block">Segmento</span>
+                    <span className="text-sm font-semibold text-[var(--foreground)] mt-0.5 block">{client.segment || '—'}</span>
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 font-medium block">Perfil</span>
-                    <span className="text-sm font-semibold text-slate-200 mt-0.5 block">{client.clientProfile || '—'}</span>
+                    <span className="text-xs text-[var(--muted-foreground)] font-medium block">Perfil</span>
+                    <span className="text-sm font-semibold text-[var(--foreground)] mt-0.5 block">{client.clientProfile || '—'}</span>
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 font-medium block">Valor Contratual (Total)</span>
+                    <span className="text-xs text-[var(--muted-foreground)] font-medium block">Valor Contratual (Total)</span>
                     <span className="text-sm font-semibold text-slate-950 mt-0.5 block">
                       {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(client.monthlyContractValue || 0)}
                     </span>
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 font-medium block">Maturidade de Marketing</span>
-                    <span className="text-sm font-semibold text-slate-200 mt-0.5 block capitalize">{client.marketingMaturity || '—'}</span>
+                    <span className="text-xs text-[var(--muted-foreground)] font-medium block">Maturidade de Marketing</span>
+                    <span className="text-sm font-semibold text-[var(--foreground)] mt-0.5 block capitalize">{client.marketingMaturity || '—'}</span>
                   </div>
                 </div>
                 <div className="pt-2">
-                  <span className="text-xs text-slate-400 font-medium block">Notas Estratégicas</span>
-                  <p className="text-sm text-slate-400 mt-1.5 bg-[var(--secondary)] p-3 rounded-lg border border-[var(--border)] whitespace-pre-wrap leading-relaxed">
+                  <span className="text-xs text-[var(--muted-foreground)] font-medium block">Notas Estratégicas</span>
+                  <p className="text-sm text-[var(--muted-foreground)] mt-1.5 bg-[var(--secondary)] p-3 rounded-lg border border-[var(--border)] whitespace-pre-wrap leading-relaxed">
                     {client.strategicNotes || 'Nenhuma nota estratégica cadastrada.'}
                   </p>
                 </div>
               </div>
 
               <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-4 shadow-xs">
-                <h3 className="font-bold text-slate-200 border-b border-slate-50 pb-3 text-sm uppercase tracking-wider text-slate-400">
+                <h3 className="font-bold text-[var(--foreground)] border-b border-slate-50 pb-3 text-sm uppercase tracking-wider text-[var(--muted-foreground)]">
                   Atalhos Rápidos e Links
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -711,40 +711,40 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     <a href={client.whatsappGroupUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg border border-emerald-100 bg-emerald-50/50 hover:bg-emerald-50 transition text-emerald-800 font-semibold text-sm">
                       <span className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">🟢</span>Grupo do WhatsApp
                     </a>
-                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-slate-400 text-sm"><span className="w-8 h-8 bg-[var(--border)] rounded-full flex items-center justify-center">⚪</span>WhatsApp não configurado</div>}
+                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-[var(--muted-foreground)] text-sm"><span className="w-8 h-8 bg-[var(--border)] rounded-full flex items-center justify-center">⚪</span>WhatsApp não configurado</div>}
 
                   {client.driveUrl ? (
-                    <a href={client.driveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg border border-yellow-200 bg-[rgba(250,204,21,0.1)]/50 hover:bg-[rgba(250,204,21,0.1)] transition text-slate-200 font-semibold text-sm">
+                    <a href={client.driveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg border border-yellow-200 bg-[rgba(250,204,21,0.1)]/50 hover:bg-[rgba(250,204,21,0.1)] transition text-[var(--foreground)] font-semibold text-sm">
                       <span className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">📁</span>Pasta no Google Drive
                     </a>
-                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-slate-400 text-sm"><span className="w-8 h-8 bg-[var(--border)] rounded-full flex items-center justify-center">⚪</span>Drive não configurado</div>}
+                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-[var(--muted-foreground)] text-sm"><span className="w-8 h-8 bg-[var(--border)] rounded-full flex items-center justify-center">⚪</span>Drive não configurado</div>}
 
                   {client.clickupUrl ? (
                     <a href={client.clickupUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg border border-cyan-100 bg-cyan-50/50 hover:bg-cyan-50 transition text-cyan-800 font-semibold text-sm">
                       <span className="w-8 h-8 bg-cyan-100 rounded-full flex items-center justify-center">🎯</span>Pasta no ClickUp
                     </a>
-                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-slate-400 text-sm"><span className="w-8 h-8 bg-[var(--border)] rounded-full flex items-center justify-center">⚪</span>ClickUp não configurado</div>}
+                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-[var(--muted-foreground)] text-sm"><span className="w-8 h-8 bg-[var(--border)] rounded-full flex items-center justify-center">⚪</span>ClickUp não configurado</div>}
 
                   {client.instagramUrl ? (
                     <a href={client.instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg border border-pink-100 bg-pink-50/50 hover:bg-pink-50 transition text-pink-800 font-semibold text-sm">
                       <span className="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center">📸</span>Instagram Comercial
                     </a>
-                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-slate-400 text-sm"><span className="w-8 h-8 bg-[var(--border)] rounded-full flex items-center justify-center">⚪</span>Instagram não configurado</div>}
+                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-[var(--muted-foreground)] text-sm"><span className="w-8 h-8 bg-[var(--border)] rounded-full flex items-center justify-center">⚪</span>Instagram não configurado</div>}
                 </div>
               </div>
             </div>
 
             <div className="space-y-6">
               <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-4 shadow-xs">
-                <h3 className="font-bold text-slate-200 border-b border-slate-50 pb-3 text-sm uppercase tracking-wider text-slate-400">Atribuições e Squad</h3>
+                <h3 className="font-bold text-[var(--foreground)] border-b border-slate-50 pb-3 text-sm uppercase tracking-wider text-[var(--muted-foreground)]">Atribuições e Squad</h3>
                 <div className="space-y-3">
                   <div>
-                    <span className="text-xs text-slate-400 block font-medium">Gestor da Conta</span>
+                    <span className="text-xs text-[var(--muted-foreground)] block font-medium">Gestor da Conta</span>
                     <div className="flex items-center gap-2.5 mt-1">
-                      <div className="w-8 h-8 rounded-full bg-yellow-100 text-slate-200 font-bold flex items-center justify-center text-xs">{manager?.name?.charAt(0) || 'G'}</div>
+                      <div className="w-8 h-8 rounded-full bg-yellow-100 text-[var(--foreground)] font-bold flex items-center justify-center text-xs">{manager?.name?.charAt(0) || 'G'}</div>
                       <div>
-                        <span className="text-sm font-semibold text-slate-200 block">{manager?.name || 'Sem gestor'}</span>
-                        <span className="text-xs text-slate-400">{manager?.email || ''}</span>
+                        <span className="text-sm font-semibold text-[var(--foreground)] block">{manager?.name || 'Sem gestor'}</span>
+                        <span className="text-xs text-[var(--muted-foreground)]">{manager?.email || ''}</span>
                       </div>
                     </div>
                   </div>
@@ -752,11 +752,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
               </div>
 
               <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-4 shadow-xs">
-                <h3 className="font-bold text-slate-200 border-b border-slate-50 pb-3 text-sm uppercase tracking-wider text-slate-400">Contato (Decisor)</h3>
-                <div className="space-y-2 text-sm text-slate-300">
-                  <div><span className="text-xs text-slate-400 block font-medium">Nome</span><span className="font-semibold text-slate-200 mt-0.5 block">{client.decisionMakerName || '—'}</span></div>
-                  <div><span className="text-xs text-slate-400 block font-medium">E-mail</span><span className="font-semibold text-slate-200 mt-0.5 block">{client.decisionMakerEmail || '—'}</span></div>
-                  <div><span className="text-xs text-slate-400 block font-medium">Telefone</span><span className="font-semibold text-slate-200 mt-0.5 block">{client.decisionMakerPhone || '—'}</span></div>
+                <h3 className="font-bold text-[var(--foreground)] border-b border-slate-50 pb-3 text-sm uppercase tracking-wider text-[var(--muted-foreground)]">Contato (Decisor)</h3>
+                <div className="space-y-2 text-sm text-[var(--muted-foreground)]">
+                  <div><span className="text-xs text-[var(--muted-foreground)] block font-medium">Nome</span><span className="font-semibold text-[var(--foreground)] mt-0.5 block">{client.decisionMakerName || '—'}</span></div>
+                  <div><span className="text-xs text-[var(--muted-foreground)] block font-medium">E-mail</span><span className="font-semibold text-[var(--foreground)] mt-0.5 block">{client.decisionMakerEmail || '—'}</span></div>
+                  <div><span className="text-xs text-[var(--muted-foreground)] block font-medium">Telefone</span><span className="font-semibold text-[var(--foreground)] mt-0.5 block">{client.decisionMakerPhone || '—'}</span></div>
                 </div>
               </div>
             </div>
@@ -768,26 +768,26 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <div className="space-y-6">
             <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-4 shadow-xs">
               <div className="flex justify-between items-center pb-2 border-b border-slate-50">
-                <h3 className="font-bold text-slate-200 text-sm uppercase tracking-wider text-slate-400">Contratos Ativos e Histórico</h3>
+                <h3 className="font-bold text-[var(--foreground)] text-sm uppercase tracking-wider text-[var(--muted-foreground)]">Contratos Ativos e Histórico</h3>
                 <button onClick={() => setContractModalOpen(true)} className="btn-primary py-1.5 px-3 text-xs shadow-xs">Adicionar Contrato</button>
               </div>
-              {contracts.length === 0 ? <p className="text-slate-400 text-sm italic py-2">Nenhum contrato cadastrado.</p> : (
+              {contracts.length === 0 ? <p className="text-[var(--muted-foreground)] text-sm italic py-2">Nenhum contrato cadastrado.</p> : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-sm">
                     <thead>
-                      <tr className="bg-[var(--secondary)] text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-[var(--border)]">
+                      <tr className="bg-[var(--secondary)] text-[var(--muted-foreground)] text-xs font-semibold uppercase tracking-wider border-b border-[var(--border)]">
                         <th className="px-4 py-3">Início</th><th className="px-4 py-3">Fim</th><th className="px-4 py-3">Valor Mensal</th><th className="px-4 py-3">% GEE</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Notas</th><th className="px-4 py-3 text-right">Ações</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-50 text-slate-300">
+                    <tbody className="divide-y divide-slate-50 text-[var(--muted-foreground)]">
                       {contracts.map(c => (
                         <tr key={c.id} className="hover:bg-[var(--secondary)]/20 transition">
                           <td className="px-4 py-3">{new Date(c.startDate).toLocaleDateString('pt-BR')}</td>
                           <td className="px-4 py-3">{c.endDate ? new Date(c.endDate).toLocaleDateString('pt-BR') : 'Sem prazo'}</td>
                           <td className="px-4 py-3 font-semibold text-[var(--foreground)]">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.monthlyValue)}</td>
-                          <td className="px-4 py-3 font-medium text-slate-300">{c.geePercentage ? `${c.geePercentage}%` : '—'}</td>
-                          <td className="px-4 py-3"><span className={`badge text-[10px] ${c.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-[var(--border)] text-slate-400'}`}>{c.status === 'active' ? 'Ativo' : 'Encerrado'}</span></td>
-                          <td className="px-4 py-3 text-xs text-slate-400 max-w-[200px] truncate">{c.notes || '—'}</td>
+                          <td className="px-4 py-3 font-medium text-[var(--muted-foreground)]">{c.geePercentage ? `${c.geePercentage}%` : '—'}</td>
+                          <td className="px-4 py-3"><span className={`badge text-[10px] ${c.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-[var(--border)] text-[var(--muted-foreground)]'}`}>{c.status === 'active' ? 'Ativo' : 'Encerrado'}</span></td>
+                          <td className="px-4 py-3 text-xs text-[var(--muted-foreground)] max-w-[200px] truncate">{c.notes || '—'}</td>
                           <td className="px-4 py-3 text-right"><button onClick={() => handleDeleteContract(c.id)} className="text-rose-600 hover:text-rose-800 text-xs font-bold">Remover</button></td>
                         </tr>
                       ))}
@@ -800,8 +800,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-4 shadow-xs">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 border-b border-slate-50 gap-4">
                 <div>
-                  <h3 className="font-bold text-slate-200 text-sm uppercase tracking-wider text-slate-400">Escopo Operacional</h3>
-                  <p className="text-xs text-slate-400 mt-0.5">Acompanhamento de entregáveis por ciclo mensal.</p>
+                  <h3 className="font-bold text-[var(--foreground)] text-sm uppercase tracking-wider text-[var(--muted-foreground)]">Escopo Operacional</h3>
+                  <p className="text-xs text-[var(--muted-foreground)] mt-0.5">Acompanhamento de entregáveis por ciclo mensal.</p>
                 </div>
                 <div className="flex gap-2 w-full sm:w-auto">
                   {cycles.length > 0 && (
@@ -813,25 +813,25 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 </div>
               </div>
 
-              {!selectedCycle ? <div className="text-center py-10"><p className="text-slate-400 text-sm italic">Nenhum ciclo operacional encontrado.</p></div> : (
+              {!selectedCycle ? <div className="text-center py-10"><p className="text-[var(--muted-foreground)] text-sm italic">Nenhum ciclo operacional encontrado.</p></div> : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-sm">
                     <thead>
-                      <tr className="bg-[var(--secondary)] text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-[var(--border)]">
+                      <tr className="bg-[var(--secondary)] text-[var(--muted-foreground)] text-xs font-semibold uppercase tracking-wider border-b border-[var(--border)]">
                         <th className="px-4 py-3">Tipo de Entregável</th><th className="px-4 py-3 text-center">Contratado</th><th className="px-4 py-3 text-center">Concluído</th><th className="px-4 py-3 text-center">Em Progresso</th><th className="px-4 py-3 text-center">Atrasado</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Obs</th><th className="px-4 py-3 text-right">Ações</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-50 text-slate-300">
+                    <tbody className="divide-y divide-slate-50 text-[var(--muted-foreground)]">
                       {selectedCycle.monthlyDeliverables.map(d => (
                         <tr key={d.id} className="hover:bg-[var(--secondary)]/20 transition">
                           <td className="px-4 py-3 font-semibold text-[var(--foreground)]">{d.deliverableType.name}</td>
                           <td className="px-4 py-3 text-center font-bold">{d.contractedQuantity}</td>
                           <td className="px-4 py-3 text-center text-emerald-600 font-bold">{d.deliveredQuantity}</td>
                           <td className="px-4 py-3 text-center text-[var(--foreground)] font-bold">{d.inProgressQuantity}</td>
-                          <td className="px-4 py-3 text-center text-slate-400 font-medium">{d.delayedQuantity}</td>
-                          <td className="px-4 py-3"><span className={`badge text-[10px] ${d.status === 'completed' ? 'bg-emerald-50 text-emerald-700' : d.status === 'in_progress' ? 'bg-[rgba(250,204,21,0.1)] text-slate-200' : d.status === 'delayed' ? 'bg-rose-50 text-rose-700' : 'bg-[var(--border)]'}`}>{d.status === 'completed' ? 'Concluído' : d.status === 'in_progress' ? 'Em Progresso' : d.status === 'delayed' ? 'Atrasado' : 'Pendente'}</span></td>
-                          <td className="px-4 py-3 text-slate-400 text-sm">{d.notes || '-'}</td>
-                          <td className="px-4 py-3 text-right"><button onClick={() => handleEditDeliverable(d)} className="text-[var(--foreground)] hover:text-slate-300 text-xs font-bold">Lançar</button></td>
+                          <td className="px-4 py-3 text-center text-[var(--muted-foreground)] font-medium">{d.delayedQuantity}</td>
+                          <td className="px-4 py-3"><span className={`badge text-[10px] ${d.status === 'completed' ? 'bg-emerald-50 text-emerald-700' : d.status === 'in_progress' ? 'bg-[rgba(250,204,21,0.1)] text-[var(--foreground)]' : d.status === 'delayed' ? 'bg-rose-50 text-rose-700' : 'bg-[var(--border)]'}`}>{d.status === 'completed' ? 'Concluído' : d.status === 'in_progress' ? 'Em Progresso' : d.status === 'delayed' ? 'Atrasado' : 'Pendente'}</span></td>
+                          <td className="px-4 py-3 text-[var(--muted-foreground)] text-sm">{d.notes || '-'}</td>
+                          <td className="px-4 py-3 text-right"><button onClick={() => handleEditDeliverable(d)} className="text-[var(--foreground)] hover:text-[var(--muted-foreground)] text-xs font-bold">Lançar</button></td>
                         </tr>
                       ))}
                     </tbody>
@@ -847,10 +847,10 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-5 shadow-xs">
             <div className="flex justify-between items-center pb-2 border-b border-slate-50">
               <div>
-                <h3 className="font-bold text-slate-200 text-sm uppercase tracking-wider text-slate-400">
+                <h3 className="font-bold text-[var(--foreground)] text-sm uppercase tracking-wider text-[var(--muted-foreground)]">
                   Histórico de Diagnósticos Semanais
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">Diagnósticos e score de saúde do cliente.</p>
+                <p className="text-xs text-[var(--muted-foreground)] mt-0.5">Diagnósticos e score de saúde do cliente.</p>
               </div>
               <button
                 onClick={handleOpenFollowupForm}
@@ -861,18 +861,18 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             </div>
 
             {followups.length === 0 ? (
-              <p className="text-slate-400 text-sm italic py-4 text-center">Nenhum acompanhamento semanal lançado para este cliente.</p>
+              <p className="text-[var(--muted-foreground)] text-sm italic py-4 text-center">Nenhum acompanhamento semanal lançado para este cliente.</p>
             ) : (
               <div className="space-y-4">
                 {followups.map((f) => (
                   <div key={f.id} className="border border-[var(--border)] rounded-xl p-4 space-y-3 bg-[var(--secondary)]/50 hover:bg-[var(--secondary)]/80 transition">
                     <div className="flex justify-between items-start flex-wrap gap-2">
                       <div>
-                        <span className="font-bold text-slate-200 text-sm">
+                        <span className="font-bold text-[var(--foreground)] text-sm">
                           Semana: {new Date(f.weekStart).toLocaleDateString('pt-BR')} até{' '}
                           {new Date(f.weekEnd).toLocaleDateString('pt-BR')}
                         </span>
-                        <span className="block text-xs text-slate-400 mt-0.5">
+                        <span className="block text-xs text-[var(--muted-foreground)] mt-0.5">
                           Lançado por: {f.manager?.name || 'Gestor'}
                         </span>
                       </div>
@@ -881,26 +881,26 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-slate-400 bg-[var(--card)] p-2.5 rounded-lg border border-[var(--border)]">
-                      <div>Grupo Whats: <span className="font-semibold text-slate-200">{f.groupActivated === 'yes' ? 'Sim' : 'Não'}</span></div>
-                      <div>Respondeu: <span className="font-semibold text-slate-200">{f.clientResponded === 'yes' ? 'Sim' : 'Não'}</span></div>
-                      <div>Prazo interno: <span className="font-semibold text-slate-200">{f.agencyRespondedOnTime === 'yes' ? 'Sim' : 'Não'}</span></div>
-                      <div>Cronograma: <span className="font-semibold text-slate-200">{f.calendarOnTrack === 'yes' ? 'Sim' : 'Não'}</span></div>
-                      <div className="col-span-2">Atrasos de entregáveis: <span className="font-semibold text-slate-200">{f.hasDelayedDelivery ? 'Sim' : 'Não'}</span></div>
-                      <div className="col-span-2 font-medium">Insatisfação: <span className={`font-semibold ${f.clientShowedDissatisfaction ? 'text-rose-600' : 'text-slate-200'}`}>{f.clientShowedDissatisfaction ? 'Detectada' : 'Não'}</span></div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-[var(--muted-foreground)] bg-[var(--card)] p-2.5 rounded-lg border border-[var(--border)]">
+                      <div>Grupo Whats: <span className="font-semibold text-[var(--foreground)]">{f.groupActivated === 'yes' ? 'Sim' : 'Não'}</span></div>
+                      <div>Respondeu: <span className="font-semibold text-[var(--foreground)]">{f.clientResponded === 'yes' ? 'Sim' : 'Não'}</span></div>
+                      <div>Prazo interno: <span className="font-semibold text-[var(--foreground)]">{f.agencyRespondedOnTime === 'yes' ? 'Sim' : 'Não'}</span></div>
+                      <div>Cronograma: <span className="font-semibold text-[var(--foreground)]">{f.calendarOnTrack === 'yes' ? 'Sim' : 'Não'}</span></div>
+                      <div className="col-span-2">Atrasos de entregáveis: <span className="font-semibold text-[var(--foreground)]">{f.hasDelayedDelivery ? 'Sim' : 'Não'}</span></div>
+                      <div className="col-span-2 font-medium">Insatisfação: <span className={`font-semibold ${f.clientShowedDissatisfaction ? 'text-rose-600' : 'text-[var(--foreground)]'}`}>{f.clientShowedDissatisfaction ? 'Detectada' : 'Não'}</span></div>
                     </div>
 
                     {f.contentGeneratedQuantity !== null && f.contentGeneratedQuantity !== undefined && (
                       <div className="text-xs mt-3 bg-[rgba(250,204,21,0.1)]/50 p-2.5 rounded-lg border border-yellow-100/60">
-                        <span className="font-semibold text-slate-200">Conteúdo Gerado na Semana:</span>
-                        <span className="text-slate-300 ml-1">{f.contentGeneratedQuantity} itens</span>
+                        <span className="font-semibold text-[var(--foreground)]">Conteúdo Gerado na Semana:</span>
+                        <span className="text-[var(--muted-foreground)] ml-1">{f.contentGeneratedQuantity} itens</span>
                       </div>
                     )}
 
                     {f.managerNotes && (
                       <div className="text-xs">
-                        <span className="font-semibold text-slate-300 block">Comentários do Gestor:</span>
-                        <p className="text-slate-400 mt-1">{f.managerNotes}</p>
+                        <span className="font-semibold text-[var(--muted-foreground)] block">Comentários do Gestor:</span>
+                        <p className="text-[var(--muted-foreground)] mt-1">{f.managerNotes}</p>
                       </div>
                     )}
 
@@ -922,10 +922,10 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-5 shadow-xs">
             <div className="flex justify-between items-center pb-2 border-b border-slate-50">
               <div>
-                <h3 className="font-bold text-slate-200 text-sm uppercase tracking-wider text-slate-400">
+                <h3 className="font-bold text-[var(--foreground)] text-sm uppercase tracking-wider text-[var(--muted-foreground)]">
                   Planos de Ação do Cliente
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">Ações corretivas de mitigação e contorno.</p>
+                <p className="text-xs text-[var(--muted-foreground)] mt-0.5">Ações corretivas de mitigação e contorno.</p>
               </div>
               <button
                 onClick={() => setActionPlanModalOpen(true)}
@@ -936,21 +936,21 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             </div>
 
             {actionPlans.length === 0 ? (
-              <p className="text-slate-400 text-sm italic py-4 text-center">Nenhum plano de ação registrado para este cliente.</p>
+              <p className="text-[var(--muted-foreground)] text-sm italic py-4 text-center">Nenhum plano de ação registrado para este cliente.</p>
             ) : (
               <div className="space-y-4">
                 {actionPlans.map((plan) => (
                   <div key={plan.id} className="border border-[var(--border)] rounded-xl p-4 space-y-3 bg-[var(--secondary)]/50 hover:bg-[var(--secondary)]/80 transition">
                     <div className="flex justify-between items-start flex-wrap gap-2">
                       <div className="min-w-0 flex-1">
-                        <span className="font-bold text-slate-200 text-sm block truncate">⚠️ {plan.problem}</span>
-                        <span className="text-xs text-slate-400 mt-1 block">
+                        <span className="font-bold text-[var(--foreground)] text-sm block truncate">⚠️ {plan.problem}</span>
+                        <span className="text-xs text-[var(--muted-foreground)] mt-1 block">
                           Criado por: {plan.creator?.name || 'Sistema'} | Atribuído a: {plan.responsible?.name || 'Não atribuído'}
                         </span>
                       </div>
                       <div className="flex gap-2">
                         <span className={`badge border font-bold text-xs ${
-                          plan.status === 'completed' ? 'bg-emerald-50 text-emerald-700' : plan.status === 'in_progress' ? 'bg-[rgba(250,204,21,0.1)] text-slate-200' : 'bg-[var(--border)] text-slate-300'
+                          plan.status === 'completed' ? 'bg-emerald-50 text-emerald-700' : plan.status === 'in_progress' ? 'bg-[rgba(250,204,21,0.1)] text-[var(--foreground)]' : 'bg-[var(--border)] text-[var(--muted-foreground)]'
                         }`}>
                           {plan.status === 'completed' ? 'Concluído' : plan.status === 'in_progress' ? 'Em progresso' : 'Aberto'}
                         </span>
@@ -962,7 +962,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                       </div>
                     </div>
 
-                    <div className="text-xs space-y-1 text-slate-400 bg-[var(--card)] p-3 rounded-lg border border-[var(--border)]">
+                    <div className="text-xs space-y-1 text-[var(--muted-foreground)] bg-[var(--card)] p-3 rounded-lg border border-[var(--border)]">
                       <div><strong>Causa provável:</strong> {plan.probableCause || 'Não informada'}</div>
                       <div><strong>Ação corretiva:</strong> {plan.action}</div>
                       <div><strong>Prazo final:</strong> {plan.dueDate ? new Date(plan.dueDate).toLocaleDateString('pt-BR') : 'Sem prazo'}</div>
@@ -1004,12 +1004,12 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         {/* Tab 5 Content: Timeline */}
         {activeTab === 'timeline' && (
           <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-5 shadow-xs">
-            <h3 className="font-bold text-slate-200 text-sm uppercase tracking-wider text-slate-400 border-b border-slate-50 pb-2">
+            <h3 className="font-bold text-[var(--foreground)] text-sm uppercase tracking-wider text-[var(--muted-foreground)] border-b border-slate-50 pb-2">
               Linha do Tempo e Histórico do Cliente
             </h3>
 
             {timeline.length === 0 ? (
-              <p className="text-slate-400 text-sm italic py-4 text-center">Nenhum evento registrado no histórico.</p>
+              <p className="text-[var(--muted-foreground)] text-sm italic py-4 text-center">Nenhum evento registrado no histórico.</p>
             ) : (
               <div className="relative border-l-2 border-[var(--border)] ml-3 pl-6 space-y-6">
                 {timeline.map((event) => (
@@ -1020,8 +1020,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     </span>
                     <div className="space-y-1">
                       <div className="flex justify-between items-start">
-                        <h4 className="font-bold text-slate-200 text-sm">{event.title}</h4>
-                        <span className="text-[10px] text-slate-400 font-semibold">
+                        <h4 className="font-bold text-[var(--foreground)] text-sm">{event.title}</h4>
+                        <span className="text-[10px] text-[var(--muted-foreground)] font-semibold">
                           {new Date(event.createdAt).toLocaleString('pt-BR', {
                             day: '2-digit',
                             month: '2-digit',
@@ -1030,11 +1030,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                           })}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400 whitespace-pre-wrap leading-relaxed">
+                      <p className="text-xs text-[var(--muted-foreground)] whitespace-pre-wrap leading-relaxed">
                         {event.description}
                       </p>
                       {event.creator && (
-                        <span className="text-[10px] text-slate-400 font-medium block mt-1">
+                        <span className="text-[10px] text-[var(--muted-foreground)] font-medium block mt-1">
                           Registrado por: {event.creator.name}
                         </span>
                       )}
@@ -1061,12 +1061,12 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                   <form onSubmit={handleUpdateClient} className="flex h-full flex-col bg-[var(--card)] shadow-2xl border-l border-[var(--border)]">
                     <div className="px-6 py-5 bg-[var(--secondary)] border-b border-[var(--border)] flex items-center justify-between">
                       <div><h2 className="text-lg font-bold text-[var(--foreground)]">Editar Cliente</h2></div>
-                      <button type="button" onClick={() => setDrawerOpen(false)} className="text-slate-400 hover:text-slate-400"><svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                      <button type="button" onClick={() => setDrawerOpen(false)} className="text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)]"><svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
                     </div>
                     <div className="flex-1 overflow-y-auto p-6 space-y-5">
                       {formError && <div className="bg-rose-50 text-rose-800 border p-3 rounded-lg text-xs">{formError}</div>}
                       <div className="space-y-4">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">1. Identificação</h3>
+                        <h3 className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">1. Identificação</h3>
                         <div><label className="form-label">Nome Fantasia *</label><input type="text" required value={tradeName} onChange={(e) => setTradeName(e.target.value)} className="form-input" /></div>
                         <div className="grid grid-cols-2 gap-4">
                           <div><label className="form-label">Razão Social</label><input type="text" value={legalName} onChange={(e) => setLegalName(e.target.value)} className="form-input" /></div>
@@ -1090,7 +1090,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                       </div>
                       <hr className="border-[var(--border)]" />
                       <div className="space-y-4">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">2. Contato e Endereço</h3>
+                        <h3 className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">2. Contato e Endereço</h3>
                         <div><label className="form-label">Nome do Decisor</label><input type="text" value={decisionMakerName} onChange={(e) => setDecisionMakerName(e.target.value)} className="form-input" /></div>
                         <div className="grid grid-cols-2 gap-4">
                           <div><label className="form-label">Telefone (Decisor)</label><input type="text" value={decisionMakerPhone} onChange={(e) => setDecisionMakerPhone(e.target.value)} className="form-input" /></div>
@@ -1103,7 +1103,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                       </div>
                       <hr className="border-[var(--border)]" />
                       <div className="space-y-4">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">3. Informações Estratégicas e Links</h3>
+                        <h3 className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">3. Informações Estratégicas e Links</h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div><label className="form-label">Perfil do Cliente</label><input type="text" value={clientProfile} onChange={(e) => setClientProfile(e.target.value)} className="form-input" placeholder="Ex: Moderado, Agressivo" /></div>
                           <div>
@@ -1128,7 +1128,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                       </div>
                       <hr className="border-[var(--border)]" />
                       <div className="space-y-4">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">4. Atribuição</h3>
+                        <h3 className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">4. Atribuição</h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <label className="form-label">Gestor da Conta</label>
@@ -1141,7 +1141,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                       </div>
                     </div>
                     <div className="px-6 py-4 bg-[var(--secondary)] border-t border-[var(--border)] flex items-center justify-end gap-3">
-                      <button type="button" onClick={() => setDrawerOpen(false)} className="px-4 py-2 text-sm text-slate-400">Cancelar</button>
+                      <button type="button" onClick={() => setDrawerOpen(false)} className="px-4 py-2 text-sm text-[var(--muted-foreground)]">Cancelar</button>
                       <button type="submit" className="btn-primary">Salvar Alterações</button>
                     </div>
                   </form>
@@ -1234,9 +1234,9 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 <div className="px-6 py-5 bg-[var(--secondary)] border-b border-[var(--border)] flex justify-between items-center">
                   <div>
                     <h3 className="font-bold text-[var(--foreground)]">Diagnóstico Semanal</h3>
-                    <p className="text-xs text-slate-400 mt-0.5">{client.tradeName}</p>
+                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{client.tradeName}</p>
                   </div>
-                  <button type="button" onClick={() => setFollowupModalOpen(false)} className="text-slate-400 hover:text-slate-650">
+                  <button type="button" onClick={() => setFollowupModalOpen(false)} className="text-[var(--muted-foreground)] hover:text-slate-650">
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                   </button>
                 </div>
@@ -1371,7 +1371,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 <div className="p-6 space-y-4">
                   {formError && <div className="bg-rose-50 text-rose-800 p-2.5 rounded text-xs">{formError}</div>}
                   <div>
-                    <p className="text-xs text-slate-400 mb-2">
+                    <p className="text-xs text-[var(--muted-foreground)] mb-2">
                       Problema original: <strong>{selectedPlan.problem}</strong>
                     </p>
                   </div>

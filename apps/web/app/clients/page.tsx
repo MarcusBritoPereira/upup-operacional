@@ -144,11 +144,11 @@ export default function ClientsPage() {
       case 'paused':
         return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'inactive':
-        return 'bg-[var(--border)] text-slate-300 border-[var(--border)]';
+        return 'bg-[var(--border)] text-[var(--muted-foreground)] border-[var(--border)]';
       case 'cancelled':
         return 'bg-rose-50 text-rose-700 border-rose-200';
       default:
-        return 'bg-[var(--secondary)] text-slate-400 border-[var(--border)]';
+        return 'bg-[var(--secondary)] text-[var(--muted-foreground)] border-[var(--border)]';
     }
   };
 
@@ -185,14 +185,14 @@ export default function ClientsPage() {
             <h1 className="text-2xl font-extrabold tracking-tight text-[var(--foreground)] sm:text-3xl">
               Clientes
             </h1>
-            <p className="text-sm text-slate-400 mt-1">
+            <p className="text-sm text-[var(--muted-foreground)] mt-1">
               Gerencie a carteira de clientes ativos, squads e contratos.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-3">
             <button
               onClick={() => setImportModalOpen(true)}
-              className="px-4 py-2 text-sm font-semibold text-slate-300 bg-[var(--card)] border border-[var(--border)] rounded-lg hover:bg-[var(--secondary)] transition-colors inline-flex items-center gap-2 shadow-sm"
+              className="px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] bg-[var(--card)] border border-[var(--border)] rounded-lg hover:bg-[var(--secondary)] transition-colors inline-flex items-center gap-2 shadow-sm"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
@@ -251,15 +251,15 @@ export default function ClientsPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-            <p className="text-slate-400 text-sm mt-3">Carregando clientes...</p>
+            <p className="text-[var(--muted-foreground)] text-sm mt-3">Carregando clientes...</p>
           </div>
         ) : filteredClients.length === 0 ? (
           <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-12 text-center">
-            <svg className="w-12 h-12 text-slate-300 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+            <svg className="w-12 h-12 text-[var(--muted-foreground)] mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-            <h3 className="text-slate-200 font-semibold mt-4">Nenhum cliente encontrado</h3>
-            <p className="text-slate-400 text-sm mt-1">
+            <h3 className="text-[var(--foreground)] font-semibold mt-4">Nenhum cliente encontrado</h3>
+            <p className="text-[var(--muted-foreground)] text-sm mt-1">
               Tente redefinir seus filtros ou adicione um novo cliente.
             </p>
           </div>
@@ -269,7 +269,7 @@ export default function ClientsPage() {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[var(--secondary)] border-b border-[var(--border)] text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  <tr className="bg-[var(--secondary)] border-b border-[var(--border)] text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
                     <th className="px-6 py-4">Nome Fantasia</th>
                     <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4">Contrato (Mensal)</th>
@@ -278,7 +278,7 @@ export default function ClientsPage() {
                     <th className="px-6 py-4 text-right">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm text-slate-300">
+                <tbody className="divide-y divide-slate-100 text-sm text-[var(--muted-foreground)]">
                   {filteredClients.map((client) => {
                     const manager = users.find((u) => u.id === client.managerId);
 
@@ -287,7 +287,7 @@ export default function ClientsPage() {
                         <td className="px-6 py-4 font-semibold text-[var(--foreground)]">
                           {client.tradeName}
                           {client.segment && (
-                            <span className="block text-xs font-normal text-slate-400 mt-0.5">
+                            <span className="block text-xs font-normal text-[var(--muted-foreground)] mt-0.5">
                               {client.segment}
                             </span>
                           )}
@@ -304,17 +304,17 @@ export default function ClientsPage() {
                           }).format(client.monthlyContractValue || 0)}
                         </td>
                         <td className="px-6 py-4">
-                          <span className="block font-medium text-slate-200">
+                          <span className="block font-medium text-[var(--foreground)]">
                             {manager?.name || 'Sem Gestor'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-slate-400">
+                        <td className="px-6 py-4 text-[var(--muted-foreground)]">
                           {new Date(client.entryDate).toLocaleDateString('pt-BR')}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <Link
                             href={`/clients/${client.id}`}
-                            className="text-[var(--foreground)] hover:text-slate-300 font-semibold inline-flex items-center gap-1"
+                            className="text-[var(--foreground)] hover:text-[var(--muted-foreground)] font-semibold inline-flex items-center gap-1"
                           >
                             Ver detalhes →
                           </Link>
@@ -336,7 +336,7 @@ export default function ClientsPage() {
                     <div className="flex justify-between items-start">
                       <div>
                         <h4 className="font-bold text-[var(--foreground)]">{client.tradeName}</h4>
-                        <p className="text-xs text-slate-400">{client.segment || 'Sem segmento'}</p>
+                        <p className="text-xs text-[var(--muted-foreground)]">{client.segment || 'Sem segmento'}</p>
                       </div>
                       <span className={`badge border ${getStatusBadgeClass(client.status)}`}>
                         {getStatusLabel(client.status)}
@@ -345,8 +345,8 @@ export default function ClientsPage() {
 
                     <div className="grid grid-cols-2 gap-2 text-xs border-t border-b border-slate-50 py-2">
                       <div>
-                        <span className="block text-slate-400 font-medium">Contrato</span>
-                        <span className="font-semibold text-slate-200 mt-0.5 block">
+                        <span className="block text-[var(--muted-foreground)] font-medium">Contrato</span>
+                        <span className="font-semibold text-[var(--foreground)] mt-0.5 block">
                           {new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
                             currency: 'BRL',
@@ -354,8 +354,8 @@ export default function ClientsPage() {
                         </span>
                       </div>
                       <div>
-                        <span className="block text-slate-400 font-medium">Entrada</span>
-                        <span className="font-semibold text-slate-200 mt-0.5 block">
+                        <span className="block text-[var(--muted-foreground)] font-medium">Entrada</span>
+                        <span className="font-semibold text-[var(--foreground)] mt-0.5 block">
                           {new Date(client.entryDate).toLocaleDateString('pt-BR')}
                         </span>
                       </div>
@@ -363,8 +363,8 @@ export default function ClientsPage() {
 
                     <div className="flex justify-between items-center text-xs pt-1">
                       <div>
-                        <span className="text-slate-400">Gestor:</span>
-                        <span className="font-medium text-slate-300 ml-1">
+                        <span className="text-[var(--muted-foreground)]">Gestor:</span>
+                        <span className="font-medium text-[var(--muted-foreground)] ml-1">
                           {manager?.name?.split(' ')[0] || 'Sem Gestor'}
                         </span>
                       </div>
@@ -401,14 +401,14 @@ export default function ClientsPage() {
                         <h2 className="text-lg font-bold text-[var(--foreground)]" id="slide-over-title">
                           Cadastrar Novo Cliente
                         </h2>
-                        <p className="text-xs text-slate-400 mt-1">
+                        <p className="text-xs text-[var(--muted-foreground)] mt-1">
                           Preencha as informações operacionais básicas do cliente.
                         </p>
                       </div>
                       <button
                         type="button"
                         onClick={() => setDrawerOpen(false)}
-                        className="rounded-md text-slate-400 hover:text-slate-400 focus:outline-none"
+                        className="rounded-md text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)] focus:outline-none"
                       >
                         <span className="sr-only">Fechar</span>
                         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
@@ -427,7 +427,7 @@ export default function ClientsPage() {
 
                       {/* Section 1: Identificação */}
                       <div className="space-y-4">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        <h3 className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">
                           1. Identificação Comercial
                         </h3>
 
@@ -484,7 +484,7 @@ export default function ClientsPage() {
 
                       {/* Section 2: Operações */}
                       <div className="space-y-4">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        <h3 className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">
                           2. Atribuição e Squad
                         </h3>
 
@@ -537,7 +537,7 @@ export default function ClientsPage() {
 
                       {/* Section 3: Links Estratégicos */}
                       <div className="space-y-4">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        <h3 className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">
                           3. Links & Ferramentas
                         </h3>
 
@@ -592,7 +592,7 @@ export default function ClientsPage() {
 
                       {/* Section 4: Informações do Decisor */}
                       <div className="space-y-4">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        <h3 className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">
                           4. Contato (Decisor)
                         </h3>
 
@@ -635,7 +635,7 @@ export default function ClientsPage() {
 
                       {/* Section 5: Notas Estratégicas */}
                       <div className="space-y-4">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        <h3 className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">
                           5. Perfil & Notas
                         </h3>
 
@@ -683,7 +683,7 @@ export default function ClientsPage() {
                       <button
                         type="button"
                         onClick={() => setDrawerOpen(false)}
-                        className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-slate-200 transition"
+                        className="px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition"
                       >
                         Cancelar
                       </button>
