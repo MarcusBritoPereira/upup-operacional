@@ -28,6 +28,7 @@ model User {
   createdPlans    ActionPlan[]  @relation("ActionPlanCreator")
   timelineEvents  ClientTimeline[]
   resolvedAlerts  Alert[]       @relation("ResolvedAlerts")
+  credentialAccessLogs CredentialAccessLog[]
 
   @@map("users")
 }
@@ -83,7 +84,6 @@ model Client {
   timelineEvents      ClientTimeline[]
   churnReasons        ChurnReason[]
   credentials         Credential[]
-  credentialAccessLogs CredentialAccessLog[]
 
   @@index([status, managerId])
   @@map("clients")
