@@ -258,11 +258,37 @@ export default function Sidebar() {
               <span>{item.label}</span>
             </Link>
           ))}
+          
+          {/* THEME TOGGLE BUTTON */}
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              padding: '8px 12px', borderRadius: 8,
+              border: 'none', background: 'transparent',
+              color: 'var(--muted-foreground)', fontSize: '0.875rem', fontWeight: 500,
+              cursor: 'pointer', width: '100%', textAlign: 'left',
+              transition: 'background 0.15s, color 0.15s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'color-mix(in srgb, var(--foreground) 5%, transparent)';
+              e.currentTarget.style.color = 'var(--foreground)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = 'var(--muted-foreground)';
+            }}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+              {mounted && theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            </span>
+            <span>{mounted && theme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}</span>
+          </button>
         </div>
 
         <div style={{ height: 1, background: 'var(--border)', margin: '0 16px', flexShrink: 0 }} />
 
-        {/* User + Logout + Theme */}
+        {/* User + Logout */}
         <div style={{ padding: '12px 14px 16px', flexShrink: 0 }}>
           <p style={{ fontSize: '0.6rem', fontWeight: 700, color: 'var(--muted-foreground)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>
             CONTA ATIVA
@@ -275,18 +301,6 @@ export default function Sidebar() {
                 {roleLabel[user?.role ?? ''] ?? user?.role ?? ''}
               </span>
             </p>
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                aria-label="Alternar tema"
-                style={{
-                  background: 'none', border: 'none', color: 'var(--muted-foreground)', cursor: 'pointer',
-                  padding: 4, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }}
-              >
-                {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-              </button>
-            )}
           </div>
           <button
             id="btn-logout"
