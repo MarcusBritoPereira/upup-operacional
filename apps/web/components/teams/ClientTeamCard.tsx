@@ -142,7 +142,19 @@ export function ClientTeamCard({ client, users, serviceProviders, onUpdate }: Cl
           const hasAssignment = !!(member || provider);
           const entityName = provider ? provider.serviceProvider.name : (member ? member.user.name : '');
           const entityId = provider ? provider.serviceProvider.id : (member ? member.user.id : '');
-          const optionsList = isProvider ? serviceProviders.filter(sp => sp.role === role || !sp.role) : users;
+          let optionsList: any[] = [];
+          if (role === 'Filmmaker') {
+            optionsList = serviceProviders.filter(sp => sp.role === 'Filmmaker');
+          } else if (role === 'Designer') {
+            optionsList = serviceProviders.filter(sp => sp.role === 'Designer');
+          } else if (role === 'Editor') {
+            // Filmmakers also edit
+            optionsList = serviceProviders.filter(sp => sp.role === 'Editor' || sp.role === 'Filmmaker');
+          } else if (role === 'GEE') {
+            optionsList = users.filter(u => u.role === 'gestor_cliente');
+          } else {
+            optionsList = isProvider ? serviceProviders : users;
+          }
 
           return (
             <div key={role} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', border: '1px solid #f1f5f9', borderRadius: '8px' }}>
