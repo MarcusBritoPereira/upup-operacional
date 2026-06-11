@@ -20,8 +20,7 @@ model User {
   createdAt       DateTime      @default(now()) @map("created_at")
   updatedAt       DateTime      @updatedAt @map("updated_at")
 
-  ledSquads       Squad[]       @relation("SquadLeader")
-  squadMemberships SquadMember[]
+  clientTeamRoles ClientTeamMember[]
   managedClients  Client[]      @relation("ClientManager")
   managedCycles   MonthlyCycle[]
   followups       WeeklyFollowup[]
@@ -33,32 +32,18 @@ model User {
   @@map("users")
 }
 
-model Squad {
-  id        String        @id @default(uuid()) @db.Uuid
-  name      String        @db.VarChar(120)
-  leaderId  String?       @map("leader_id") @db.Uuid
-  status    String        @default("active") @db.VarChar(30)
-  createdAt DateTime      @default(now()) @map("created_at")
-  updatedAt DateTime      @updatedAt @map("updated_at")
-
-  leader    User?         @relation("SquadLeader", fields: [leaderId], references: [id], onDelete: SetNull)
-  members   SquadMember[]
-  clients   Client[]
-
-  @@map("squads")
-}
-
-model SquadMember {
+model ClientTeamMember {
   id        String   @id @default(uuid()) @db.Uuid
-  squadId   String   @map("squad_id") @db.Uuid
+  clientId  String   @map("client_id") @db.Uuid
   userId    String   @map("user_id") @db.Uuid
+  role      String   @db.VarChar(80)
   createdAt DateTime @default(now()) @map("created_at")
 
-  squad     Squad    @relation(fields: [squadId], references: [id], onDelete: Cascade)
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([squadId, userId])
-  @@map("squad_members")
+  @@unique([clientId, userId, role])
+  @@map("client_team_members")
 }
 
 model Client {
@@ -72,7 +57,6 @@ model Client {
   exitReason          String?                @map("exit_reason") @db.Text
   monthlyContractValue Decimal                @default(0) @map("monthly_contract_value") @db.Decimal(12, 2)
   managerId           String?                @map("manager_id") @db.Uuid
-  squadId             String?                @map("squad_id") @db.Uuid
   decisionMakerName   String?                @map("decision_maker_name") @db.VarChar(150)
   decisionMakerPhone  String?                @map("decision_maker_phone") @db.VarChar(30)
   decisionMakerEmail  String?                @map("decision_maker_email") @db.VarChar(150)
@@ -89,7 +73,7 @@ model Client {
   updatedAt           DateTime               @updatedAt @map("updated_at")
 
   manager             User?                  @relation("ClientManager", fields: [managerId], references: [id], onDelete: SetNull)
-  squad               Squad?                 @relation(fields: [squadId], references: [id], onDelete: SetNull)
+  teamMembers         ClientTeamMember[]
   contracts           Contract[]
   monthlyCycles       MonthlyCycle[]
   weeklyFollowups     WeeklyFollowup[]
@@ -98,9 +82,9 @@ model Client {
   alerts              Alert[]
   timelineEvents      ClientTimeline[]
   churnReasons        ChurnReason[]
+  credentials         Credential[]
 
   @@index([status, managerId])
-  @@index([status, squadId])
   @@map("clients")
 }
 
@@ -109,16 +93,49 @@ model Contract {
   clientId     String         @map("client_id") @db.Uuid
   startDate    DateTime       @map("start_date") @db.Date
   endDate      DateTime?      @map("end_date") @db.Date
-  monthlyValue Decimal        @map("monthly_value") @db.Decimal(12, 2)
-  status       ContractStatus @default(active)
-  notes        String?        @db.Text
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @updatedAt @map("updated_at")
+  monthlyValue   Decimal        @map("monthly_value") @db.Decimal(12, 2)
+  taxPercentage  Decimal?       @map("tax_percentage") @db.Decimal(5, 2)
+  geePercentage  Decimal?       @map("gee_percentage") @db.Decimal(5, 2)
+  geeFixedValue  Decimal?       @map("gee_fixed_value") @db.Decimal(12, 2)
+  status         ContractStatus @default(active)
+  notes          String?        @db.Text
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
 
-  client       Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client         Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   @@index([clientId, status])
   @@map("contracts")
+}
+
+model ServiceProvider {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(150)
+  email     String?  @unique @db.VarChar(150)
+  whatsapp  String?  @db.VarChar(30)
+  role      String?  @db.VarChar(100)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("service_providers")
+}
+
+model Credential {
+  id          String   @id @default(uuid()) @db.Uuid
+  clientId    String   @map("client_id") @db.Uuid
+  systemName  String   @map("system_name") @db.VarChar(100)
+  url         String?  @db.Text
+  username    String   @db.VarChar(150)
+  password    String   @db.Text
+  notes       String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@map("credentials")
 }
 
 model DeliverableType {
@@ -191,6 +208,7 @@ model WeeklyFollowup {
   clientShowedDissatisfaction Boolean      @default(false) @map("client_showed_dissatisfaction")
   churnRisk                  String?      @map("churn_risk") @db.VarChar(30)
   weeklyScore                Int          @map("weekly_score")
+  contentGeneratedQuantity   Int?         @map("content_generated_quantity")
   managerNotes               String?      @map("manager_notes") @db.Text
   recommendedAction          String?      @map("recommended_action") @db.Text
   createdAt                  DateTime     @default(now()) @map("created_at")

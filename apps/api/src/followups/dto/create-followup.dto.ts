@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsUUID,
   IsDateString,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateFollowupDto {
@@ -59,4 +60,8 @@ export class CreateFollowupDto {
   @IsString()
   @IsOptional()
   recommendedAction?: string;
+
+  @IsNumber()
+  @IsOptional()
+  contentGeneratedQuantity?: number;
 }

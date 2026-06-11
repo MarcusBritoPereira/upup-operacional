@@ -133,7 +133,7 @@ export default function LoginPage() {
         }
 
         .login-card {
-          background: white;
+          background: #09090b;
           border-radius: 20px;
           padding: 40px;
           width: 100%;
@@ -158,13 +158,13 @@ export default function LoginPage() {
         .login-title {
           font-size: 1.2rem;
           font-weight: 700;
-          color: #0f172a;
+          color: #fafafa;
           line-height: 1.2;
         }
 
         .login-subtitle {
           font-size: 0.8rem;
-          color: #64748b;
+          color: #a1a1aa;
           margin-top: 2px;
         }
 
@@ -204,7 +204,7 @@ export default function LoginPage() {
           width: 16px;
           height: 16px;
           border: 2px solid rgba(255, 255, 255, 0.3);
-          border-top-color: white;
+          border-top-color: #09090b;
           border-radius: 50%;
           animation: spin 0.6s linear infinite;
           flex-shrink: 0;
@@ -217,7 +217,7 @@ export default function LoginPage() {
         .login-footer {
           text-align: center;
           font-size: 0.75rem;
-          color: #94a3b8;
+          color: #a1a1aa;
           margin-top: 28px;
         }
 

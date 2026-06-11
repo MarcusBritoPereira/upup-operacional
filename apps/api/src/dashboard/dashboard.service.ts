@@ -13,13 +13,13 @@ export class DashboardService {
       return { managerId: userId };
     }
 
-    const memberships = await this.prisma.squadMember.findMany({
+    const memberships = await this.prisma.clientTeamMember.findMany({
       where: { userId },
-      select: { squadId: true },
+      select: { clientId: true },
     });
-    const squadIds = memberships.map((m) => m.squadId);
+    const clientIds = memberships.map((m) => m.clientId);
 
-    return { squadId: { in: squadIds } };
+    return { id: { in: clientIds } };
   }
 
   async getOverview(userId: string, role: string) {
@@ -69,7 +69,7 @@ export class DashboardService {
       ? {}
       : role === 'gestor_cliente'
       ? { client: { managerId: userId } }
-      : { client: { squadId: { in: await this.getSquadIds(userId) } } };
+      : { client: { id: { in: await this.getClientIds(userId) } } };
 
     const overdueActionPlans = await this.prisma.actionPlan.count({
       where: {
@@ -150,11 +150,11 @@ export class DashboardService {
     };
   }
 
-  private async getSquadIds(userId: string): Promise<string[]> {
-    const memberships = await this.prisma.squadMember.findMany({
+  private async getClientIds(userId: string): Promise<string[]> {
+    const memberships = await this.prisma.clientTeamMember.findMany({
       where: { userId },
-      select: { squadId: true },
+      select: { clientId: true },
     });
-    return memberships.map((m) => m.squadId);
+    return memberships.map((m) => m.clientId);
   }
 }

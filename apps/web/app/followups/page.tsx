@@ -170,24 +170,24 @@ export default function FollowupsPage() {
       <div className="p-6 max-w-6xl mx-auto space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#fafafa] sm:text-3xl">
             Acompanhamento Semanal
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-400 mt-1">
             Preencha e visualize o diagnóstico semanal dos seus clientes ativos.
           </p>
         </div>
 
         {/* Current Week Card */}
-        <div className="bg-slate-50 rounded-xl border border-slate-200/60 p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div className="bg-[#18181b] rounded-xl border border-[#3f3f46]/60 p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div>
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Semana Operacional</span>
-            <span className="text-sm font-semibold text-slate-700 mt-0.5 block">
+            <span className="text-sm font-semibold text-slate-300 mt-0.5 block">
               {weekStart ? new Date(weekStart).toLocaleDateString('pt-BR') : ''} até{' '}
               {weekEnd ? new Date(weekEnd).toLocaleDateString('pt-BR') : ''}
             </span>
           </div>
-          <span className="text-xs text-slate-500 italic">
+          <span className="text-xs text-slate-400 italic">
             Os acompanhamentos devem ser atualizados até sexta-feira às 18h.
           </span>
         </div>
@@ -196,23 +196,23 @@ export default function FollowupsPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-            <p className="text-slate-500 text-sm mt-3">Carregando lista de acompanhamento...</p>
+            <p className="text-slate-400 text-sm mt-3">Carregando lista de acompanhamento...</p>
           </div>
         ) : error ? (
           <div className="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-xl text-sm">
             {error}
           </div>
         ) : clients.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-100 p-12 text-center">
-            <h3 className="text-slate-800 font-semibold">Nenhum cliente ativo</h3>
-            <p className="text-slate-500 text-sm mt-1">Nenhum cliente ativo foi encontrado na sua carteira.</p>
+          <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-12 text-center">
+            <h3 className="text-slate-200 font-semibold">Nenhum cliente ativo</h3>
+            <p className="text-slate-400 text-sm mt-1">Nenhum cliente ativo foi encontrado na sua carteira.</p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-xs">
+          <div className="bg-[#09090b] rounded-xl border border-[#27272a] overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-sm">
                 <thead>
-                  <tr className="bg-slate-50 text-slate-500 text-xs font-semibold uppercase tracking-wider border-b border-slate-100">
+                  <tr className="bg-[#18181b] text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-[#27272a]">
                     <th className="px-6 py-4">Cliente</th>
                     <th className="px-6 py-4">Gestor</th>
                     <th className="px-6 py-4">Status da Semana</th>
@@ -220,21 +220,21 @@ export default function FollowupsPage() {
                     <th className="px-6 py-4 text-right">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-700">
+                <tbody className="divide-y divide-slate-100 text-slate-300">
                   {clients.map((client) => {
                     const manager = users.find((u) => u.id === client.managerId);
                     const filled = isFilledThisWeek(client.id);
                     const weeklyData = getWeeklyFollowup(client.id);
 
                     return (
-                      <tr key={client.id} className="hover:bg-slate-50/50 transition">
-                        <td className="px-6 py-4 font-semibold text-slate-900">
+                      <tr key={client.id} className="hover:bg-[#18181b]/50 transition">
+                        <td className="px-6 py-4 font-semibold text-[#fafafa]">
                           {client.tradeName}
                           <span className="block text-xs font-normal text-slate-400 mt-0.5">
                             {client.segment || '—'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-slate-600">
+                        <td className="px-6 py-4 text-slate-400">
                           {manager?.name || 'Sem Gestor'}
                         </td>
                         <td className="px-6 py-4">
@@ -282,11 +282,11 @@ export default function FollowupsPage() {
         {modalOpen && selectedClient && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div onClick={() => setModalOpen(false)} className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs"></div>
-            <div className="bg-white rounded-xl shadow-2xl border border-slate-100 max-w-lg w-full z-10 overflow-hidden">
+            <div className="bg-[#09090b] rounded-xl shadow-2xl border border-[#27272a] max-w-lg w-full z-10 overflow-hidden">
               <form onSubmit={handleSubmitFollowup}>
-                <div className="px-6 py-5 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                <div className="px-6 py-5 bg-[#18181b] border-b border-[#27272a] flex justify-between items-center">
                   <div>
-                    <h3 className="font-bold text-slate-900">Diagnóstico Semanal</h3>
+                    <h3 className="font-bold text-[#fafafa]">Diagnóstico Semanal</h3>
                     <p className="text-xs text-slate-400 mt-0.5">{selectedClient.tradeName}</p>
                   </div>
                   <button type="button" onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-slate-650">
@@ -308,7 +308,7 @@ export default function FollowupsPage() {
                     </div>
                   </div>
 
-                  <hr className="border-slate-100" />
+                  <hr className="border-[#27272a]" />
                   <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Perguntas Objetivas</h4>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -346,27 +346,27 @@ export default function FollowupsPage() {
                   </div>
 
                   <div className="flex flex-col gap-2 pt-2">
-                    <label className="flex items-center gap-2.5 text-sm font-semibold text-slate-700">
+                    <label className="flex items-center gap-2.5 text-sm font-semibold text-slate-300">
                       <input
                         type="checkbox"
                         checked={hasDelayedDelivery}
                         onChange={(e) => setHasDelayedDelivery(e.target.checked)}
-                        className="rounded border-slate-300 text-primary focus:ring-primary w-4.5 h-4.5"
+                        className="rounded border-[#52525b] text-yellow-500 focus:ring-yellow-500 w-4.5 h-4.5"
                       />
                       Houve atraso em algum entregável contratado?
                     </label>
-                    <label className="flex items-center gap-2.5 text-sm font-semibold text-slate-700">
+                    <label className="flex items-center gap-2.5 text-sm font-semibold text-slate-300">
                       <input
                         type="checkbox"
                         checked={clientShowedDissatisfaction}
                         onChange={(e) => setClientShowedDissatisfaction(e.target.checked)}
-                        className="rounded border-slate-300 text-primary focus:ring-primary w-4.5 h-4.5"
+                        className="rounded border-[#52525b] text-yellow-500 focus:ring-yellow-500 w-4.5 h-4.5"
                       />
                       O cliente manifestou alguma insatisfação?
                     </label>
                   </div>
 
-                  <hr className="border-slate-100" />
+                  <hr className="border-[#27272a]" />
                   <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Diagnóstico de Churn</h4>
 
                   <div>
@@ -390,8 +390,8 @@ export default function FollowupsPage() {
                   </div>
                 </div>
 
-                <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                  <button type="button" onClick={() => setModalOpen(false)} className="text-xs font-semibold text-slate-500 hover:text-slate-700">Cancelar</button>
+                <div className="px-6 py-4 bg-[#18181b] border-t border-[#27272a] flex justify-end gap-3">
+                  <button type="button" onClick={() => setModalOpen(false)} className="text-xs font-semibold text-slate-400 hover:text-slate-300">Cancelar</button>
                   <button type="submit" disabled={submitting} className="btn-primary text-xs py-1.5 px-3">Enviar Diagnóstico</button>
                 </div>
               </form>

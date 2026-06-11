@@ -3,20 +3,18 @@ import { ClientAccessPolicy } from './client-access.policy';
 
 function createPolicy(options: {
   managerId?: string | null;
-  squadId?: string | null;
-  isSquadMember?: boolean;
+  isTeamMember?: boolean;
 }) {
   const prisma = {
     client: {
       findUnique: jest.fn().mockResolvedValue({
         managerId: options.managerId ?? null,
-        squadId: options.squadId ?? null,
       }),
     },
-    squadMember: {
+    clientTeamMember: {
       findFirst: jest
         .fn()
-        .mockResolvedValue(options.isSquadMember ? { id: 'membership-id' } : null),
+        .mockResolvedValue(options.isTeamMember ? { id: 'membership-id' } : null),
     },
   };
 
@@ -44,8 +42,8 @@ describe('ClientAccessPolicy', () => {
     ).resolves.toBeUndefined();
   });
 
-  it('allows a squad member to operate but not manage the client', async () => {
-    const { policy } = createPolicy({ squadId: 'squad-id', isSquadMember: true });
+  it('allows a team member to operate but not manage the client', async () => {
+    const { policy } = createPolicy({ isTeamMember: true });
 
     await expect(
       policy.assertCanOperateClient('member-id', 'colaborador', 'client-id'),
@@ -58,8 +56,7 @@ describe('ClientAccessPolicy', () => {
   it('denies users outside the client portfolio', async () => {
     const { policy } = createPolicy({
       managerId: 'other-manager',
-      squadId: 'other-squad',
-      isSquadMember: false,
+      isTeamMember: false,
     });
 
     await expect(

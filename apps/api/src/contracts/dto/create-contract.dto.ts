@@ -26,6 +26,18 @@ export class CreateContractDto {
   @IsNotEmpty()
   monthlyValue: number;
 
+  @IsNumber()
+  @IsOptional()
+  taxPercentage?: number;
+
+  @IsNumber()
+  @IsOptional()
+  geePercentage?: number;
+
+  @IsNumber()
+  @IsOptional()
+  geeFixedValue?: number;
+
   @IsEnum(ContractStatus)
   @IsOptional()
   status?: ContractStatus;

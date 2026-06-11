@@ -78,8 +78,8 @@ export default function MobileNav() {
           bottom: 0;
           left: 0;
           right: 0;
-          background: white;
-          border-top: 1px solid #e2e8f0;
+          background: #09090b;
+          border-top: 1px solid #27272a;
           display: flex;
           align-items: stretch;
           height: 64px;
@@ -95,7 +95,7 @@ export default function MobileNav() {
           align-items: center;
           justify-content: center;
           gap: 3px;
-          color: #94a3b8;
+          color: #a1a1aa;
           text-decoration: none;
           padding: 8px 4px;
           border-radius: 8px;
@@ -105,8 +105,8 @@ export default function MobileNav() {
         }
 
         .mobile-nav-item:hover {
-          color: #475569;
-          background: #f8fafc;
+          color: #a1a1aa;
+          background: #18181b;
         }
 
         .mobile-nav-item-active {

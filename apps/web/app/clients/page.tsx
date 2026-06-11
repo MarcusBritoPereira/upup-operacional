@@ -5,23 +5,24 @@ import Link from 'next/link';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import api from '@/lib/api';
 import { Client, Squad, AuthUser, ClientStatus, HealthStatus } from '@/lib/types';
+import { ImportClientsModal } from '@/components/clients/ImportClientsModal';
 
 export default function ClientsPage() {
   const [clients, setClients] = useState<Client[]>([]);
-  const [squads, setSquads] = useState<Squad[]>([]);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  
   const [users, setUsers] = useState<AuthUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Filter States
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('');
-  const [squadFilter, setSquadFilter] = useState<string>('');
 
   // Form Drawer State
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  // Import Modal State
+  const [importModalOpen, setImportModalOpen] = useState(false);
 
   // Form Fields
   const [tradeName, setTradeName] = useState('');
@@ -30,7 +31,6 @@ export default function ClientsPage() {
   const [status, setStatus] = useState<ClientStatus>('active');
   const [entryDate, setEntryDate] = useState(new Date().toISOString().split('T')[0]);
   const [managerId, setManagerId] = useState('');
-  const [squadId, setSquadId] = useState('');
   const [decisionMakerName, setDecisionMakerName] = useState('');
   const [decisionMakerPhone, setDecisionMakerPhone] = useState('');
   const [decisionMakerEmail, setDecisionMakerEmail] = useState('');
@@ -48,13 +48,11 @@ export default function ClientsPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [clientsData, squadsData, usersData] = await Promise.all([
+      const [clientsData, usersData] = await Promise.all([
         api.get<Client[]>('/clients'),
-        api.get<Squad[]>('/squads'),
         api.get<AuthUser[]>('/users'),
       ]);
       setClients(clientsData);
-      setSquads(squadsData);
       setUsers(usersData);
       setError(null);
     } catch (err: any) {
@@ -81,7 +79,6 @@ export default function ClientsPage() {
       status,
       entryDate,
       managerId: managerId || undefined,
-      squadId: squadId || undefined,
       decisionMakerName: decisionMakerName || undefined,
       decisionMakerPhone: decisionMakerPhone || undefined,
       decisionMakerEmail: decisionMakerEmail || undefined,
@@ -105,7 +102,6 @@ export default function ClientsPage() {
       setStatus('active');
       setEntryDate(new Date().toISOString().split('T')[0]);
       setManagerId('');
-      setSquadId('');
       setDecisionMakerName('');
       setDecisionMakerPhone('');
       setDecisionMakerEmail('');
@@ -137,9 +133,8 @@ export default function ClientsPage() {
       (client.segment && client.segment.toLowerCase().includes(search.toLowerCase()));
 
     const matchesStatus = statusFilter ? client.status === statusFilter : true;
-    const matchesSquad = squadFilter ? client.squadId === squadFilter : true;
 
-    return matchesSearch && matchesStatus && matchesSquad;
+    return matchesSearch && matchesStatus;
   });
 
   const getStatusBadgeClass = (status: ClientStatus) => {
@@ -149,20 +144,21 @@ export default function ClientsPage() {
       case 'paused':
         return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'inactive':
-        return 'bg-slate-100 text-slate-700 border-slate-200';
+        return 'bg-[#27272a] text-slate-300 border-[#3f3f46]';
       case 'cancelled':
         return 'bg-rose-50 text-rose-700 border-rose-200';
       default:
-        return 'bg-slate-50 text-slate-600 border-slate-200';
+        return 'bg-[#18181b] text-slate-400 border-[#3f3f46]';
     }
   };
 
   const getStatusLabel = (status: ClientStatus) => {
-    const labels = {
+    const labels: Record<ClientStatus, string> = {
       active: 'Ativo',
       paused: 'Pausado',
       inactive: 'Inativo',
       cancelled: 'Cancelado',
+      churned: 'Churn',
     };
     return labels[status] || status;
   };
@@ -186,26 +182,37 @@ export default function ClientsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+            <h1 className="text-2xl font-extrabold tracking-tight text-[#fafafa] sm:text-3xl">
               Clientes
             </h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-sm text-slate-400 mt-1">
               Gerencie a carteira de clientes ativos, squads e contratos.
             </p>
           </div>
-          <button
-            onClick={() => setDrawerOpen(true)}
-            className="btn-primary inline-flex items-center gap-2 shadow-sm"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Novo Cliente
-          </button>
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <button
+              onClick={() => setImportModalOpen(true)}
+              className="px-4 py-2 text-sm font-semibold text-slate-300 bg-[#09090b] border border-[#52525b] rounded-lg hover:bg-[#18181b] transition-colors inline-flex items-center gap-2 shadow-sm"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+              </svg>
+              Importar Clientes
+            </button>
+            <button
+              onClick={() => setDrawerOpen(true)}
+              className="btn-primary inline-flex items-center gap-2 shadow-sm"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Novo Cliente
+            </button>
+          </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-slate-100 p-4 shadow-xs flex flex-wrap gap-4 items-center">
+        <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-4 shadow-xs flex flex-wrap gap-4 items-center">
           <div className="flex-1 min-w-[240px]">
             <input
               type="text"
@@ -228,20 +235,6 @@ export default function ClientsPage() {
               <option value="cancelled">Cancelado</option>
             </select>
           </div>
-          <div className="w-48">
-            <select
-              value={squadFilter}
-              onChange={(e) => setSquadFilter(e.target.value)}
-              className="form-input"
-            >
-              <option value="">Todas as Squads</option>
-              {squads.map((squad) => (
-                <option key={squad.id} value={squad.id}>
-                  {squad.name}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
 
         {/* Error Callout */}
@@ -258,41 +251,40 @@ export default function ClientsPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-            <p className="text-slate-500 text-sm mt-3">Carregando clientes...</p>
+            <p className="text-slate-400 text-sm mt-3">Carregando clientes...</p>
           </div>
         ) : filteredClients.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-100 p-12 text-center">
+          <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-12 text-center">
             <svg className="w-12 h-12 text-slate-300 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-            <h3 className="text-slate-800 font-semibold mt-4">Nenhum cliente encontrado</h3>
-            <p className="text-slate-500 text-sm mt-1">
+            <h3 className="text-slate-200 font-semibold mt-4">Nenhum cliente encontrado</h3>
+            <p className="text-slate-400 text-sm mt-1">
               Tente redefinir seus filtros ou adicione um novo cliente.
             </p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-xs">
+          <div className="bg-[#09090b] rounded-xl border border-[#27272a] overflow-hidden shadow-xs">
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <tr className="bg-[#18181b] border-b border-[#27272a] text-xs font-semibold text-slate-400 uppercase tracking-wider">
                     <th className="px-6 py-4">Nome Fantasia</th>
                     <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4">Contrato (Mensal)</th>
-                    <th className="px-6 py-4">Gestor / Squad</th>
+                    <th className="px-6 py-4">Gestor</th>
                     <th className="px-6 py-4">Entrada</th>
                     <th className="px-6 py-4 text-right">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
+                <tbody className="divide-y divide-slate-100 text-sm text-slate-300">
                   {filteredClients.map((client) => {
                     const manager = users.find((u) => u.id === client.managerId);
-                    const squad = squads.find((s) => s.id === client.squadId);
 
                     return (
-                      <tr key={client.id} className="hover:bg-slate-50/50 transition">
-                        <td className="px-6 py-4 font-semibold text-slate-900">
+                      <tr key={client.id} className="hover:bg-[#18181b]/50 transition">
+                        <td className="px-6 py-4 font-semibold text-[#fafafa]">
                           {client.tradeName}
                           {client.segment && (
                             <span className="block text-xs font-normal text-slate-400 mt-0.5">
@@ -305,27 +297,24 @@ export default function ClientsPage() {
                             {getStatusLabel(client.status)}
                           </span>
                         </td>
-                        <td className="px-6 py-4 font-medium text-slate-900">
+                        <td className="px-6 py-4 font-medium text-[#fafafa]">
                           {new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
                             currency: 'BRL',
                           }).format(client.monthlyContractValue || 0)}
                         </td>
                         <td className="px-6 py-4">
-                          <span className="block font-medium text-slate-800">
+                          <span className="block font-medium text-slate-200">
                             {manager?.name || 'Sem Gestor'}
                           </span>
-                          <span className="block text-xs text-slate-400 mt-0.5">
-                            {squad?.name || 'Sem Squad'}
-                          </span>
                         </td>
-                        <td className="px-6 py-4 text-slate-500">
+                        <td className="px-6 py-4 text-slate-400">
                           {new Date(client.entryDate).toLocaleDateString('pt-BR')}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <Link
                             href={`/clients/${client.id}`}
-                            className="text-primary hover:text-blue-700 font-semibold inline-flex items-center gap-1"
+                            className="text-[#fafafa] hover:text-slate-300 font-semibold inline-flex items-center gap-1"
                           >
                             Ver detalhes →
                           </Link>
@@ -341,13 +330,12 @@ export default function ClientsPage() {
             <div className="grid grid-cols-1 gap-4 p-4 md:hidden">
               {filteredClients.map((client) => {
                 const manager = users.find((u) => u.id === client.managerId);
-                const squad = squads.find((s) => s.id === client.squadId);
 
                 return (
-                  <div key={client.id} className="border border-slate-100 rounded-xl p-4 space-y-3 bg-white">
+                  <div key={client.id} className="border border-[#27272a] rounded-xl p-4 space-y-3 bg-[#09090b]">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="font-bold text-slate-900">{client.tradeName}</h4>
+                        <h4 className="font-bold text-[#fafafa]">{client.tradeName}</h4>
                         <p className="text-xs text-slate-400">{client.segment || 'Sem segmento'}</p>
                       </div>
                       <span className={`badge border ${getStatusBadgeClass(client.status)}`}>
@@ -358,7 +346,7 @@ export default function ClientsPage() {
                     <div className="grid grid-cols-2 gap-2 text-xs border-t border-b border-slate-50 py-2">
                       <div>
                         <span className="block text-slate-400 font-medium">Contrato</span>
-                        <span className="font-semibold text-slate-800 mt-0.5 block">
+                        <span className="font-semibold text-slate-200 mt-0.5 block">
                           {new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
                             currency: 'BRL',
@@ -367,7 +355,7 @@ export default function ClientsPage() {
                       </div>
                       <div>
                         <span className="block text-slate-400 font-medium">Entrada</span>
-                        <span className="font-semibold text-slate-800 mt-0.5 block">
+                        <span className="font-semibold text-slate-200 mt-0.5 block">
                           {new Date(client.entryDate).toLocaleDateString('pt-BR')}
                         </span>
                       </div>
@@ -375,14 +363,14 @@ export default function ClientsPage() {
 
                     <div className="flex justify-between items-center text-xs pt-1">
                       <div>
-                        <span className="text-slate-400">Squad/Gestor:</span>
-                        <span className="font-medium text-slate-700 ml-1">
-                          {squad?.name || 'Sem Squad'} / {manager?.name?.split(' ')[0] || 'Sem Gestor'}
+                        <span className="text-slate-400">Gestor:</span>
+                        <span className="font-medium text-slate-300 ml-1">
+                          {manager?.name?.split(' ')[0] || 'Sem Gestor'}
                         </span>
                       </div>
                       <Link
                         href={`/clients/${client.id}`}
-                        className="text-primary font-bold hover:underline"
+                        className="text-[#fafafa] font-bold hover:underline"
                       >
                         Acessar →
                       </Link>
@@ -406,21 +394,21 @@ export default function ClientsPage() {
 
               <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
                 <div className="pointer-events-auto w-screen max-w-xl">
-                  <form onSubmit={handleCreateClient} className="flex h-full flex-col bg-white shadow-2xl border-l border-slate-100">
+                  <form onSubmit={handleCreateClient} className="flex h-full flex-col bg-[#09090b] shadow-2xl border-l border-[#27272a]">
                     {/* Header */}
-                    <div className="px-6 py-5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                    <div className="px-6 py-5 bg-[#18181b] border-b border-[#27272a] flex items-center justify-between">
                       <div>
-                        <h2 className="text-lg font-bold text-slate-900" id="slide-over-title">
+                        <h2 className="text-lg font-bold text-[#fafafa]" id="slide-over-title">
                           Cadastrar Novo Cliente
                         </h2>
-                        <p className="text-xs text-slate-500 mt-1">
+                        <p className="text-xs text-slate-400 mt-1">
                           Preencha as informações operacionais básicas do cliente.
                         </p>
                       </div>
                       <button
                         type="button"
                         onClick={() => setDrawerOpen(false)}
-                        className="rounded-md text-slate-400 hover:text-slate-500 focus:outline-none"
+                        className="rounded-md text-slate-400 hover:text-slate-400 focus:outline-none"
                       >
                         <span className="sr-only">Fechar</span>
                         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
@@ -492,7 +480,7 @@ export default function ClientsPage() {
                         </div>
                       </div>
 
-                      <hr className="border-slate-100" />
+                      <hr className="border-[#27272a]" />
 
                       {/* Section 2: Operações */}
                       <div className="space-y-4">
@@ -516,21 +504,6 @@ export default function ClientsPage() {
                                     {u.name}
                                   </option>
                                 ))}
-                            </select>
-                          </div>
-                          <div>
-                            <label className="form-label">Squad Atendente</label>
-                            <select
-                              value={squadId}
-                              onChange={(e) => setSquadId(e.target.value)}
-                              className="form-input"
-                            >
-                              <option value="">Selecione a Squad</option>
-                              {squads.map((squad) => (
-                                <option key={squad.id} value={squad.id}>
-                                  {squad.name}
-                                </option>
-                              ))}
                             </select>
                           </div>
                         </div>
@@ -560,7 +533,7 @@ export default function ClientsPage() {
                         </div>
                       </div>
 
-                      <hr className="border-slate-100" />
+                      <hr className="border-[#27272a]" />
 
                       {/* Section 3: Links Estratégicos */}
                       <div className="space-y-4">
@@ -615,7 +588,7 @@ export default function ClientsPage() {
                         </div>
                       </div>
 
-                      <hr className="border-slate-100" />
+                      <hr className="border-[#27272a]" />
 
                       {/* Section 4: Informações do Decisor */}
                       <div className="space-y-4">
@@ -658,7 +631,7 @@ export default function ClientsPage() {
                         </div>
                       </div>
 
-                      <hr className="border-slate-100" />
+                      <hr className="border-[#27272a]" />
 
                       {/* Section 5: Notas Estratégicas */}
                       <div className="space-y-4">
@@ -706,11 +679,11 @@ export default function ClientsPage() {
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
+                    <div className="px-6 py-4 bg-[#18181b] border-t border-[#27272a] flex items-center justify-end gap-3">
                       <button
                         type="button"
                         onClick={() => setDrawerOpen(false)}
-                        className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-800 transition"
+                        className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-slate-200 transition"
                       >
                         Cancelar
                       </button>
@@ -732,6 +705,16 @@ export default function ClientsPage() {
           </div>
         )}
       </div>
+
+      {/* Import Modal */}
+      {importModalOpen && (
+        <ImportClientsModal
+          onClose={() => setImportModalOpen(false)}
+          onSuccess={() => {
+            fetchData();
+          }}
+        />
+      )}
     </DashboardLayout>
   );
 }

@@ -8,7 +8,7 @@ export class ClientAccessPolicy {
   private async getClient(clientId: string) {
     const client = await this.prisma.client.findUnique({
       where: { id: clientId },
-      select: { managerId: true, squadId: true },
+      select: { managerId: true },
     });
     if (!client) {
       throw new NotFoundException(`Cliente com ID "${clientId}" não encontrado.`);
@@ -28,16 +28,15 @@ export class ClientAccessPolicy {
       return true;
     }
 
-    if (client.squadId) {
-      const isSquadMember = await this.prisma.squadMember.findFirst({
-        where: {
-          squadId: client.squadId,
-          userId: userId,
-        },
-      });
-      if (isSquadMember) {
-        return true;
-      }
+    const isTeamMember = await this.prisma.clientTeamMember.findFirst({
+      where: {
+        clientId: clientId,
+        userId: userId,
+      },
+    });
+    
+    if (isTeamMember) {
+      return true;
     }
 
     return false;
@@ -60,8 +59,8 @@ export class ClientAccessPolicy {
     return client.managerId === userId;
   }
 
-  // 4. Mudar gestor/squad: gerência e superiores
-  async canAssignManagerOrSquad(role: string): Promise<boolean> {
+  // 4. Mudar gestor/time: gerência e superiores
+  async canAssignManagerOrTeam(role: string): Promise<boolean> {
     return ['admin', 'diretoria', 'gerencia'].includes(role);
   }
 

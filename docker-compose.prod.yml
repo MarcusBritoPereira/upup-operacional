@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-upup_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-upup_secure_password}
+      POSTGRES_DB: ${POSTGRES_DB:-upup_operacional}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - pgdata_operacional:/var/lib/postgresql/data
+    # Exposing port locally only if needed for debugging
+    ports:
+      - "127.0.0.1:5436:5432"
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=3011
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-upup_admin}:${POSTGRES_PASSWORD:-upup_secure_password}@postgres:5432/${POSTGRES_DB:-upup_operacional}?schema=public
+      - JWT_SECRET=${JWT_SECRET}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - COOKIE_SECURE=${COOKIE_SECURE}
+      # Add other API environment variables here
+    ports:
+      - "127.0.0.1:3011:3011"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=https://operacional.upsystem.cloud/api
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=3010
+      - NEXT_PUBLIC_API_URL=https://operacional.upsystem.cloud/api # Assuming Nginx routes /api to backend
+      # Add other Web environment variables here
+    ports:
+      - "127.0.0.1:3010:3010"
+    depends_on:
+      - api
+
+volumes:
+  pgdata_operacional:

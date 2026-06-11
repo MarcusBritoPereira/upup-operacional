@@ -17,11 +17,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return (
       <div style={{
         minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: '#f8fafc',
+        background: 'var(--background)',
       }}>
         <div style={{
-          width: 36, height: 36, border: '3px solid #e2e8f0',
-          borderTopColor: '#0ea5e9', borderRadius: '50%',
+          width: 36, height: 36, border: '3px solid #27272a',
+          borderTopColor: '#facc15', borderRadius: '50%',
           animation: 'spin 0.8s linear infinite',
         }} />
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -32,7 +32,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (!user) return null;
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--background)' }}>
       <Sidebar />
       <main style={{ flex: 1, minWidth: 0, marginLeft: 200 }} className="dashboard-main">
         {children}

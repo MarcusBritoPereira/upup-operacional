@@ -20,6 +20,10 @@ export class UpdateContractDto {
   @IsOptional()
   monthlyValue?: number;
 
+  @IsNumber()
+  @IsOptional()
+  geePercentage?: number;
+
   @IsEnum(ContractStatus)
   @IsOptional()
   status?: ContractStatus;

@@ -33,18 +33,51 @@ export class ClientsService {
             role: true,
           },
         },
-        squad: {
+        teamMembers: {
           select: {
             id: true,
-            name: true,
+            role: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
           },
         },
       },
     });
   }
 
+  async createBulk(createClientDtos: CreateClientDto[]) {
+    // Validação prévia de todos os registros para fail-fast
+    for (const dto of createClientDtos) {
+      if (dto.entryDate && dto.exitDate) {
+        if (new Date(dto.exitDate) < new Date(dto.entryDate)) {
+          throw new BadRequestException(`A data de saída (exitDate) deve ser maior ou igual à data de entrada para o cliente: ${dto.tradeName}.`);
+        }
+      }
+    }
+
+    const data = createClientDtos.map(dto => {
+      const { entryDate, exitDate, ...rest } = dto;
+      return {
+        ...rest,
+        entryDate: new Date(entryDate),
+        exitDate: exitDate ? new Date(exitDate) : null,
+      };
+    });
+
+    const result = await this.prisma.client.createMany({
+      data,
+    });
+
+    return { count: result.count };
+  }
+
   async findAll(
-    filters: { status?: string; managerId?: string; squadId?: string },
+    filters: { status?: string; managerId?: string },
     user: { id: string; role: string },
   ) {
     const where: any = {};
@@ -55,21 +88,18 @@ export class ClientsService {
     if (filters.managerId) {
       where.managerId = filters.managerId;
     }
-    if (filters.squadId) {
-      where.squadId = filters.squadId;
-    }
 
     // Aplicar escopo para usuários que não são admin/diretoria/gerência
     if (!['admin', 'diretoria', 'gerencia'].includes(user.role)) {
-      const memberships = await this.prisma.squadMember.findMany({
+      const memberships = await this.prisma.clientTeamMember.findMany({
         where: { userId: user.id },
-        select: { squadId: true },
+        select: { clientId: true },
       });
-      const squadIds = memberships.map((m) => m.squadId);
+      const clientIds = memberships.map((m) => m.clientId);
 
       where.OR = [
         { managerId: user.id },
-        { squadId: { in: squadIds } },
+        { id: { in: clientIds } },
       ];
     }
 
@@ -84,10 +114,17 @@ export class ClientsService {
             role: true,
           },
         },
-        squad: {
+        teamMembers: {
           select: {
             id: true,
-            name: true,
+            role: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
           },
         },
       },
@@ -109,10 +146,17 @@ export class ClientsService {
             role: true,
           },
         },
-        squad: {
+        teamMembers: {
           select: {
             id: true,
-            name: true,
+            role: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
           },
         },
       },
@@ -160,10 +204,17 @@ export class ClientsService {
             role: true,
           },
         },
-        squad: {
+        teamMembers: {
           select: {
             id: true,
-            name: true,
+            role: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
           },
         },
       },
@@ -197,6 +248,45 @@ export class ClientsService {
       orderBy: {
         createdAt: 'desc',
       },
+    });
+  }
+
+  async addTeamMember(clientId: string, userId: string, role: string) {
+    // Check if client exists
+    await this.findOne(clientId);
+
+    // Check if member already exists
+    const existing = await this.prisma.clientTeamMember.findFirst({
+      where: { clientId, userId, role },
+    });
+
+    if (existing) {
+      throw new BadRequestException('Usuário já possui este papel neste cliente.');
+    }
+
+    return this.prisma.clientTeamMember.create({
+      data: {
+        clientId,
+        userId,
+        role,
+      },
+    });
+  }
+
+  async removeTeamMember(clientId: string, userId: string, role: string) {
+    // Check if client exists
+    await this.findOne(clientId);
+
+    const existing = await this.prisma.clientTeamMember.findFirst({
+      where: { clientId, userId, role },
+    });
+
+    if (!existing) {
+      throw new NotFoundException('Membro da equipe não encontrado.');
+    }
+
+    return this.prisma.clientTeamMember.delete({
+      where: { id: existing.id },
     });
   }
 }

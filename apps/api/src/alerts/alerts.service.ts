@@ -12,16 +12,16 @@ export class AlertsService {
     if (status) where.status = status;
 
     if (!['admin', 'diretoria', 'gerencia'].includes(user.role)) {
-      const memberships = await this.prisma.squadMember.findMany({
+      const memberships = await this.prisma.clientTeamMember.findMany({
         where: { userId: user.id },
-        select: { squadId: true },
+        select: { clientId: true },
       });
-      const squadIds = memberships.map((m) => m.squadId);
+      const clientIds = memberships.map((m) => m.clientId);
 
       where.client = {
         OR: [
           { managerId: user.id },
-          { squadId: { in: squadIds } },
+          { id: { in: clientIds } },
         ],
       };
     }
@@ -34,7 +34,6 @@ export class AlertsService {
             id: true,
             tradeName: true,
             managerId: true,
-            squadId: true,
           },
         },
       },

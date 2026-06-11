@@ -5,7 +5,7 @@ export type UserRole =
   | 'gestor_cliente'
   | 'producao';
 
-export type ClientStatus = 'active' | 'paused' | 'inactive' | 'cancelled';
+export type ClientStatus = 'active' | 'paused' | 'inactive' | 'cancelled' | 'churned';
 export type HealthStatus = 'green' | 'yellow' | 'red' | 'gray';
 export type ActionPlanStatus = 'open' | 'in_progress' | 'completed' | 'cancelled';
 
@@ -29,7 +29,6 @@ export interface Client {
   exitReason?: string;
   monthlyContractValue: number;
   managerId?: string;
-  squadId?: string;
   decisionMakerName?: string;
   decisionMakerPhone?: string;
   decisionMakerEmail?: string;
@@ -128,6 +127,7 @@ export interface WeeklyFollowup {
   weeklyScore: number;
   managerNotes?: string;
   recommendedAction?: string;
+  contentGeneratedQuantity?: number;
   manager?: {
     id: string;
     name: string;
@@ -152,6 +152,9 @@ export interface Contract {
   startDate: string;
   endDate?: string;
   monthlyValue: number;
+  taxPercentage?: number;
+  geePercentage?: number;
+  geeFixedValue?: number;
   status: string;
   notes?: string;
   createdAt: string;

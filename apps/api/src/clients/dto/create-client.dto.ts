@@ -43,9 +43,6 @@ export class CreateClientDto {
   @IsOptional()
   managerId?: string;
 
-  @IsUUID()
-  @IsOptional()
-  squadId?: string;
 
   @IsString()
   @IsOptional()

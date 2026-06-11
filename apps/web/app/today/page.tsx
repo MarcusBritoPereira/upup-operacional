@@ -50,7 +50,7 @@ export default function TodayPage() {
       case 'medium':
         return 'bg-yellow-100 text-yellow-700 border-yellow-200';
       default:
-        return 'bg-blue-100 text-blue-700 border-blue-200';
+        return 'bg-yellow-100 text-slate-200 border-yellow-200';
     }
   };
 
@@ -100,7 +100,7 @@ export default function TodayPage() {
                   {alerts.map((alert) => (
                     <div key={alert.id} className="alert-card">
                       <div className="alert-card-header">
-                        <span className={`severity-indicator ${alert.severity === 'high' ? 'bg-red-500' : 'bg-yellow-500'}`} />
+                        <span className={`severity-indicator ${alert.severity === 'high' ? 'bg-red-500' : 'bg-[rgba(250,204,21,0.1)]0'}`} />
                         <span className="alert-client-name">{alert.client?.tradeName}</span>
                       </div>
                       <h3 className="alert-card-title">{alert.title}</h3>
@@ -184,12 +184,12 @@ export default function TodayPage() {
         .today-title {
           font-size: 1.75rem;
           font-weight: 800;
-          color: #0f172a;
+          color: #fafafa;
         }
 
         .today-subtitle {
           font-size: 0.9rem;
-          color: #64748b;
+          color: #a1a1aa;
           margin-top: 4px;
         }
 
@@ -199,18 +199,19 @@ export default function TodayPage() {
           gap: 6px;
           padding: 8px 14px;
           border-radius: 8px;
-          border: 1px solid #e2e8f0;
-          background: white;
+          border: 1px solid #27272a;
+          background: #09090b;
           font-size: 0.85rem;
           font-weight: 600;
-          color: #475569;
+          color: #a1a1aa;
           cursor: pointer;
           transition: all 0.15s ease;
         }
 
         .refresh-button:hover {
-          background: #f8fafc;
-          border-color: #cbd5e1;
+          background: #18181b;
+          border-color: #3f3f46;
+          color: #fafafa;
         }
 
         .today-grid {
@@ -230,7 +231,7 @@ export default function TodayPage() {
           align-items: center;
           gap: 10px;
           padding-bottom: 12px;
-          border-bottom: 2px solid #f1f5f9;
+          border-bottom: 2px solid #27272a;
         }
 
         .column-badge {
@@ -241,29 +242,29 @@ export default function TodayPage() {
         }
 
         .badge-red {
-          background: #fee2e2;
+          background: rgba(239, 68, 68, 0.1);
           color: #ef4444;
         }
 
         .badge-cyan {
-          background: #ecfeff;
-          color: #06b6d4;
+          background: rgba(250, 204, 21, 0.1);
+          color: #facc15;
         }
 
         .column-title {
           font-size: 1rem;
           font-weight: 700;
-          color: #1e293b;
+          color: #fafafa;
         }
 
         .empty-state {
           padding: 32px;
-          border: 1px dashed #cbd5e1;
+          border: 1px dashed #3f3f46;
           border-radius: 12px;
           text-align: center;
-          color: #94a3b8;
+          color: #a1a1aa;
           font-size: 0.88rem;
-          background: #f8fafc;
+          background: #18181b;
         }
 
         .cards-list {
@@ -273,17 +274,17 @@ export default function TodayPage() {
         }
 
         .alert-card, .plan-card {
-          background: white;
-          border: 1px solid #e2e8f0;
+          background: #09090b;
+          border: 1px solid #27272a;
           border-radius: 12px;
           padding: 16px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-          transition: transform 0.15s ease, box-shadow 0.15s ease;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+          transition: transform 0.15s ease, border-color 0.15s ease;
         }
 
         .alert-card:hover, .plan-card:hover {
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+          border-color: #3f3f46;
         }
 
         .alert-card-header, .plan-card-header {
@@ -302,7 +303,7 @@ export default function TodayPage() {
         .alert-client-name, .plan-client-name {
           font-size: 0.78rem;
           font-weight: 700;
-          color: #06b6d4;
+          color: #facc15;
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
@@ -310,12 +311,12 @@ export default function TodayPage() {
         .alert-card-title {
           font-size: 0.95rem;
           font-weight: 700;
-          color: #1e293b;
+          color: #fafafa;
         }
 
         .alert-card-desc {
           font-size: 0.83rem;
-          color: #64748b;
+          color: #a1a1aa;
           margin-top: 6px;
           line-height: 1.4;
         }
@@ -326,20 +327,20 @@ export default function TodayPage() {
           justify-content: space-between;
           margin-top: 14px;
           padding-top: 12px;
-          border-top: 1px solid #f1f5f9;
+          border-top: 1px solid #27272a;
         }
 
         .alert-date, .plan-due-date {
           font-size: 0.75rem;
-          color: #94a3b8;
+          color: #a1a1aa;
         }
 
         .resolve-btn {
           font-size: 0.78rem;
           font-weight: 600;
-          color: #10b981;
-          background: #ecfdf5;
-          border: 1px solid #a7f3d0;
+          color: #34d399;
+          background: rgba(16, 185, 129, 0.1);
+          border: 1px solid rgba(16, 185, 129, 0.2);
           padding: 4px 10px;
           border-radius: 6px;
           cursor: pointer;
@@ -347,8 +348,8 @@ export default function TodayPage() {
         }
 
         .resolve-btn:hover {
-          background: #d1fae5;
-          color: #047857;
+          background: rgba(16, 185, 129, 0.2);
+          color: #10b981;
         }
 
         .plan-priority-badge {
@@ -361,24 +362,24 @@ export default function TodayPage() {
         }
 
         .priority-high {
-          background: #fee2e2;
-          color: #be123c;
+          background: rgba(225, 29, 72, 0.1);
+          color: #fb7185;
         }
 
         .priority-medium {
-          background: #fef9c3;
-          color: #a16207;
+          background: rgba(234, 179, 8, 0.1);
+          color: #facc15;
         }
 
         .plan-card-problem {
           font-size: 0.92rem;
           font-weight: 700;
-          color: #1e293b;
+          color: #fafafa;
         }
 
         .plan-card-action {
           font-size: 0.83rem;
-          color: #475569;
+          color: #a1a1aa;
           margin-top: 6px;
           line-height: 1.4;
         }
@@ -386,7 +387,7 @@ export default function TodayPage() {
         .go-to-client-link {
           font-size: 0.78rem;
           font-weight: 600;
-          color: #06b6d4;
+          color: #facc15;
           text-decoration: none;
         }
 
@@ -397,14 +398,14 @@ export default function TodayPage() {
         .loading-state, .error-state {
           padding: 80px 0;
           text-align: center;
-          color: #64748b;
+          color: #a1a1aa;
         }
 
         .spinner {
           width: 32px;
           height: 32px;
-          border: 3px solid #f3f3f3;
-          border-top: 3px solid #06b6d4;
+          border: 3px solid #27272a;
+          border-top: 3px solid #facc15;
           border-radius: 50%;
           margin: 0 auto 16px;
           animation: spin 1s linear infinite;

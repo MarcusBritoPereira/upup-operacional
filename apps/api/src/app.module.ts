@@ -6,7 +6,6 @@ import { HealthModule } from './health/health.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ClientsModule } from './clients/clients.module';
 import { UsersModule } from './users/users.module';
-import { SquadsModule } from './squads/squads.module';
 import { ContractsModule } from './contracts/contracts.module';
 import { DeliverableTypesModule } from './deliverable-types/deliverable-types.module';
 import { MonthlyCyclesModule } from './monthly-cycles/monthly-cycles.module';
@@ -16,6 +15,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { AlertsModule } from './alerts/alerts.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { ServiceProvidersModule } from './service-providers/service-providers.module';
+import { CredentialsModule } from './credentials/credentials.module';
 
 @Module({
   imports: [
@@ -32,7 +33,6 @@ import { APP_GUARD } from '@nestjs/core';
     HealthModule,
     ClientsModule,
     UsersModule,
-    SquadsModule,
     ContractsModule,
     DeliverableTypesModule,
     MonthlyCyclesModule,
@@ -40,6 +40,8 @@ import { APP_GUARD } from '@nestjs/core';
     ActionPlansModule,
     DashboardModule,
     AlertsModule,
+    ServiceProvidersModule,
+    CredentialsModule,
   ],
   providers: [
     {
