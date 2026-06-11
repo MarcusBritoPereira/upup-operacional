@@ -5,6 +5,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  role?: string;
 }
 
 interface TeamMember {
@@ -40,7 +41,7 @@ interface ClientTeamCardProps {
   onUpdate: () => void;
 }
 
-const DEFAULT_ROLES = ['Filmmaker', 'Designer', 'Editor', 'GEE'];
+const DEFAULT_ROLES = ['Filmmaker', 'Designer', 'Editor'];
 
 export function ClientTeamCard({ client, users, serviceProviders, onUpdate }: ClientTeamCardProps) {
   const [loading, setLoading] = useState(false);
@@ -103,34 +104,85 @@ export function ClientTeamCard({ client, users, serviceProviders, onUpdate }: Cl
 
   return (
     <div style={{
-      backgroundColor: '#09090b',
+      backgroundColor: 'var(--card)',
       borderRadius: '12px',
-      border: '1px solid #27272a',
+      border: '1px solid var(--border)',
       padding: '20px',
       display: 'flex',
       flexDirection: 'column',
       gap: '16px'
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#fafafa' }}>
+        <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: 'var(--foreground)' }}>
           {client.tradeName}
         </h3>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
         {/* Gestor Principal */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', backgroundColor: '#18181b', borderRadius: '8px' }}>
-          <div>
-            <div style={{ fontSize: '0.8rem', color: '#a1a1aa', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>Gestor (Estratégia)</div>
-            <div style={{ fontSize: '0.9rem', color: '#fafafa', fontWeight: 500 }}>
-              {client.manager ? client.manager.name : <span style={{ color: '#a1a1aa' }}>Não atribuído</span>}
-            </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', border: '1px solid var(--border)', borderRadius: '8px' }}>
+          <div style={{ flex: 1 }}>
+            <label htmlFor={`select-${client.id}-Gestor`} style={{ display: 'block', fontSize: '0.8rem', color: 'var(--muted-foreground)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>Gestor (Estratégia e Execução)</label>
+            {client.manager ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: 'var(--secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted-foreground)', fontWeight: 600, fontSize: '0.7rem' }}>
+                  {client.manager.name.substring(0, 2).toUpperCase()}
+                </div>
+                <span style={{ fontSize: '0.9rem', color: 'var(--foreground)', fontWeight: 500 }}>{client.manager.name}</span>
+                <button 
+                  onClick={async () => {
+                    if (!confirm('Deseja remover o gestor deste cliente?')) return;
+                    setLoading(true);
+                    try {
+                      await api.patch(`/clients/${client.id}`, { managerId: null });
+                      onUpdate();
+                    } catch (err) {
+                      alert('Erro ao remover gestor.');
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  disabled={loading}
+                  style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '0.75rem', cursor: 'pointer', padding: '0 4px', textDecoration: 'underline' }}>
+                  Remover
+                </button>
+              </div>
+            ) : (
+              <select
+                id={`select-${client.id}-Gestor`}
+                disabled={loading}
+                onChange={async (e) => {
+                  if (!e.target.value) return;
+                  setLoading(true);
+                  try {
+                    await api.patch(`/clients/${client.id}`, { managerId: e.target.value });
+                    onUpdate();
+                  } catch (err) {
+                    alert('Erro ao atribuir gestor.');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                value=""
+                style={{
+                  width: '100%',
+                  padding: '6px 8px',
+                  borderRadius: '6px',
+                  border: '1px solid var(--border)',
+                  fontSize: '0.85rem',
+                  color: 'var(--foreground)',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: 'var(--background)'
+                }}
+              >
+                <option value="" disabled>Selecionar Gestor...</option>
+                {users.filter(u => u.role === 'gestor_cliente' || u.role === 'admin').map((u) => (
+                  <option key={u.id} value={u.id}>{u.name}</option>
+                ))}
+              </select>
+            )}
           </div>
-          {client.manager && (
-            <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#27272a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a1a1aa', fontWeight: 600, fontSize: '0.8rem' }}>
-              {client.manager.name.substring(0, 2).toUpperCase()}
-            </div>
-          )}
         </div>
 
         {/* Roles Flexíveis */}
@@ -157,15 +209,15 @@ export function ClientTeamCard({ client, users, serviceProviders, onUpdate }: Cl
           }
 
           return (
-            <div key={role} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', border: '1px solid #f1f5f9', borderRadius: '8px' }}>
+            <div key={role} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', border: '1px solid var(--border)', borderRadius: '8px' }}>
               <div style={{ flex: 1 }}>
-                <label htmlFor={`select-${client.id}-${role}`} style={{ display: 'block', fontSize: '0.8rem', color: '#a1a1aa', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>{role}</label>
+                <label htmlFor={`select-${client.id}-${role}`} style={{ display: 'block', fontSize: '0.8rem', color: 'var(--muted-foreground)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>{role}</label>
                 {hasAssignment ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#27272a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a1a1aa', fontWeight: 600, fontSize: '0.7rem' }}>
+                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: 'var(--secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted-foreground)', fontWeight: 600, fontSize: '0.7rem' }}>
                       {entityName.substring(0, 2).toUpperCase()}
                     </div>
-                    <span style={{ fontSize: '0.9rem', color: '#fafafa', fontWeight: 500 }}>{entityName}</span>
+                    <span style={{ fontSize: '0.9rem', color: 'var(--foreground)', fontWeight: 500 }}>{entityName}</span>
                     <button 
                       onClick={() => handleRemoveMember(role, entityId)}
                       disabled={loading}
@@ -183,12 +235,12 @@ export function ClientTeamCard({ client, users, serviceProviders, onUpdate }: Cl
                       width: '100%',
                       padding: '6px 8px',
                       borderRadius: '6px',
-                      border: '1px solid #cbd5e1',
+                      border: '1px solid var(--border)',
                       fontSize: '0.85rem',
-                      color: '#a1a1aa',
+                      color: 'var(--foreground)',
                       outline: 'none',
                       cursor: 'pointer',
-                      backgroundColor: '#18181b'
+                      backgroundColor: 'var(--background)'
                     }}
                   >
                     <option value="" disabled>Selecionar {role}...</option>

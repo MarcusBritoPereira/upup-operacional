@@ -157,7 +157,11 @@ export class ClientsController {
         'Apenas a gerência ou cargos superiores podem alterar a equipe do cliente.',
       );
     }
-    return this.clientsService.addServiceProvider(id, body.serviceProviderId, body.role);
+    return this.clientsService.addServiceProvider(
+      id,
+      body.serviceProviderId,
+      body.role,
+    );
   }
 
   @Delete(':id/service-providers/:providerId/:role')

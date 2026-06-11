@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:15-alpine
     ports:
-      - "${POSTGRES_PORT:-5436}:5432"
+      - "${POSTGRES_PORT:-5437}:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-upup_admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-upup_secure_password}

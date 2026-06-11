@@ -126,20 +126,21 @@ export default function LoginPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 40%, #e0e7ff 100%);
+          background: radial-gradient(circle at top left, color-mix(in srgb, var(--primary) 10%, transparent) 0%, var(--background) 50%);
+          background-color: var(--background);
           padding: 20px;
           position: relative;
           overflow: hidden;
         }
 
         .login-card {
-          background: #09090b;
+          background: var(--card);
           border-radius: 20px;
           padding: 40px;
           width: 100%;
           max-width: 420px;
           box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.8);
+          border: 1px solid var(--border);
           position: relative;
           z-index: 10;
         }
@@ -158,13 +159,13 @@ export default function LoginPage() {
         .login-title {
           font-size: 1.2rem;
           font-weight: 700;
-          color: #fafafa;
+          color: var(--foreground);
           line-height: 1.2;
         }
 
         .login-subtitle {
           font-size: 0.8rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           margin-top: 2px;
         }
 
@@ -184,9 +185,9 @@ export default function LoginPage() {
           display: flex;
           align-items: center;
           gap: 8px;
-          background: #fee2e2;
-          color: #b91c1c;
-          border: 1px solid #fca5a5;
+          background: color-mix(in srgb, var(--red) 15%, transparent);
+          color: var(--red);
+          border: 1px solid color-mix(in srgb, var(--red) 30%, transparent);
           border-radius: 8px;
           padding: 10px 14px;
           font-size: 0.85rem;
@@ -204,7 +205,7 @@ export default function LoginPage() {
           width: 16px;
           height: 16px;
           border: 2px solid rgba(255, 255, 255, 0.3);
-          border-top-color: #09090b;
+          border-top-color: var(--card);
           border-radius: 50%;
           animation: spin 0.6s linear infinite;
           flex-shrink: 0;
@@ -217,7 +218,7 @@ export default function LoginPage() {
         .login-footer {
           text-align: center;
           font-size: 0.75rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           margin-top: 28px;
         }
 
@@ -237,7 +238,7 @@ export default function LoginPage() {
         .decoration-circle-1 {
           width: 400px;
           height: 400px;
-          background: #bfdbfe;
+          background: color-mix(in srgb, var(--primary) 10%, transparent);
           top: -100px;
           right: -100px;
         }
@@ -245,7 +246,7 @@ export default function LoginPage() {
         .decoration-circle-2 {
           width: 300px;
           height: 300px;
-          background: #a5f3fc;
+          background: color-mix(in srgb, var(--primary) 5%, transparent);
           bottom: -80px;
           left: -80px;
         }
@@ -253,7 +254,7 @@ export default function LoginPage() {
         .decoration-circle-3 {
           width: 200px;
           height: 200px;
-          background: #99f6e4;
+          background: color-mix(in srgb, var(--primary) 15%, transparent);
           bottom: 100px;
           right: 50px;
         }

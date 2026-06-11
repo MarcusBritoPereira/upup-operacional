@@ -365,7 +365,11 @@ export class ClientsService {
     });
   }
 
-  async addServiceProvider(clientId: string, serviceProviderId: string, role: string) {
+  async addServiceProvider(
+    clientId: string,
+    serviceProviderId: string,
+    role: string,
+  ) {
     await this.findOne(clientId);
 
     const existing = await this.prisma.clientServiceProvider.findFirst({
@@ -387,7 +391,11 @@ export class ClientsService {
     });
   }
 
-  async removeServiceProvider(clientId: string, serviceProviderId: string, role: string) {
+  async removeServiceProvider(
+    clientId: string,
+    serviceProviderId: string,
+    role: string,
+  ) {
     await this.findOne(clientId);
 
     const existing = await this.prisma.clientServiceProvider.findFirst({
@@ -395,7 +403,9 @@ export class ClientsService {
     });
 
     if (!existing) {
-      throw new NotFoundException('Prestador não encontrado neste papel da equipe.');
+      throw new NotFoundException(
+        'Prestador não encontrado neste papel da equipe.',
+      );
     }
 
     return this.prisma.clientServiceProvider.delete({

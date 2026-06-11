@@ -3,7 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
+import { Moon, Sun } from 'lucide-react';
 
 const mainNav = [
   {
@@ -102,6 +104,12 @@ export default function Sidebar() {
   const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const isActive = (href: string) =>
     href === '/dashboard' ? pathname === href : pathname.startsWith(href);
@@ -121,8 +129,8 @@ export default function Sidebar() {
       textDecoration: 'none',
       fontSize: '0.875rem',
       fontWeight: active ? 600 : 500,
-      color: active ? '#facc15' : hovered ? '#fafafa' : '#a1a1aa',
-      background: active ? 'rgba(250,204,21,0.1)' : hovered ? 'rgba(255,255,255,0.05)' : 'transparent',
+      color: active ? 'var(--primary)' : hovered ? 'var(--foreground)' : 'var(--muted-foreground)',
+      background: active ? 'color-mix(in srgb, var(--primary) 15%, transparent)' : hovered ? 'color-mix(in srgb, var(--foreground) 5%, transparent)' : 'transparent',
       transition: 'background 0.15s, color 0.15s',
       minHeight: 40,
       cursor: 'pointer',
@@ -135,7 +143,7 @@ export default function Sidebar() {
       {/* ── MOBILE TOP BAR ── */}
       <header style={{
         position: 'fixed', top: 0, left: 0, right: 0, height: 56,
-        background: '#09090b', borderBottom: '1px solid #27272a',
+        background: 'var(--background)', borderBottom: '1px solid var(--border)',
         zIndex: 50, alignItems: 'center', justifyContent: 'space-between',
         padding: '0 16px', display: 'none',
       }} className="sb-mobile-topbar">
@@ -143,7 +151,7 @@ export default function Sidebar() {
           onClick={() => setMobileOpen(true)}
           aria-label="Abrir menu"
           style={{
-            background: 'none', border: 'none', color: '#fafafa', cursor: 'pointer',
+            background: 'none', border: 'none', color: 'var(--foreground)', cursor: 'pointer',
             padding: 8, borderRadius: 6, display: 'flex', alignItems: 'center',
             minWidth: 44, minHeight: 44,
           }}
@@ -152,12 +160,12 @@ export default function Sidebar() {
             <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
           </svg>
         </button>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: '0.9rem', color: '#fafafa' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: '0.9rem', color: 'var(--foreground)' }}>
           <Logo /><span>UP Gestão</span>
         </div>
         <div style={{
-          width: 32, height: 32, borderRadius: '50%', background: '#27272a',
-          color: '#facc15', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          width: 32, height: 32, borderRadius: '50%', background: 'var(--secondary)',
+          color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '0.78rem', fontWeight: 700,
         }}>{initial}</div>
       </header>
@@ -175,8 +183,8 @@ export default function Sidebar() {
       <aside style={{
         position: 'fixed', top: 0, left: 0, bottom: 0,
         width: 200,
-        background: '#09090b',
-        borderRight: '1px solid #27272a',
+        background: 'var(--background)',
+        borderRight: '1px solid var(--border)',
         display: 'flex', flexDirection: 'column',
         zIndex: 46,
         transition: 'transform 0.25s cubic-bezier(0.4,0,0.2,1)',
@@ -186,11 +194,11 @@ export default function Sidebar() {
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10,
           padding: '18px 16px 16px',
-          borderBottom: '1px solid #27272a',
+          borderBottom: '1px solid var(--border)',
           flexShrink: 0,
         }}>
           <Logo />
-          <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fafafa' }}>UP Gestão</span>
+          <span style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--foreground)' }}>UP Gestão</span>
           {/* Mobile close */}
           <button
             onClick={() => setMobileOpen(false)}
@@ -198,7 +206,7 @@ export default function Sidebar() {
             className="sb-close-btn"
             style={{
               marginLeft: 'auto', background: 'none', border: 'none',
-              color: '#a1a1aa', cursor: 'pointer', padding: 4, borderRadius: 4,
+              color: 'var(--muted-foreground)', cursor: 'pointer', padding: 4, borderRadius: 4,
               display: 'none', alignItems: 'center',
             }}
           >
@@ -232,7 +240,7 @@ export default function Sidebar() {
         </nav>
 
         {/* Separator */}
-        <div style={{ height: 1, background: '#27272a', margin: '0 16px', flexShrink: 0 }} />
+        <div style={{ height: 1, background: 'var(--border)', margin: '0 16px', flexShrink: 0 }} />
 
         {/* Bottom Nav */}
         <div style={{ padding: '10px 10px 4px', display: 'flex', flexDirection: 'column', gap: 2, flexShrink: 0 }}>
@@ -252,25 +260,39 @@ export default function Sidebar() {
           ))}
         </div>
 
-        <div style={{ height: 1, background: '#27272a', margin: '0 16px', flexShrink: 0 }} />
+        <div style={{ height: 1, background: 'var(--border)', margin: '0 16px', flexShrink: 0 }} />
 
-        {/* User + Logout */}
+        {/* User + Logout + Theme */}
         <div style={{ padding: '12px 14px 16px', flexShrink: 0 }}>
-          <p style={{ fontSize: '0.6rem', fontWeight: 700, color: '#a1a1aa', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>
+          <p style={{ fontSize: '0.6rem', fontWeight: 700, color: 'var(--muted-foreground)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>
             CONTA ATIVA
           </p>
-          <p style={{ fontSize: '0.78rem', color: '#fafafa', fontWeight: 600, marginBottom: 10, wordBreak: 'break-all' }}>
-            {user?.name ?? 'Usuário'}
-            <br />
-            <span style={{ fontSize: '0.7rem', color: '#a1a1aa', fontWeight: 500 }}>
-              {roleLabel[user?.role ?? ''] ?? user?.role ?? ''}
-            </span>
-          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <p style={{ fontSize: '0.78rem', color: 'var(--foreground)', fontWeight: 600, marginBottom: 10, wordBreak: 'break-all' }}>
+              {user?.name ?? 'Usuário'}
+              <br />
+              <span style={{ fontSize: '0.7rem', color: 'var(--muted-foreground)', fontWeight: 500 }}>
+                {roleLabel[user?.role ?? ''] ?? user?.role ?? ''}
+              </span>
+            </p>
+            {mounted && (
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                aria-label="Alternar tema"
+                style={{
+                  background: 'none', border: 'none', color: 'var(--muted-foreground)', cursor: 'pointer',
+                  padding: 4, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}
+              >
+                {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+              </button>
+            )}
+          </div>
           <button
             id="btn-logout"
             onClick={logout}
             style={{
-              color: '#a1a1aa', background: 'transparent', cursor: 'pointer',
+              color: 'var(--muted-foreground)', background: 'transparent', cursor: 'pointer',
               display: 'flex', alignItems: 'center', gap: 7,
               fontSize: '0.82rem', fontWeight: 600,
               padding: '6px 0', minHeight: 36,
@@ -303,8 +325,8 @@ export default function Sidebar() {
 function Logo() {
   return (
     <svg width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-      <rect width="32" height="32" rx="7" fill="#fafafa" />
-      <path d="M8 22L12 10L16 18L20 13L24 22" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <rect width="32" height="32" rx="7" fill="var(--foreground)" />
+      <path d="M8 22L12 10L16 18L20 13L24 22" stroke="var(--background)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

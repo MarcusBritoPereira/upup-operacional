@@ -108,8 +108,8 @@ export default function DashboardPage() {
     {
       label: 'Clientes ativos',
       value: overview?.totalActiveClients ?? 0,
-      accent: '#facc15',
-      accentBg: 'rgba(250,204,21,0.15)',
+      accent: 'var(--primary)',
+      accentBg: 'color-mix(in srgb, var(--primary) 15%, transparent)',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -146,8 +146,8 @@ export default function DashboardPage() {
     {
       label: 'Sem follow-up',
       value: overview?.clientsWithoutFollowup ?? 0,
-      accent: '#a1a1aa',
-      accentBg: 'rgba(148,163,184,0.1)',
+      accent: 'var(--muted-foreground)',
+      accentBg: 'color-mix(in srgb, var(--muted-foreground) 10%, transparent)',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />
@@ -311,7 +311,7 @@ export default function DashboardPage() {
                     ) : (
                       <ul className="item-list">
                         {today?.pendingActionPlans.map((p) => {
-                          const prio = PRIORITY_MAP[p.priority] ?? { label: p.priority, color: '#a1a1aa' };
+                          const prio = PRIORITY_MAP[p.priority] ?? { label: p.priority, color: 'var(--muted-foreground)' };
                           return (
                             <li key={p.id} className="item-row">
                               <div className="item-dot" style={{ background: prio.color }} />
@@ -345,7 +345,7 @@ export default function DashboardPage() {
                     ) : (
                       <ul className="item-list">
                         {today?.alerts.map((a) => {
-                          const sev = SEVERITY_MAP[a.severity] ?? { label: a.severity, color: '#a1a1aa' };
+                          const sev = SEVERITY_MAP[a.severity] ?? { label: a.severity, color: 'var(--muted-foreground)' };
                           return (
                             <li key={a.id} className="item-row">
                               <div className="item-dot" style={{ background: sev.color }} />
@@ -382,7 +382,7 @@ export default function DashboardPage() {
         /* ─── SHELL ─── */
         .dash {
           min-height: 100vh;
-          background: #27272a;
+          background: var(--background);
           padding: 32px 32px 40px;
           max-width: 1300px;
           margin: 0 auto;
@@ -399,16 +399,16 @@ export default function DashboardPage() {
         }
         .dash-greeting {
           font-size: 0.8rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           font-weight: 500;
           margin-bottom: 4px;
           letter-spacing: 0.01em;
         }
-        .dash-name { color: #facc15; font-weight: 700; }
+        .dash-name { color: var(--primary); font-weight: 700; }
         .dash-title {
           font-size: 1.85rem;
           font-weight: 800;
-          color: #fafafa;
+          color: var(--foreground);
           letter-spacing: -0.03em;
           line-height: 1.1;
         }
@@ -416,13 +416,13 @@ export default function DashboardPage() {
         .dash-date-day {
           font-size: 0.7rem;
           text-transform: capitalize;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           font-weight: 600;
           letter-spacing: 0.05em;
         }
         .dash-date-full {
           font-size: 0.825rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           font-weight: 500;
           text-transform: capitalize;
           margin-top: 2px;
@@ -436,9 +436,9 @@ export default function DashboardPage() {
           margin-bottom: 18px;
         }
         .stat-card {
-          background: #09090b;
+          background: var(--card);
           border-radius: 10px;
-          border: 1px solid #27272a;
+          border: 1px solid var(--border);
           padding: 18px 16px 16px;
           display: flex;
           flex-direction: column;
@@ -450,7 +450,7 @@ export default function DashboardPage() {
         }
         .stat-card:hover {
           transform: translateY(-3px);
-          box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.1);
         }
         .stat-bar {
           position: absolute;
@@ -476,13 +476,13 @@ export default function DashboardPage() {
         .stat-value {
           font-size: 2rem;
           font-weight: 800;
-          color: #fafafa;
+          color: var(--card-foreground);
           line-height: 1;
           letter-spacing: -0.04em;
         }
         .stat-label {
           font-size: 0.73rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           font-weight: 600;
           margin-top: 4px;
           text-transform: uppercase;
@@ -491,9 +491,9 @@ export default function DashboardPage() {
 
         /* ─── PORTFOLIO ─── */
         .portfolio-strip {
-          background: #09090b;
+          background: var(--card);
           border-radius: 10px;
-          border: 1px solid #27272a;
+          border: 1px solid var(--border);
           padding: 20px 24px;
           display: flex;
           align-items: center;
@@ -511,8 +511,8 @@ export default function DashboardPage() {
           width: 44px;
           height: 44px;
           border-radius: 10px;
-          background: rgba(250,204,21,0.1);
-          color: #facc15;
+          background: color-mix(in srgb, var(--primary) 15%, transparent);
+          color: var(--primary);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -520,7 +520,7 @@ export default function DashboardPage() {
         }
         .portfolio-label {
           font-size: 0.75rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.04em;
@@ -529,16 +529,16 @@ export default function DashboardPage() {
         .portfolio-value {
           font-size: 1.8rem;
           font-weight: 800;
-          color: #fafafa;
+          color: var(--foreground);
           letter-spacing: -0.03em;
         }
         .portfolio-cta {
           display: flex;
           align-items: center;
           gap: 6px;
-          background: #09090b;
-          color: #fafafa;
-          border: 1px solid #27272a;
+          background: var(--card);
+          color: var(--foreground);
+          border: 1px solid var(--border);
           border-radius: 6px;
           padding: 9px 16px;
           font-size: 0.8rem;
@@ -547,11 +547,10 @@ export default function DashboardPage() {
           transition: all 0.15s ease;
           white-space: nowrap;
           min-height: 44px;
-          box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         .portfolio-cta:hover {
-          background: #18181b;
-          border-color: #3f3f46;
+          background: var(--secondary);
         }
 
         /* ─── TODAY ─── */
@@ -585,7 +584,7 @@ export default function DashboardPage() {
         .today-title {
           font-size: 1.1rem;
           font-weight: 700;
-          color: #fafafa;
+          color: var(--foreground);
           letter-spacing: -0.02em;
         }
         .today-link {
@@ -594,7 +593,7 @@ export default function DashboardPage() {
           gap: 4px;
           font-size: 0.78rem;
           font-weight: 600;
-          color: #eab308;
+          color: var(--primary);
           text-decoration: none;
           transition: opacity 0.15s;
           min-height: 44px;
@@ -609,9 +608,9 @@ export default function DashboardPage() {
           gap: 14px;
         }
         .today-card {
-          background: #09090b;
+          background: var(--card);
           border-radius: 10px;
-          border: 1px solid #27272a;
+          border: 1px solid var(--border);
           overflow: hidden;
           display: flex;
           flex-direction: column;
@@ -625,11 +624,11 @@ export default function DashboardPage() {
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          border-bottom: 1px solid #27272a;
+          border-bottom: 1px solid var(--border);
         }
-        .today-card-head--red   { color: #ef4444; background: rgba(239,68,68,0.05); }
-        .today-card-head--amber { color: #f59e0b; background: rgba(245,158,11,0.05); }
-        .today-card-head--yellow { color: #eab308; background: rgba(250,204,21,0.1); }
+        .today-card-head--red   { color: var(--red); background: color-mix(in srgb, var(--red) 5%, transparent); }
+        .today-card-head--amber { color: var(--yellow); background: color-mix(in srgb, var(--yellow) 5%, transparent); }
+        .today-card-head--yellow { color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, transparent); }
 
         .today-card-body {
           flex: 1;
@@ -658,7 +657,7 @@ export default function DashboardPage() {
         }
         .item-link {
           flex: 1;
-          color: #fafafa;
+          color: var(--foreground);
           font-weight: 500;
           text-decoration: none;
           white-space: nowrap;
@@ -666,7 +665,7 @@ export default function DashboardPage() {
           text-overflow: ellipsis;
           transition: color 0.1s;
         }
-        a.item-link:hover { color: #eab308; }
+        a.item-link:hover { color: var(--primary); }
         .item-badge {
           font-size: 0.68rem;
           font-weight: 700;
@@ -678,7 +677,7 @@ export default function DashboardPage() {
         }
         .item-date {
           font-size: 0.68rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           font-weight: 500;
           flex-shrink: 0;
         }
@@ -690,12 +689,12 @@ export default function DashboardPage() {
           align-items: center;
           gap: 6px;
           padding: 16px 0 8px;
-          color: #52525b;
+          color: var(--muted-foreground);
           text-align: center;
         }
         .empty-state p {
           font-size: 0.78rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           font-style: italic;
         }
 
@@ -708,7 +707,7 @@ export default function DashboardPage() {
         }
         .dash-skeleton {
           height: 80px;
-          background: linear-gradient(90deg, #27272a 25%, #3f3f46 50%, #27272a 75%);
+          background: linear-gradient(90deg, var(--border) 25%, var(--secondary) 50%, var(--border) 75%);
           background-size: 200% 100%;
           border-radius: 10px;
           animation: shimmer 1.4s infinite;
@@ -725,14 +724,14 @@ export default function DashboardPage() {
           align-items: center;
           gap: 12px;
           padding: 80px 0;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           text-align: center;
         }
         .dash-error button {
           margin-top: 4px;
           padding: 10px 20px;
-          background: #facc15;
-          color: #fafafa;
+          background: var(--primary);
+          color: var(--primary-foreground);
           border: none;
           border-radius: 6px;
           font-size: 0.85rem;

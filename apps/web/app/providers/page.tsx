@@ -10,6 +10,7 @@ interface ServiceProvider {
   email: string | null;
   whatsapp: string | null;
   role: string | null;
+  clientLinks?: { id: string; role: string; client: { id: string; tradeName: string; status: string; } }[];
   createdAt: string;
   updatedAt: string;
 }
@@ -122,7 +123,7 @@ export default function ProvidersPage() {
             </div>
             <h3 className="font-bold text-[#fafafa] text-lg">{provider.name}</h3>
             {provider.role && (
-              <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-slate-200">
+              <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
                 {provider.role}
               </span>
             )}
@@ -135,6 +136,36 @@ export default function ProvidersPage() {
                 <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                 {provider.whatsapp || <span className="text-slate-400 italic">Não informado</span>}
               </div>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-[#27272a]">
+              <details className="group">
+                <summary className="text-sm font-medium text-slate-400 cursor-pointer hover:text-[#fafafa] transition flex items-center gap-1 select-none outline-none">
+                  <svg className="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                  Atende {provider.clientLinks?.length || 0} cliente(s)
+                </summary>
+                <div className="mt-3 pl-5 space-y-2">
+                  {[...(provider.clientLinks || [])]
+                    .sort((a, b) => a.client.tradeName.localeCompare(b.client.tradeName))
+                    .map(link => {
+                    const isRepeated = (provider.clientLinks?.filter(l => l.client.id === link.client.id).length || 0) > 1;
+                    return (
+                      <div key={link.id} className="text-sm text-slate-300 flex items-center gap-2">
+                        <div className={`w-1.5 h-1.5 rounded-full ${link.client.status === 'active' ? 'bg-emerald-500' : 'bg-slate-600'}`}></div>
+                        {link.client.tradeName}
+                        {isRepeated && link.role && (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#27272a] text-slate-400">
+                            {link.role === 'ServiceProvider' ? provider.role : link.role}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {(!provider.clientLinks || provider.clientLinks.length === 0) && (
+                    <div className="text-sm text-slate-500 italic">Nenhum cliente associado.</div>
+                  )}
+                </div>
+              </details>
             </div>
           </div>
         ))}

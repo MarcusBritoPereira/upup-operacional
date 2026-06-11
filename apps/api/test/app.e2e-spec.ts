@@ -56,7 +56,7 @@ describe('Application (e2e)', () => {
       .send({ email: 'admin@upup.com', password: 'admin123' })
       .expect(200);
 
-    const cookies = login.headers['set-cookie'];
+    const cookies = login.headers['set-cookie'] as string[] | undefined;
     if (!cookies) {
       throw new Error('Login did not return a session cookie');
     }
@@ -67,7 +67,7 @@ describe('Application (e2e)', () => {
       .set('Cookie', cookies)
       .expect(200)
       .expect(({ body }) => {
-        expect(body.user).toMatchObject({
+        expect((body as { user: any }).user).toMatchObject({
           email: 'admin@upup.com',
           role: 'admin',
           isActive: true,

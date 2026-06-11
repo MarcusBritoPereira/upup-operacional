@@ -184,12 +184,12 @@ export default function TodayPage() {
         .today-title {
           font-size: 1.75rem;
           font-weight: 800;
-          color: #fafafa;
+          color: var(--foreground);
         }
 
         .today-subtitle {
           font-size: 0.9rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           margin-top: 4px;
         }
 
@@ -199,19 +199,19 @@ export default function TodayPage() {
           gap: 6px;
           padding: 8px 14px;
           border-radius: 8px;
-          border: 1px solid #27272a;
-          background: #09090b;
+          border: 1px solid var(--border);
+          background: var(--card);
           font-size: 0.85rem;
           font-weight: 600;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           cursor: pointer;
           transition: all 0.15s ease;
         }
 
         .refresh-button:hover {
-          background: #18181b;
-          border-color: #3f3f46;
-          color: #fafafa;
+          background: var(--secondary);
+          border-color: var(--border);
+          color: var(--foreground);
         }
 
         .today-grid {
@@ -231,7 +231,7 @@ export default function TodayPage() {
           align-items: center;
           gap: 10px;
           padding-bottom: 12px;
-          border-bottom: 2px solid #27272a;
+          border-bottom: 2px solid var(--border);
         }
 
         .column-badge {
@@ -242,29 +242,29 @@ export default function TodayPage() {
         }
 
         .badge-red {
-          background: rgba(239, 68, 68, 0.1);
-          color: #ef4444;
+          background: color-mix(in srgb, var(--red) 10%, transparent);
+          color: var(--red);
         }
 
         .badge-cyan {
-          background: rgba(250, 204, 21, 0.1);
-          color: #facc15;
+          background: color-mix(in srgb, var(--primary) 10%, transparent);
+          color: var(--primary);
         }
 
         .column-title {
           font-size: 1rem;
           font-weight: 700;
-          color: #fafafa;
+          color: var(--foreground);
         }
 
         .empty-state {
           padding: 32px;
-          border: 1px dashed #3f3f46;
+          border: 1px dashed var(--border);
           border-radius: 12px;
           text-align: center;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           font-size: 0.88rem;
-          background: #18181b;
+          background: var(--secondary);
         }
 
         .cards-list {
@@ -274,17 +274,17 @@ export default function TodayPage() {
         }
 
         .alert-card, .plan-card {
-          background: #09090b;
-          border: 1px solid #27272a;
+          background: var(--card);
+          border: 1px solid var(--border);
           border-radius: 12px;
           padding: 16px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
           transition: transform 0.15s ease, border-color 0.15s ease;
         }
 
         .alert-card:hover, .plan-card:hover {
           transform: translateY(-2px);
-          border-color: #3f3f46;
+          border-color: var(--border);
         }
 
         .alert-card-header, .plan-card-header {
@@ -303,7 +303,7 @@ export default function TodayPage() {
         .alert-client-name, .plan-client-name {
           font-size: 0.78rem;
           font-weight: 700;
-          color: #facc15;
+          color: var(--primary);
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
@@ -311,12 +311,12 @@ export default function TodayPage() {
         .alert-card-title {
           font-size: 0.95rem;
           font-weight: 700;
-          color: #fafafa;
+          color: var(--foreground);
         }
 
         .alert-card-desc {
           font-size: 0.83rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           margin-top: 6px;
           line-height: 1.4;
         }
@@ -327,20 +327,20 @@ export default function TodayPage() {
           justify-content: space-between;
           margin-top: 14px;
           padding-top: 12px;
-          border-top: 1px solid #27272a;
+          border-top: 1px solid var(--border);
         }
 
         .alert-date, .plan-due-date {
           font-size: 0.75rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
         }
 
         .resolve-btn {
           font-size: 0.78rem;
           font-weight: 600;
-          color: #34d399;
-          background: rgba(16, 185, 129, 0.1);
-          border: 1px solid rgba(16, 185, 129, 0.2);
+          color: var(--green);
+          background: color-mix(in srgb, var(--green) 10%, transparent);
+          border: 1px solid color-mix(in srgb, var(--green) 20%, transparent);
           padding: 4px 10px;
           border-radius: 6px;
           cursor: pointer;
@@ -348,8 +348,7 @@ export default function TodayPage() {
         }
 
         .resolve-btn:hover {
-          background: rgba(16, 185, 129, 0.2);
-          color: #10b981;
+          background: color-mix(in srgb, var(--green) 20%, transparent);
         }
 
         .plan-priority-badge {
@@ -362,24 +361,24 @@ export default function TodayPage() {
         }
 
         .priority-high {
-          background: rgba(225, 29, 72, 0.1);
-          color: #fb7185;
+          background: color-mix(in srgb, var(--red) 10%, transparent);
+          color: var(--red);
         }
 
         .priority-medium {
-          background: rgba(234, 179, 8, 0.1);
-          color: #facc15;
+          background: color-mix(in srgb, var(--primary) 10%, transparent);
+          color: var(--primary);
         }
 
         .plan-card-problem {
           font-size: 0.92rem;
           font-weight: 700;
-          color: #fafafa;
+          color: var(--foreground);
         }
 
         .plan-card-action {
           font-size: 0.83rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           margin-top: 6px;
           line-height: 1.4;
         }
@@ -387,7 +386,7 @@ export default function TodayPage() {
         .go-to-client-link {
           font-size: 0.78rem;
           font-weight: 600;
-          color: #facc15;
+          color: var(--primary);
           text-decoration: none;
         }
 
@@ -398,14 +397,14 @@ export default function TodayPage() {
         .loading-state, .error-state {
           padding: 80px 0;
           text-align: center;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
         }
 
         .spinner {
           width: 32px;
           height: 32px;
-          border: 3px solid #27272a;
-          border-top: 3px solid #facc15;
+          border: 3px solid var(--border);
+          border-top: 3px solid var(--primary);
           border-radius: 50%;
           margin: 0 auto 16px;
           animation: spin 1s linear infinite;

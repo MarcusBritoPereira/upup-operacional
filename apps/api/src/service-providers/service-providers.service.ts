@@ -16,6 +16,19 @@ export class ServiceProvidersService {
   async findAll() {
     return this.prisma.serviceProvider.findMany({
       orderBy: { name: 'asc' },
+      include: {
+        clientLinks: {
+          include: {
+            client: {
+              select: {
+                id: true,
+                tradeName: true,
+                status: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 

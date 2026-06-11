@@ -192,12 +192,12 @@ export default function ActionPlansPage() {
         .plans-title {
           font-size: 1.75rem;
           font-weight: 800;
-          color: #fafafa;
+          color: var(--foreground);
         }
 
         .plans-subtitle {
           font-size: 0.9rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           margin-top: 4px;
         }
 
@@ -213,9 +213,9 @@ export default function ActionPlansPage() {
           white-space: nowrap;
           padding: 8px 16px;
           border-radius: 8px;
-          border: 1px solid #27272a;
-          background: #09090b;
-          color: #a1a1aa;
+          border: 1px solid var(--border);
+          background: var(--card);
+          color: var(--muted-foreground);
           font-size: 0.85rem;
           font-weight: 600;
           cursor: pointer;
@@ -223,14 +223,14 @@ export default function ActionPlansPage() {
         }
 
         .filter-btn:hover {
-          border-color: #3f3f46;
-          background: #18181b;
+          border-color: var(--border);
+          background: var(--secondary);
         }
 
         .filter-btn.active {
-          background: #ecfeff;
-          color: #06b6d4;
-          border-color: #a5f3fc;
+          background: color-mix(in srgb, var(--primary) 10%, transparent);
+          color: var(--primary);
+          border-color: color-mix(in srgb, var(--primary) 20%, transparent);
         }
 
         .plans-grid {
@@ -240,8 +240,8 @@ export default function ActionPlansPage() {
         }
 
         .plan-card {
-          background: #09090b;
-          border: 1px solid #27272a;
+          background: var(--card);
+          border: 1px solid var(--border);
           border-radius: 12px;
           padding: 20px;
           box-shadow: 0 1px 3px rgba(0,0,0,0.02);
@@ -265,7 +265,7 @@ export default function ActionPlansPage() {
         .client-name {
           font-size: 0.82rem;
           font-weight: 700;
-          color: #06b6d4;
+          color: var(--primary);
           text-transform: uppercase;
         }
 
@@ -276,10 +276,10 @@ export default function ActionPlansPage() {
           border-radius: 6px;
         }
 
-        .status-open { background: #27272a; color: #a1a1aa; }
-        .status-progress { background: #fef9c3; color: #a16207; }
-        .status-completed { background: #dcfce7; color: #15803d; }
-        .status-cancelled { background: #fee2e2; color: #b91c1c; }
+        .status-open { background: var(--secondary); color: var(--muted-foreground); }
+        .status-progress { background: color-mix(in srgb, var(--yellow) 15%, transparent); color: var(--yellow); }
+        .status-completed { background: color-mix(in srgb, var(--green) 15%, transparent); color: var(--green); }
+        .status-cancelled { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
 
         .card-body {
           display: flex;
@@ -291,12 +291,12 @@ export default function ActionPlansPage() {
         .plan-title {
           font-size: 1rem;
           font-weight: 700;
-          color: #fafafa;
+          color: var(--foreground);
         }
 
         .plan-text {
           font-size: 0.85rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           line-height: 1.4;
         }
 
@@ -305,9 +305,9 @@ export default function ActionPlansPage() {
           grid-template-columns: repeat(3, 1fr);
           gap: 10px;
           padding: 12px;
-          background: #18181b;
+          background: var(--secondary);
           border-radius: 8px;
-          border: 1px solid #f1f5f9;
+          border: 1px solid var(--border);
         }
 
         .meta-item {
@@ -318,28 +318,28 @@ export default function ActionPlansPage() {
 
         .meta-label {
           font-size: 0.7rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           font-weight: 500;
         }
 
         .meta-val {
           font-size: 0.8rem;
           font-weight: 600;
-          color: #334155;
+          color: var(--foreground);
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
         }
 
         .text-red {
-          color: #ef4444;
+          color: var(--red);
         }
 
         .resolution-notes {
           padding: 12px;
-          background: #f0fdf4;
+          background: color-mix(in srgb, var(--green) 10%, transparent);
           border-radius: 8px;
-          border: 1px solid #dcfce7;
+          border: 1px solid color-mix(in srgb, var(--green) 20%, transparent);
           font-size: 0.82rem;
           display: flex;
           flex-direction: column;
@@ -347,7 +347,7 @@ export default function ActionPlansPage() {
         }
 
         .resolution-text {
-          color: #166534;
+          color: var(--green);
         }
 
         .card-footer {
@@ -355,13 +355,13 @@ export default function ActionPlansPage() {
           display: flex;
           justify-content: flex-end;
           padding-top: 12px;
-          border-top: 1px solid #f1f5f9;
+          border-top: 1px solid var(--border);
         }
 
         .details-link {
           font-size: 0.82rem;
           font-weight: 600;
-          color: #06b6d4;
+          color: var(--primary);
           text-decoration: none;
         }
 
@@ -372,14 +372,14 @@ export default function ActionPlansPage() {
         .loading-state, .error-state {
           padding: 80px 0;
           text-align: center;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
         }
 
         .spinner {
           width: 32px;
           height: 32px;
-          border: 3px solid #f3f3f3;
-          border-top: 3px solid #06b6d4;
+          border: 3px solid var(--border);
+          border-top: 3px solid var(--primary);
           border-radius: 50%;
           margin: 0 auto 16px;
           animation: spin 1s linear infinite;

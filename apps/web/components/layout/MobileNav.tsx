@@ -78,8 +78,8 @@ export default function MobileNav() {
           bottom: 0;
           left: 0;
           right: 0;
-          background: #09090b;
-          border-top: 1px solid #27272a;
+          background: var(--card);
+          border-top: 1px solid var(--border);
           display: flex;
           align-items: stretch;
           height: 64px;
@@ -95,7 +95,7 @@ export default function MobileNav() {
           align-items: center;
           justify-content: center;
           gap: 3px;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           text-decoration: none;
           padding: 8px 4px;
           border-radius: 8px;
@@ -105,16 +105,16 @@ export default function MobileNav() {
         }
 
         .mobile-nav-item:hover {
-          color: #a1a1aa;
-          background: #18181b;
+          color: var(--foreground);
+          background: var(--secondary);
         }
 
         .mobile-nav-item-active {
-          color: #2563eb;
+          color: var(--primary);
         }
 
         .mobile-nav-item-active .mobile-nav-icon {
-          background: #eff6ff;
+          background: color-mix(in srgb, var(--primary) 15%, transparent);
           border-radius: 8px;
           padding: 4px 12px;
         }

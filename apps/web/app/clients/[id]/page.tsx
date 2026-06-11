@@ -1090,10 +1090,48 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                       </div>
                       <hr className="border-[#27272a]" />
                       <div className="space-y-4">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">2. Atribuição</h3>
+                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">2. Contato e Endereço</h3>
+                        <div><label className="form-label">Nome do Decisor</label><input type="text" value={decisionMakerName} onChange={(e) => setDecisionMakerName(e.target.value)} className="form-input" /></div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div><label className="form-label">Telefone (Decisor)</label><input type="text" value={decisionMakerPhone} onChange={(e) => setDecisionMakerPhone(e.target.value)} className="form-input" /></div>
+                          <div><label className="form-label">E-mail (Decisor)</label><input type="email" value={decisionMakerEmail} onChange={(e) => setDecisionMakerEmail(e.target.value)} className="form-input" /></div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div><label className="form-label">Cidade</label><input type="text" value={city} onChange={(e) => setCity(e.target.value)} className="form-input" /></div>
+                          <div><label className="form-label">Estado (UF)</label><input type="text" value={state} onChange={(e) => setState(e.target.value)} className="form-input" maxLength={2} /></div>
+                        </div>
+                      </div>
+                      <hr className="border-[#27272a]" />
+                      <div className="space-y-4">
+                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">3. Informações Estratégicas e Links</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div><label className="form-label">Perfil do Cliente</label><input type="text" value={clientProfile} onChange={(e) => setClientProfile(e.target.value)} className="form-input" placeholder="Ex: Moderado, Agressivo" /></div>
+                          <div>
+                            <label className="form-label">Maturidade de Marketing</label>
+                            <select value={marketingMaturity} onChange={(e) => setMarketingMaturity(e.target.value)} className="form-input">
+                              <option value="">Selecione</option>
+                              <option value="iniciante">Iniciante</option>
+                              <option value="intermediario">Intermediário</option>
+                              <option value="avancado">Avançado</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div><label className="form-label">Notas Estratégicas</label><textarea rows={3} value={strategicNotes} onChange={(e) => setStrategicNotes(e.target.value)} className="form-input resize-none" placeholder="Observações de negócios, focos, etc." /></div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div><label className="form-label">Link do WhatsApp (Grupo)</label><input type="url" value={whatsappGroupUrl} onChange={(e) => setWhatsappGroupUrl(e.target.value)} className="form-input" placeholder="https://chat.whatsapp.com/..." /></div>
+                          <div><label className="form-label">Link do Drive</label><input type="url" value={driveUrl} onChange={(e) => setDriveUrl(e.target.value)} className="form-input" placeholder="https://drive.google.com/..." /></div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div><label className="form-label">Link do ClickUp</label><input type="url" value={clickupUrl} onChange={(e) => setClickupUrl(e.target.value)} className="form-input" placeholder="https://app.clickup.com/..." /></div>
+                          <div><label className="form-label">Instagram Comercial</label><input type="url" value={instagramUrl} onChange={(e) => setInstagramUrl(e.target.value)} className="form-input" placeholder="https://instagram.com/..." /></div>
+                        </div>
+                      </div>
+                      <hr className="border-[#27272a]" />
+                      <div className="space-y-4">
+                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">4. Atribuição</h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="form-label">Gestor</label>
+                            <label className="form-label">Gestor da Conta</label>
                             <select value={managerId} onChange={(e) => setManagerId(e.target.value)} className="form-input">
                               <option value="">Selecione</option>
                               {users.filter(u => u.role === 'gestor_cliente' || u.role === 'admin').map(u => <option key={u.id} value={u.id}>{u.name}</option>)}

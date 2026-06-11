@@ -6,10 +6,10 @@ export default function SettingsPage() {
   return (
     <DashboardLayout>
       <div style={{ padding: '28px 24px' }}>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#fafafa', marginBottom: '8px' }}>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: '8px' }}>
           Configurações
         </h1>
-        <p style={{ color: '#a1a1aa', fontSize: '0.9rem' }}>
+        <p style={{ color: 'var(--muted-foreground)', fontSize: '0.9rem' }}>
           Configurações do sistema — em desenvolvimento.
         </p>
       </div>
