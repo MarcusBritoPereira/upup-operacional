@@ -144,11 +144,11 @@ export default function ClientsPage() {
       case 'paused':
         return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'inactive':
-        return 'bg-[#27272a] text-slate-300 border-[#3f3f46]';
+        return 'bg-[var(--border)] text-slate-300 border-[var(--border)]';
       case 'cancelled':
         return 'bg-rose-50 text-rose-700 border-rose-200';
       default:
-        return 'bg-[#18181b] text-slate-400 border-[#3f3f46]';
+        return 'bg-[var(--secondary)] text-slate-400 border-[var(--border)]';
     }
   };
 
@@ -182,7 +182,7 @@ export default function ClientsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-[#fafafa] sm:text-3xl">
+            <h1 className="text-2xl font-extrabold tracking-tight text-[var(--foreground)] sm:text-3xl">
               Clientes
             </h1>
             <p className="text-sm text-slate-400 mt-1">
@@ -192,7 +192,7 @@ export default function ClientsPage() {
           <div className="flex flex-col sm:flex-row items-center gap-3">
             <button
               onClick={() => setImportModalOpen(true)}
-              className="px-4 py-2 text-sm font-semibold text-slate-300 bg-[#09090b] border border-[#52525b] rounded-lg hover:bg-[#18181b] transition-colors inline-flex items-center gap-2 shadow-sm"
+              className="px-4 py-2 text-sm font-semibold text-slate-300 bg-[var(--card)] border border-[var(--border)] rounded-lg hover:bg-[var(--secondary)] transition-colors inline-flex items-center gap-2 shadow-sm"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
@@ -212,7 +212,7 @@ export default function ClientsPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-4 shadow-xs flex flex-wrap gap-4 items-center">
+        <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-4 shadow-xs flex flex-wrap gap-4 items-center">
           <div className="flex-1 min-w-[240px]">
             <input
               type="text"
@@ -254,7 +254,7 @@ export default function ClientsPage() {
             <p className="text-slate-400 text-sm mt-3">Carregando clientes...</p>
           </div>
         ) : filteredClients.length === 0 ? (
-          <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-12 text-center">
+          <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-12 text-center">
             <svg className="w-12 h-12 text-slate-300 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
@@ -264,12 +264,12 @@ export default function ClientsPage() {
             </p>
           </div>
         ) : (
-          <div className="bg-[#09090b] rounded-xl border border-[#27272a] overflow-hidden shadow-xs">
+          <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] overflow-hidden shadow-xs">
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#18181b] border-b border-[#27272a] text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  <tr className="bg-[var(--secondary)] border-b border-[var(--border)] text-xs font-semibold text-slate-400 uppercase tracking-wider">
                     <th className="px-6 py-4">Nome Fantasia</th>
                     <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4">Contrato (Mensal)</th>
@@ -283,8 +283,8 @@ export default function ClientsPage() {
                     const manager = users.find((u) => u.id === client.managerId);
 
                     return (
-                      <tr key={client.id} className="hover:bg-[#18181b]/50 transition">
-                        <td className="px-6 py-4 font-semibold text-[#fafafa]">
+                      <tr key={client.id} className="hover:bg-[var(--secondary)]/50 transition">
+                        <td className="px-6 py-4 font-semibold text-[var(--foreground)]">
                           {client.tradeName}
                           {client.segment && (
                             <span className="block text-xs font-normal text-slate-400 mt-0.5">
@@ -297,7 +297,7 @@ export default function ClientsPage() {
                             {getStatusLabel(client.status)}
                           </span>
                         </td>
-                        <td className="px-6 py-4 font-medium text-[#fafafa]">
+                        <td className="px-6 py-4 font-medium text-[var(--foreground)]">
                           {new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
                             currency: 'BRL',
@@ -314,7 +314,7 @@ export default function ClientsPage() {
                         <td className="px-6 py-4 text-right">
                           <Link
                             href={`/clients/${client.id}`}
-                            className="text-[#fafafa] hover:text-slate-300 font-semibold inline-flex items-center gap-1"
+                            className="text-[var(--foreground)] hover:text-slate-300 font-semibold inline-flex items-center gap-1"
                           >
                             Ver detalhes →
                           </Link>
@@ -332,10 +332,10 @@ export default function ClientsPage() {
                 const manager = users.find((u) => u.id === client.managerId);
 
                 return (
-                  <div key={client.id} className="border border-[#27272a] rounded-xl p-4 space-y-3 bg-[#09090b]">
+                  <div key={client.id} className="border border-[var(--border)] rounded-xl p-4 space-y-3 bg-[var(--card)]">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="font-bold text-[#fafafa]">{client.tradeName}</h4>
+                        <h4 className="font-bold text-[var(--foreground)]">{client.tradeName}</h4>
                         <p className="text-xs text-slate-400">{client.segment || 'Sem segmento'}</p>
                       </div>
                       <span className={`badge border ${getStatusBadgeClass(client.status)}`}>
@@ -370,7 +370,7 @@ export default function ClientsPage() {
                       </div>
                       <Link
                         href={`/clients/${client.id}`}
-                        className="text-[#fafafa] font-bold hover:underline"
+                        className="text-[var(--foreground)] font-bold hover:underline"
                       >
                         Acessar →
                       </Link>
@@ -394,11 +394,11 @@ export default function ClientsPage() {
 
               <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
                 <div className="pointer-events-auto w-screen max-w-xl">
-                  <form onSubmit={handleCreateClient} className="flex h-full flex-col bg-[#09090b] shadow-2xl border-l border-[#27272a]">
+                  <form onSubmit={handleCreateClient} className="flex h-full flex-col bg-[var(--card)] shadow-2xl border-l border-[var(--border)]">
                     {/* Header */}
-                    <div className="px-6 py-5 bg-[#18181b] border-b border-[#27272a] flex items-center justify-between">
+                    <div className="px-6 py-5 bg-[var(--secondary)] border-b border-[var(--border)] flex items-center justify-between">
                       <div>
-                        <h2 className="text-lg font-bold text-[#fafafa]" id="slide-over-title">
+                        <h2 className="text-lg font-bold text-[var(--foreground)]" id="slide-over-title">
                           Cadastrar Novo Cliente
                         </h2>
                         <p className="text-xs text-slate-400 mt-1">
@@ -480,7 +480,7 @@ export default function ClientsPage() {
                         </div>
                       </div>
 
-                      <hr className="border-[#27272a]" />
+                      <hr className="border-[var(--border)]" />
 
                       {/* Section 2: Operações */}
                       <div className="space-y-4">
@@ -533,7 +533,7 @@ export default function ClientsPage() {
                         </div>
                       </div>
 
-                      <hr className="border-[#27272a]" />
+                      <hr className="border-[var(--border)]" />
 
                       {/* Section 3: Links Estratégicos */}
                       <div className="space-y-4">
@@ -588,7 +588,7 @@ export default function ClientsPage() {
                         </div>
                       </div>
 
-                      <hr className="border-[#27272a]" />
+                      <hr className="border-[var(--border)]" />
 
                       {/* Section 4: Informações do Decisor */}
                       <div className="space-y-4">
@@ -631,7 +631,7 @@ export default function ClientsPage() {
                         </div>
                       </div>
 
-                      <hr className="border-[#27272a]" />
+                      <hr className="border-[var(--border)]" />
 
                       {/* Section 5: Notas Estratégicas */}
                       <div className="space-y-4">
@@ -679,7 +679,7 @@ export default function ClientsPage() {
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="px-6 py-4 bg-[#18181b] border-t border-[#27272a] flex items-center justify-end gap-3">
+                    <div className="px-6 py-4 bg-[var(--secondary)] border-t border-[var(--border)] flex items-center justify-end gap-3">
                       <button
                         type="button"
                         onClick={() => setDrawerOpen(false)}

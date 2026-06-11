@@ -94,8 +94,8 @@ export function ImportClientsModal({ onClose, onSuccess }: ImportClientsModalPro
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-[#09090b] rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
-        <div className="flex justify-between items-center p-5 border-b border-[#27272a]">
+      <div className="bg-[var(--card)] rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+        <div className="flex justify-between items-center p-5 border-b border-[var(--border)]">
           <h2 className="text-lg font-bold text-slate-200">Importar Clientes</h2>
           <button
             onClick={onClose}
@@ -111,7 +111,7 @@ export function ImportClientsModal({ onClose, onSuccess }: ImportClientsModalPro
         </div>
 
         <div className="p-6">
-          <div className="mb-6 p-4 bg-[#18181b] border border-[#3f3f46] rounded-lg text-sm text-slate-400">
+          <div className="mb-6 p-4 bg-[var(--secondary)] border border-[var(--border)] rounded-lg text-sm text-slate-400">
             <p className="mb-2 font-medium text-slate-300">Instruções:</p>
             <ol className="list-decimal pl-4 mb-3 space-y-1">
               <li>Baixe o modelo de planilha abaixo.</li>
@@ -122,7 +122,7 @@ export function ImportClientsModal({ onClose, onSuccess }: ImportClientsModalPro
             <a
               href="/template-clientes.csv"
               download="template-clientes.csv"
-              className="inline-flex items-center gap-1.5 text-[#fafafa] hover:text-slate-300 font-medium"
+              className="inline-flex items-center gap-1.5 text-[var(--foreground)] hover:text-slate-300 font-medium"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -144,9 +144,9 @@ export function ImportClientsModal({ onClose, onSuccess }: ImportClientsModalPro
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-md file:border-0
                 file:text-sm file:font-semibold
-                file:bg-[rgba(250,204,21,0.1)] file:text-[#fafafa]
+                file:bg-[rgba(250,204,21,0.1)] file:text-[var(--foreground)]
                 hover:file:bg-yellow-100 transition-colors
-                border border-[#3f3f46] rounded-lg p-1 cursor-pointer"
+                border border-[var(--border)] rounded-lg p-1 cursor-pointer"
             />
           </div>
 
@@ -157,7 +157,7 @@ export function ImportClientsModal({ onClose, onSuccess }: ImportClientsModalPro
           )}
         </div>
 
-        <div className="p-5 border-t border-[#27272a] flex justify-end gap-3 bg-[#18181b]">
+        <div className="p-5 border-t border-[var(--border)] flex justify-end gap-3 bg-[var(--secondary)]">
           <button
             onClick={onClose}
             disabled={loading}

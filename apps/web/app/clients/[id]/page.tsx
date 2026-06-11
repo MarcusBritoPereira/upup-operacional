@@ -508,11 +508,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       case 'paused':
         return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'inactive':
-        return 'bg-[#27272a] text-slate-300 border-[#3f3f46]';
+        return 'bg-[var(--border)] text-slate-300 border-[var(--border)]';
       case 'cancelled':
         return 'bg-rose-50 text-rose-700 border-rose-200';
       default:
-        return 'bg-[#18181b] text-slate-400 border-[#3f3f46]';
+        return 'bg-[var(--secondary)] text-slate-400 border-[var(--border)]';
     }
   };
 
@@ -554,7 +554,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             </svg>
             <div>{error || 'Cliente não encontrado.'}</div>
           </div>
-          <Link href="/clients" className="text-[#fafafa] font-bold hover:underline inline-block">
+          <Link href="/clients" className="text-[var(--foreground)] font-bold hover:underline inline-block">
             ← Voltar para Clientes
           </Link>
         </div>
@@ -587,7 +587,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-extrabold text-[#fafafa] sm:text-3xl">
+                <h1 className="text-2xl font-extrabold text-[var(--foreground)] sm:text-3xl">
                   {client.tradeName}
                 </h1>
                 <span className={`badge border ${getStatusBadgeClass(client.status)}`}>
@@ -601,7 +601,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             <div className="flex gap-2">
               <button
                 onClick={() => setDrawerOpen(true)}
-                className="px-4 py-2 border border-[#3f3f46] bg-[#09090b] rounded-lg text-slate-300 font-semibold text-sm hover:bg-[#18181b] transition inline-flex items-center gap-2"
+                className="px-4 py-2 border border-[var(--border)] bg-[var(--card)] rounded-lg text-slate-300 font-semibold text-sm hover:bg-[var(--secondary)] transition inline-flex items-center gap-2"
               >
                 <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
@@ -613,7 +613,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         </div>
 
         {/* Tab Headers */}
-        <div className="border-b border-[#3f3f46] flex gap-6 overflow-x-auto">
+        <div className="border-b border-[var(--border)] flex gap-6 overflow-x-auto">
           <button
             onClick={() => setActiveTab('cadastro')}
             className={`pb-3 text-sm font-bold border-b-2 transition whitespace-nowrap ${
@@ -625,7 +625,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <button
             onClick={() => setActiveTab('contratos')}
             className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'contratos' ? 'border-slate-900 text-[#fafafa]' : 'border-transparent text-slate-400 hover:text-slate-400'
+              activeTab === 'contratos' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-slate-400 hover:text-slate-400'
             }`}
           >
             Contratos e Escopo
@@ -633,7 +633,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <button
             onClick={() => setActiveTab('followup')}
             className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'followup' ? 'border-slate-900 text-[#fafafa]' : 'border-transparent text-slate-400 hover:text-slate-400'
+              activeTab === 'followup' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-slate-400 hover:text-slate-400'
             }`}
           >
             Diagnóstico Semanal
@@ -641,7 +641,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <button
             onClick={() => setActiveTab('action-plans')}
             className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'action-plans' ? 'border-slate-900 text-[#fafafa]' : 'border-transparent text-slate-400 hover:text-slate-400'
+              activeTab === 'action-plans' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-slate-400 hover:text-slate-400'
             }`}
           >
             Planos de Ação
@@ -649,7 +649,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <button
             onClick={() => setActiveTab('timeline')}
             className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'timeline' ? 'border-slate-900 text-[#fafafa]' : 'border-transparent text-slate-400 hover:text-slate-400'
+              activeTab === 'timeline' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-slate-400 hover:text-slate-400'
             }`}
           >
             Timeline
@@ -658,7 +658,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             <button
               onClick={() => setActiveTab('senhas')}
               className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === 'senhas' ? 'border-slate-900 text-[#fafafa]' : 'border-transparent text-slate-400 hover:text-slate-400'
+                activeTab === 'senhas' ? 'border-slate-900 text-[var(--foreground)]' : 'border-transparent text-slate-400 hover:text-slate-400'
               }`}
             >
               Senhas
@@ -670,7 +670,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         {activeTab === 'cadastro' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-6 space-y-5 shadow-xs">
+              <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-5 shadow-xs">
                 <h3 className="font-bold text-slate-200 border-b border-slate-50 pb-3 text-sm uppercase tracking-wider text-slate-400">
                   Informações Estratégicas
                 </h3>
@@ -696,13 +696,13 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 </div>
                 <div className="pt-2">
                   <span className="text-xs text-slate-400 font-medium block">Notas Estratégicas</span>
-                  <p className="text-sm text-slate-400 mt-1.5 bg-[#18181b] p-3 rounded-lg border border-[#27272a] whitespace-pre-wrap leading-relaxed">
+                  <p className="text-sm text-slate-400 mt-1.5 bg-[var(--secondary)] p-3 rounded-lg border border-[var(--border)] whitespace-pre-wrap leading-relaxed">
                     {client.strategicNotes || 'Nenhuma nota estratégica cadastrada.'}
                   </p>
                 </div>
               </div>
 
-              <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-6 space-y-4 shadow-xs">
+              <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-4 shadow-xs">
                 <h3 className="font-bold text-slate-200 border-b border-slate-50 pb-3 text-sm uppercase tracking-wider text-slate-400">
                   Atalhos Rápidos e Links
                 </h3>
@@ -711,31 +711,31 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     <a href={client.whatsappGroupUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg border border-emerald-100 bg-emerald-50/50 hover:bg-emerald-50 transition text-emerald-800 font-semibold text-sm">
                       <span className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">🟢</span>Grupo do WhatsApp
                     </a>
-                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[#27272a] bg-[#18181b] text-slate-400 text-sm"><span className="w-8 h-8 bg-[#27272a] rounded-full flex items-center justify-center">⚪</span>WhatsApp não configurado</div>}
+                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-slate-400 text-sm"><span className="w-8 h-8 bg-[var(--border)] rounded-full flex items-center justify-center">⚪</span>WhatsApp não configurado</div>}
 
                   {client.driveUrl ? (
                     <a href={client.driveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg border border-yellow-200 bg-[rgba(250,204,21,0.1)]/50 hover:bg-[rgba(250,204,21,0.1)] transition text-slate-200 font-semibold text-sm">
                       <span className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">📁</span>Pasta no Google Drive
                     </a>
-                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[#27272a] bg-[#18181b] text-slate-400 text-sm"><span className="w-8 h-8 bg-[#27272a] rounded-full flex items-center justify-center">⚪</span>Drive não configurado</div>}
+                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-slate-400 text-sm"><span className="w-8 h-8 bg-[var(--border)] rounded-full flex items-center justify-center">⚪</span>Drive não configurado</div>}
 
                   {client.clickupUrl ? (
                     <a href={client.clickupUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg border border-cyan-100 bg-cyan-50/50 hover:bg-cyan-50 transition text-cyan-800 font-semibold text-sm">
                       <span className="w-8 h-8 bg-cyan-100 rounded-full flex items-center justify-center">🎯</span>Pasta no ClickUp
                     </a>
-                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[#27272a] bg-[#18181b] text-slate-400 text-sm"><span className="w-8 h-8 bg-[#27272a] rounded-full flex items-center justify-center">⚪</span>ClickUp não configurado</div>}
+                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-slate-400 text-sm"><span className="w-8 h-8 bg-[var(--border)] rounded-full flex items-center justify-center">⚪</span>ClickUp não configurado</div>}
 
                   {client.instagramUrl ? (
                     <a href={client.instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg border border-pink-100 bg-pink-50/50 hover:bg-pink-50 transition text-pink-800 font-semibold text-sm">
                       <span className="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center">📸</span>Instagram Comercial
                     </a>
-                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[#27272a] bg-[#18181b] text-slate-400 text-sm"><span className="w-8 h-8 bg-[#27272a] rounded-full flex items-center justify-center">⚪</span>Instagram não configurado</div>}
+                  ) : <div className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-slate-400 text-sm"><span className="w-8 h-8 bg-[var(--border)] rounded-full flex items-center justify-center">⚪</span>Instagram não configurado</div>}
                 </div>
               </div>
             </div>
 
             <div className="space-y-6">
-              <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-6 space-y-4 shadow-xs">
+              <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-4 shadow-xs">
                 <h3 className="font-bold text-slate-200 border-b border-slate-50 pb-3 text-sm uppercase tracking-wider text-slate-400">Atribuições e Squad</h3>
                 <div className="space-y-3">
                   <div>
@@ -751,7 +751,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                   </div>
               </div>
 
-              <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-6 space-y-4 shadow-xs">
+              <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-4 shadow-xs">
                 <h3 className="font-bold text-slate-200 border-b border-slate-50 pb-3 text-sm uppercase tracking-wider text-slate-400">Contato (Decisor)</h3>
                 <div className="space-y-2 text-sm text-slate-300">
                   <div><span className="text-xs text-slate-400 block font-medium">Nome</span><span className="font-semibold text-slate-200 mt-0.5 block">{client.decisionMakerName || '—'}</span></div>
@@ -766,7 +766,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         {/* Tab 2 Content: Contracts & Scope */}
         {activeTab === 'contratos' && (
           <div className="space-y-6">
-            <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-6 space-y-4 shadow-xs">
+            <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-4 shadow-xs">
               <div className="flex justify-between items-center pb-2 border-b border-slate-50">
                 <h3 className="font-bold text-slate-200 text-sm uppercase tracking-wider text-slate-400">Contratos Ativos e Histórico</h3>
                 <button onClick={() => setContractModalOpen(true)} className="btn-primary py-1.5 px-3 text-xs shadow-xs">Adicionar Contrato</button>
@@ -775,18 +775,18 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-sm">
                     <thead>
-                      <tr className="bg-[#18181b] text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-[#27272a]">
+                      <tr className="bg-[var(--secondary)] text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-[var(--border)]">
                         <th className="px-4 py-3">Início</th><th className="px-4 py-3">Fim</th><th className="px-4 py-3">Valor Mensal</th><th className="px-4 py-3">% GEE</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Notas</th><th className="px-4 py-3 text-right">Ações</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50 text-slate-300">
                       {contracts.map(c => (
-                        <tr key={c.id} className="hover:bg-[#18181b]/20 transition">
+                        <tr key={c.id} className="hover:bg-[var(--secondary)]/20 transition">
                           <td className="px-4 py-3">{new Date(c.startDate).toLocaleDateString('pt-BR')}</td>
                           <td className="px-4 py-3">{c.endDate ? new Date(c.endDate).toLocaleDateString('pt-BR') : 'Sem prazo'}</td>
-                          <td className="px-4 py-3 font-semibold text-[#fafafa]">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.monthlyValue)}</td>
+                          <td className="px-4 py-3 font-semibold text-[var(--foreground)]">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.monthlyValue)}</td>
                           <td className="px-4 py-3 font-medium text-slate-300">{c.geePercentage ? `${c.geePercentage}%` : '—'}</td>
-                          <td className="px-4 py-3"><span className={`badge text-[10px] ${c.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-[#27272a] text-slate-400'}`}>{c.status === 'active' ? 'Ativo' : 'Encerrado'}</span></td>
+                          <td className="px-4 py-3"><span className={`badge text-[10px] ${c.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-[var(--border)] text-slate-400'}`}>{c.status === 'active' ? 'Ativo' : 'Encerrado'}</span></td>
                           <td className="px-4 py-3 text-xs text-slate-400 max-w-[200px] truncate">{c.notes || '—'}</td>
                           <td className="px-4 py-3 text-right"><button onClick={() => handleDeleteContract(c.id)} className="text-rose-600 hover:text-rose-800 text-xs font-bold">Remover</button></td>
                         </tr>
@@ -797,7 +797,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
               )}
             </div>
 
-            <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-6 space-y-4 shadow-xs">
+            <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-4 shadow-xs">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 border-b border-slate-50 gap-4">
                 <div>
                   <h3 className="font-bold text-slate-200 text-sm uppercase tracking-wider text-slate-400">Escopo Operacional</h3>
@@ -817,21 +817,21 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-sm">
                     <thead>
-                      <tr className="bg-[#18181b] text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-[#27272a]">
+                      <tr className="bg-[var(--secondary)] text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-[var(--border)]">
                         <th className="px-4 py-3">Tipo de Entregável</th><th className="px-4 py-3 text-center">Contratado</th><th className="px-4 py-3 text-center">Concluído</th><th className="px-4 py-3 text-center">Em Progresso</th><th className="px-4 py-3 text-center">Atrasado</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Obs</th><th className="px-4 py-3 text-right">Ações</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50 text-slate-300">
                       {selectedCycle.monthlyDeliverables.map(d => (
-                        <tr key={d.id} className="hover:bg-[#18181b]/20 transition">
-                          <td className="px-4 py-3 font-semibold text-[#fafafa]">{d.deliverableType.name}</td>
+                        <tr key={d.id} className="hover:bg-[var(--secondary)]/20 transition">
+                          <td className="px-4 py-3 font-semibold text-[var(--foreground)]">{d.deliverableType.name}</td>
                           <td className="px-4 py-3 text-center font-bold">{d.contractedQuantity}</td>
                           <td className="px-4 py-3 text-center text-emerald-600 font-bold">{d.deliveredQuantity}</td>
-                          <td className="px-4 py-3 text-center text-[#fafafa] font-bold">{d.inProgressQuantity}</td>
+                          <td className="px-4 py-3 text-center text-[var(--foreground)] font-bold">{d.inProgressQuantity}</td>
                           <td className="px-4 py-3 text-center text-slate-400 font-medium">{d.delayedQuantity}</td>
-                          <td className="px-4 py-3"><span className={`badge text-[10px] ${d.status === 'completed' ? 'bg-emerald-50 text-emerald-700' : d.status === 'in_progress' ? 'bg-[rgba(250,204,21,0.1)] text-slate-200' : d.status === 'delayed' ? 'bg-rose-50 text-rose-700' : 'bg-[#27272a]'}`}>{d.status === 'completed' ? 'Concluído' : d.status === 'in_progress' ? 'Em Progresso' : d.status === 'delayed' ? 'Atrasado' : 'Pendente'}</span></td>
+                          <td className="px-4 py-3"><span className={`badge text-[10px] ${d.status === 'completed' ? 'bg-emerald-50 text-emerald-700' : d.status === 'in_progress' ? 'bg-[rgba(250,204,21,0.1)] text-slate-200' : d.status === 'delayed' ? 'bg-rose-50 text-rose-700' : 'bg-[var(--border)]'}`}>{d.status === 'completed' ? 'Concluído' : d.status === 'in_progress' ? 'Em Progresso' : d.status === 'delayed' ? 'Atrasado' : 'Pendente'}</span></td>
                           <td className="px-4 py-3 text-slate-400 text-sm">{d.notes || '-'}</td>
-                          <td className="px-4 py-3 text-right"><button onClick={() => handleEditDeliverable(d)} className="text-[#fafafa] hover:text-slate-300 text-xs font-bold">Lançar</button></td>
+                          <td className="px-4 py-3 text-right"><button onClick={() => handleEditDeliverable(d)} className="text-[var(--foreground)] hover:text-slate-300 text-xs font-bold">Lançar</button></td>
                         </tr>
                       ))}
                     </tbody>
@@ -844,7 +844,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
         {/* Tab 3 Content: Weekly Diagnosis History */}
         {activeTab === 'followup' && (
-          <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-6 space-y-5 shadow-xs">
+          <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-5 shadow-xs">
             <div className="flex justify-between items-center pb-2 border-b border-slate-50">
               <div>
                 <h3 className="font-bold text-slate-200 text-sm uppercase tracking-wider text-slate-400">
@@ -865,7 +865,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             ) : (
               <div className="space-y-4">
                 {followups.map((f) => (
-                  <div key={f.id} className="border border-[#27272a] rounded-xl p-4 space-y-3 bg-[#18181b]/50 hover:bg-[#18181b]/80 transition">
+                  <div key={f.id} className="border border-[var(--border)] rounded-xl p-4 space-y-3 bg-[var(--secondary)]/50 hover:bg-[var(--secondary)]/80 transition">
                     <div className="flex justify-between items-start flex-wrap gap-2">
                       <div>
                         <span className="font-bold text-slate-200 text-sm">
@@ -881,7 +881,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-slate-400 bg-[#09090b] p-2.5 rounded-lg border border-[#27272a]">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-slate-400 bg-[var(--card)] p-2.5 rounded-lg border border-[var(--border)]">
                       <div>Grupo Whats: <span className="font-semibold text-slate-200">{f.groupActivated === 'yes' ? 'Sim' : 'Não'}</span></div>
                       <div>Respondeu: <span className="font-semibold text-slate-200">{f.clientResponded === 'yes' ? 'Sim' : 'Não'}</span></div>
                       <div>Prazo interno: <span className="font-semibold text-slate-200">{f.agencyRespondedOnTime === 'yes' ? 'Sim' : 'Não'}</span></div>
@@ -919,7 +919,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
         {/* Tab 4 Content: Action Plans */}
         {activeTab === 'action-plans' && (
-          <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-6 space-y-5 shadow-xs">
+          <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-5 shadow-xs">
             <div className="flex justify-between items-center pb-2 border-b border-slate-50">
               <div>
                 <h3 className="font-bold text-slate-200 text-sm uppercase tracking-wider text-slate-400">
@@ -940,7 +940,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             ) : (
               <div className="space-y-4">
                 {actionPlans.map((plan) => (
-                  <div key={plan.id} className="border border-[#27272a] rounded-xl p-4 space-y-3 bg-[#18181b]/50 hover:bg-[#18181b]/80 transition">
+                  <div key={plan.id} className="border border-[var(--border)] rounded-xl p-4 space-y-3 bg-[var(--secondary)]/50 hover:bg-[var(--secondary)]/80 transition">
                     <div className="flex justify-between items-start flex-wrap gap-2">
                       <div className="min-w-0 flex-1">
                         <span className="font-bold text-slate-200 text-sm block truncate">⚠️ {plan.problem}</span>
@@ -950,19 +950,19 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                       </div>
                       <div className="flex gap-2">
                         <span className={`badge border font-bold text-xs ${
-                          plan.status === 'completed' ? 'bg-emerald-50 text-emerald-700' : plan.status === 'in_progress' ? 'bg-[rgba(250,204,21,0.1)] text-slate-200' : 'bg-[#27272a] text-slate-300'
+                          plan.status === 'completed' ? 'bg-emerald-50 text-emerald-700' : plan.status === 'in_progress' ? 'bg-[rgba(250,204,21,0.1)] text-slate-200' : 'bg-[var(--border)] text-slate-300'
                         }`}>
                           {plan.status === 'completed' ? 'Concluído' : plan.status === 'in_progress' ? 'Em progresso' : 'Aberto'}
                         </span>
                         <span className={`badge border font-bold text-xs ${
-                          plan.priority === 'critical' || plan.priority === 'high' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-[#18181b]'
+                          plan.priority === 'critical' || plan.priority === 'high' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-[var(--secondary)]'
                         }`}>
                           {plan.priority}
                         </span>
                       </div>
                     </div>
 
-                    <div className="text-xs space-y-1 text-slate-400 bg-[#09090b] p-3 rounded-lg border border-[#27272a]">
+                    <div className="text-xs space-y-1 text-slate-400 bg-[var(--card)] p-3 rounded-lg border border-[var(--border)]">
                       <div><strong>Causa provável:</strong> {plan.probableCause || 'Não informada'}</div>
                       <div><strong>Ação corretiva:</strong> {plan.action}</div>
                       <div><strong>Prazo final:</strong> {plan.dueDate ? new Date(plan.dueDate).toLocaleDateString('pt-BR') : 'Sem prazo'}</div>
@@ -1003,7 +1003,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
         {/* Tab 5 Content: Timeline */}
         {activeTab === 'timeline' && (
-          <div className="bg-[#09090b] rounded-xl border border-[#27272a] p-6 space-y-5 shadow-xs">
+          <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-5 shadow-xs">
             <h3 className="font-bold text-slate-200 text-sm uppercase tracking-wider text-slate-400 border-b border-slate-50 pb-2">
               Linha do Tempo e Histórico do Cliente
             </h3>
@@ -1011,11 +1011,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             {timeline.length === 0 ? (
               <p className="text-slate-400 text-sm italic py-4 text-center">Nenhum evento registrado no histórico.</p>
             ) : (
-              <div className="relative border-l-2 border-[#27272a] ml-3 pl-6 space-y-6">
+              <div className="relative border-l-2 border-[var(--border)] ml-3 pl-6 space-y-6">
                 {timeline.map((event) => (
                   <div key={event.id} className="relative">
                     {/* Circle Dot on Timeline */}
-                    <span className="absolute -left-[31px] top-1 w-4.5 h-4.5 rounded-full border-2 border-white bg-yellow-400 shadow-xs flex items-center justify-center text-[8px] text-[#fafafa]">
+                    <span className="absolute -left-[31px] top-1 w-4.5 h-4.5 rounded-full border-2 border-white bg-yellow-400 shadow-xs flex items-center justify-center text-[8px] text-[var(--foreground)]">
                       ✓
                     </span>
                     <div className="space-y-1">
@@ -1058,9 +1058,9 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
               <div onClick={() => setDrawerOpen(false)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"></div>
               <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
                 <div className="pointer-events-auto w-screen max-w-xl">
-                  <form onSubmit={handleUpdateClient} className="flex h-full flex-col bg-[#09090b] shadow-2xl border-l border-[#27272a]">
-                    <div className="px-6 py-5 bg-[#18181b] border-b border-[#27272a] flex items-center justify-between">
-                      <div><h2 className="text-lg font-bold text-[#fafafa]">Editar Cliente</h2></div>
+                  <form onSubmit={handleUpdateClient} className="flex h-full flex-col bg-[var(--card)] shadow-2xl border-l border-[var(--border)]">
+                    <div className="px-6 py-5 bg-[var(--secondary)] border-b border-[var(--border)] flex items-center justify-between">
+                      <div><h2 className="text-lg font-bold text-[var(--foreground)]">Editar Cliente</h2></div>
                       <button type="button" onClick={() => setDrawerOpen(false)} className="text-slate-400 hover:text-slate-400"><svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
                     </div>
                     <div className="flex-1 overflow-y-auto p-6 space-y-5">
@@ -1088,7 +1088,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                           </div>
                         )}
                       </div>
-                      <hr className="border-[#27272a]" />
+                      <hr className="border-[var(--border)]" />
                       <div className="space-y-4">
                         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">2. Contato e Endereço</h3>
                         <div><label className="form-label">Nome do Decisor</label><input type="text" value={decisionMakerName} onChange={(e) => setDecisionMakerName(e.target.value)} className="form-input" /></div>
@@ -1101,7 +1101,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                           <div><label className="form-label">Estado (UF)</label><input type="text" value={state} onChange={(e) => setState(e.target.value)} className="form-input" maxLength={2} /></div>
                         </div>
                       </div>
-                      <hr className="border-[#27272a]" />
+                      <hr className="border-[var(--border)]" />
                       <div className="space-y-4">
                         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">3. Informações Estratégicas e Links</h3>
                         <div className="grid grid-cols-2 gap-4">
@@ -1126,7 +1126,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                           <div><label className="form-label">Instagram Comercial</label><input type="url" value={instagramUrl} onChange={(e) => setInstagramUrl(e.target.value)} className="form-input" placeholder="https://instagram.com/..." /></div>
                         </div>
                       </div>
-                      <hr className="border-[#27272a]" />
+                      <hr className="border-[var(--border)]" />
                       <div className="space-y-4">
                         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">4. Atribuição</h3>
                         <div className="grid grid-cols-2 gap-4">
@@ -1140,7 +1140,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                         </div>
                       </div>
                     </div>
-                    <div className="px-6 py-4 bg-[#18181b] border-t border-[#27272a] flex items-center justify-end gap-3">
+                    <div className="px-6 py-4 bg-[var(--secondary)] border-t border-[var(--border)] flex items-center justify-end gap-3">
                       <button type="button" onClick={() => setDrawerOpen(false)} className="px-4 py-2 text-sm text-slate-400">Cancelar</button>
                       <button type="submit" className="btn-primary">Salvar Alterações</button>
                     </div>
@@ -1155,16 +1155,16 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         {contractModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div onClick={() => setContractModalOpen(false)} className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs"></div>
-            <div className="bg-[#09090b] rounded-xl shadow-2xl border border-[#27272a] max-w-md w-full z-10 overflow-hidden">
+            <div className="bg-[var(--card)] rounded-xl shadow-2xl border border-[var(--border)] max-w-md w-full z-10 overflow-hidden">
               <form onSubmit={handleAddContract}>
-                <div className="px-6 py-5 bg-[#18181b] border-b border-[#27272a] flex justify-between items-center"><h3 className="font-bold text-[#fafafa]">Novo Contrato</h3></div>
+                <div className="px-6 py-5 bg-[var(--secondary)] border-b border-[var(--border)] flex justify-between items-center"><h3 className="font-bold text-[var(--foreground)]">Novo Contrato</h3></div>
                 <div className="p-6 space-y-4">
                   {formError && <div className="bg-rose-50 text-rose-800 p-2.5 rounded text-xs">{formError}</div>}
                   <div className="grid grid-cols-2 gap-4">
                     <div><label className="form-label">Valor Mensal (R$) *</label><input type="text" required value={contractValue} onChange={(e) => setContractValue(formatCurrencyInput(e.target.value))} className="form-input" placeholder="0,00" /></div>
                     <div><label className="form-label">% Imposto</label><input type="number" step="0.01" value={contractTaxPercentage} onChange={(e) => setContractTaxPercentage(e.target.value)} className="form-input" placeholder="Opcional" /></div>
                   </div>
-                  <div className="space-y-2 border border-[#27272a] p-3 rounded-lg bg-[#09090b]">
+                  <div className="space-y-2 border border-[var(--border)] p-3 rounded-lg bg-[var(--card)]">
                     <label className="form-label">Repasse GEE</label>
                     <div className="flex gap-4 mb-2">
                       <label className="flex items-center gap-2 text-sm"><input type="radio" name="geeType" checked={contractGeeType === 'percentage'} onChange={() => setContractGeeType('percentage')} className="text-yellow-500 focus:ring-yellow-500 h-4 w-4 border-gray-300" /> Porcentagem (%)</label>
@@ -1182,7 +1182,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                   </div>
                   <div><label className="form-label">Notas</label><textarea rows={2} value={contractNotes} onChange={(e) => setContractNotes(e.target.value)} className="form-input resize-none" /></div>
                 </div>
-                <div className="px-6 py-4 bg-[#18181b] border-t border-[#27272a] flex justify-end gap-3">
+                <div className="px-6 py-4 bg-[var(--secondary)] border-t border-[var(--border)] flex justify-end gap-3">
                   <button type="button" onClick={() => setContractModalOpen(false)} className="text-xs font-semibold">Cancelar</button>
                   <button type="submit" disabled={submitting} className="btn-primary text-xs py-1.5 px-3">Salvar Contrato</button>
                 </div>
@@ -1195,9 +1195,9 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         {deliverableModalOpen && editingDeliverable && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div onClick={() => setDeliverableModalOpen(false)} className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs"></div>
-            <div className="bg-[#09090b] rounded-xl shadow-2xl border border-[#27272a] max-w-md w-full z-10 overflow-hidden">
+            <div className="bg-[var(--card)] rounded-xl shadow-2xl border border-[var(--border)] max-w-md w-full z-10 overflow-hidden">
               <form onSubmit={handleUpdateDeliverable}>
-                <div className="px-6 py-5 bg-[#18181b] border-b border-[#27272a] flex justify-between items-center"><h3 className="font-bold text-[#fafafa]">{editingDeliverable.deliverableType.name}</h3></div>
+                <div className="px-6 py-5 bg-[var(--secondary)] border-b border-[var(--border)] flex justify-between items-center"><h3 className="font-bold text-[var(--foreground)]">{editingDeliverable.deliverableType.name}</h3></div>
                 <div className="p-6 space-y-4">
                   {formError && <div className="bg-rose-50 text-rose-800 p-2.5 rounded text-xs">{formError}</div>}
                   <div className="grid grid-cols-2 gap-4">
@@ -1216,7 +1216,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                   </div>
                   <div><label className="form-label">Observações</label><textarea rows={2} value={deliverableNotes} onChange={(e) => setDeliverableNotes(e.target.value)} className="form-input resize-none" /></div>
                 </div>
-                <div className="px-6 py-4 bg-[#18181b] border-t border-[#27272a] flex justify-end gap-3">
+                <div className="px-6 py-4 bg-[var(--secondary)] border-t border-[var(--border)] flex justify-end gap-3">
                   <button type="button" onClick={() => setDeliverableModalOpen(false)} className="text-xs font-semibold">Cancelar</button>
                   <button type="submit" disabled={submitting} className="btn-primary text-xs py-1.5 px-3">Atualizar Metas</button>
                 </div>
@@ -1229,11 +1229,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         {followupModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div onClick={() => setFollowupModalOpen(false)} className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs"></div>
-            <div className="bg-[#09090b] rounded-xl shadow-2xl border border-[#27272a] max-w-lg w-full z-10 overflow-hidden">
+            <div className="bg-[var(--card)] rounded-xl shadow-2xl border border-[var(--border)] max-w-lg w-full z-10 overflow-hidden">
               <form onSubmit={handleSubmitFollowup}>
-                <div className="px-6 py-5 bg-[#18181b] border-b border-[#27272a] flex justify-between items-center">
+                <div className="px-6 py-5 bg-[var(--secondary)] border-b border-[var(--border)] flex justify-between items-center">
                   <div>
-                    <h3 className="font-bold text-[#fafafa]">Diagnóstico Semanal</h3>
+                    <h3 className="font-bold text-[var(--foreground)]">Diagnóstico Semanal</h3>
                     <p className="text-xs text-slate-400 mt-0.5">{client.tradeName}</p>
                   </div>
                   <button type="button" onClick={() => setFollowupModalOpen(false)} className="text-slate-400 hover:text-slate-650">
@@ -1247,7 +1247,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     <div><label className="form-label">Data de Início</label><input type="date" required value={weekStart} onChange={(e) => setWeekStart(e.target.value)} className="form-input" /></div>
                     <div><label className="form-label">Data de Fim</label><input type="date" required value={weekEnd} onChange={(e) => setWeekEnd(e.target.value)} className="form-input" /></div>
                   </div>
-                  <hr className="border-[#27272a]" />
+                  <hr className="border-[var(--border)]" />
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="form-label">Grupo Whats Ativo? *</label>
@@ -1278,22 +1278,22 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                   </div>
                   <div className="flex flex-col gap-2 pt-2">
                     <label className="flex items-center gap-2 text-sm font-semibold">
-                      <input type="checkbox" checked={hasDelayedDelivery} onChange={(e) => setHasDelayedDelivery(e.target.checked)} className="rounded border-[#52525b] text-yellow-500 focus:ring-yellow-500 w-4.5 h-4.5" />
+                      <input type="checkbox" checked={hasDelayedDelivery} onChange={(e) => setHasDelayedDelivery(e.target.checked)} className="rounded border-[var(--border)] text-yellow-500 focus:ring-yellow-500 w-4.5 h-4.5" />
                       Houve atraso em algum entregável?
                     </label>
                     <label className="flex items-center gap-2 text-sm font-semibold">
-                      <input type="checkbox" checked={clientShowedDissatisfaction} onChange={(e) => setClientShowedDissatisfaction(e.target.checked)} className="rounded border-[#52525b] text-yellow-500 focus:ring-yellow-500 w-4.5 h-4.5" />
+                      <input type="checkbox" checked={clientShowedDissatisfaction} onChange={(e) => setClientShowedDissatisfaction(e.target.checked)} className="rounded border-[var(--border)] text-yellow-500 focus:ring-yellow-500 w-4.5 h-4.5" />
                       Cliente manifestou insatisfação?
                     </label>
                   </div>
-                  <hr className="border-[#27272a]" />
+                  <hr className="border-[var(--border)]" />
                   <div><label className="form-label">Risco de Churn (Sinalizado pelo time)</label><select value={churnRisk} onChange={(e) => setChurnRisk(e.target.value)} className="form-input"><option value="none">Nenhum Risco Aparente</option><option value="low">Risco Baixo (Insatisfação pontual)</option><option value="medium">Risco Médio (Vários desalinhamentos)</option><option value="high">Risco Alto (Aviso de cancelamento / muita insatisfação)</option></select></div>
                   <div><label className="form-label">Quantidade de Conteúdo Gerado</label><input type="number" min="0" value={contentGeneratedQuantity} onChange={(e) => setContentGeneratedQuantity(e.target.value)} className="form-input" placeholder="Ex: 15" /></div>
                   <div><label className="form-label">Observações</label><textarea rows={2} value={managerNotes} onChange={(e) => setManagerNotes(e.target.value)} className="form-input resize-none" /></div>
                   <div><label className="form-label">Ação Recomendada</label><textarea rows={2} value={recommendedAction} onChange={(e) => setRecommendedAction(e.target.value)} className="form-input resize-none" /></div>
                 </div>
 
-                <div className="px-6 py-4 bg-[#18181b] border-t border-[#27272a] flex justify-end gap-3">
+                <div className="px-6 py-4 bg-[var(--secondary)] border-t border-[var(--border)] flex justify-end gap-3">
                   <button type="button" onClick={() => setFollowupModalOpen(false)} className="text-xs font-semibold">Cancelar</button>
                   <button type="submit" disabled={submitting} className="btn-primary text-xs py-1.5 px-3">Enviar Diagnóstico</button>
                 </div>
@@ -1306,10 +1306,10 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         {actionPlanModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div onClick={() => setActionPlanModalOpen(false)} className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs"></div>
-            <div className="bg-[#09090b] rounded-xl shadow-2xl border border-[#27272a] max-w-md w-full z-10 overflow-hidden">
+            <div className="bg-[var(--card)] rounded-xl shadow-2xl border border-[var(--border)] max-w-md w-full z-10 overflow-hidden">
               <form onSubmit={handleAddActionPlan}>
-                <div className="px-6 py-5 bg-[#18181b] border-b border-[#27272a] flex justify-between items-center">
-                  <h3 className="font-bold text-[#fafafa]">Criar Plano de Ação</h3>
+                <div className="px-6 py-5 bg-[var(--secondary)] border-b border-[var(--border)] flex justify-between items-center">
+                  <h3 className="font-bold text-[var(--foreground)]">Criar Plano de Ação</h3>
                 </div>
                 <div className="p-6 space-y-4">
                   {formError && <div className="bg-rose-50 text-rose-800 p-2.5 rounded text-xs">{formError}</div>}
@@ -1348,7 +1348,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     <input type="date" value={planDueDate} onChange={(e) => setPlanDueDate(e.target.value)} className="form-input" />
                   </div>
                 </div>
-                <div className="px-6 py-4 bg-[#18181b] border-t border-[#27272a] flex justify-end gap-3">
+                <div className="px-6 py-4 bg-[var(--secondary)] border-t border-[var(--border)] flex justify-end gap-3">
                   <button type="button" onClick={() => setActionPlanModalOpen(false)} className="text-xs font-semibold">Cancelar</button>
                   <button type="submit" disabled={submitting} className="btn-primary text-xs py-1.5 px-3">Salvar Plano</button>
                 </div>
@@ -1361,10 +1361,10 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         {resolvePlanModalOpen && selectedPlan && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div onClick={() => setResolvePlanModalOpen(false)} className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs"></div>
-            <div className="bg-[#09090b] rounded-xl shadow-2xl border border-[#27272a] max-w-md w-full z-10 overflow-hidden">
+            <div className="bg-[var(--card)] rounded-xl shadow-2xl border border-[var(--border)] max-w-md w-full z-10 overflow-hidden">
               <form onSubmit={handleUpdateActionPlanStatus}>
-                <div className="px-6 py-5 bg-[#18181b] border-b border-[#27272a] flex justify-between items-center">
-                  <h3 className="font-bold text-[#fafafa]">
+                <div className="px-6 py-5 bg-[var(--secondary)] border-b border-[var(--border)] flex justify-between items-center">
+                  <h3 className="font-bold text-[var(--foreground)]">
                     {planTargetStatus === 'completed' ? 'Concluir Plano de Ação' : 'Cancelar Plano de Ação'}
                   </h3>
                 </div>
@@ -1388,7 +1388,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     </div>
                   )}
                 </div>
-                <div className="px-6 py-4 bg-[#18181b] border-t border-[#27272a] flex justify-end gap-3">
+                <div className="px-6 py-4 bg-[var(--secondary)] border-t border-[var(--border)] flex justify-end gap-3">
                   <button type="button" onClick={() => setResolvePlanModalOpen(false)} className="text-xs font-semibold">Cancelar</button>
                   <button type="submit" disabled={submitting} className="btn-primary text-xs py-1.5 px-3">
                     {planTargetStatus === 'completed' ? 'Marcar como Concluído' : 'Confirmar Cancelamento'}

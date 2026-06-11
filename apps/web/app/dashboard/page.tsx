@@ -774,7 +774,7 @@ export default function DashboardPage() {
 function EmptyState({ label }: { label: string }) {
   return (
     <div className="empty-state">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#52525b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--border)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
         <path d="M8 15s1.5-2 4-2 4 2 4 2" />
         <line x1="9" y1="9" x2="9.01" y2="9" />

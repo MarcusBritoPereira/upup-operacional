@@ -20,7 +20,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         background: 'var(--background)',
       }}>
         <div style={{
-          width: 36, height: 36, border: '3px solid #27272a',
+          width: 36, height: 36, border: '3px solid var(--border)',
           borderTopColor: '#facc15', borderRadius: '50%',
           animation: 'spin 0.8s linear infinite',
         }} />

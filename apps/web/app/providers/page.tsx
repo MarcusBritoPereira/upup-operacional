@@ -94,9 +94,9 @@ export default function ProvidersPage() {
   return (
     <DashboardLayout>
       <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#09090b] p-6 rounded-xl border border-[#27272a] shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[var(--card)] p-6 rounded-xl border border-[var(--border)] shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-[#fafafa] tracking-tight">Prestadores de Serviço</h1>
+          <h1 className="text-2xl font-bold text-[var(--foreground)] tracking-tight">Prestadores de Serviço</h1>
           <p className="text-slate-400 text-sm mt-1">Gerencie a rede de freelancers e parceiros</p>
         </div>
         <button
@@ -112,16 +112,16 @@ export default function ProvidersPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {providers.map((provider) => (
-          <div key={provider.id} className="bg-[#09090b] p-5 rounded-xl shadow-xs border border-[#27272a] hover:border-[#3f3f46] transition">
+          <div key={provider.id} className="bg-[var(--card)] p-5 rounded-xl shadow-xs border border-[var(--border)] hover:border-[var(--border)] transition">
             <div className="flex justify-between items-start mb-4">
-              <div className="w-10 h-10 rounded-full bg-[rgba(250,204,21,0.1)] text-[#fafafa] flex items-center justify-center font-bold text-sm">
+              <div className="w-10 h-10 rounded-full bg-[rgba(250,204,21,0.1)] text-[var(--foreground)] flex items-center justify-center font-bold text-sm">
                 {provider.name.charAt(0).toUpperCase()}
               </div>
               <button onClick={() => handleDelete(provider.id)} className="text-slate-400 hover:text-rose-500 p-1">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
               </button>
             </div>
-            <h3 className="font-bold text-[#fafafa] text-lg">{provider.name}</h3>
+            <h3 className="font-bold text-[var(--foreground)] text-lg">{provider.name}</h3>
             {provider.role && (
               <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
                 {provider.role}
@@ -138,9 +138,9 @@ export default function ProvidersPage() {
               </div>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-[#27272a]">
+            <div className="mt-4 pt-4 border-t border-[var(--border)]">
               <details className="group">
-                <summary className="text-sm font-medium text-slate-400 cursor-pointer hover:text-[#fafafa] transition flex items-center gap-1 select-none outline-none">
+                <summary className="text-sm font-medium text-slate-400 cursor-pointer hover:text-[var(--foreground)] transition flex items-center gap-1 select-none outline-none">
                   <svg className="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
                   Atende {provider.clientLinks?.length || 0} cliente(s)
                 </summary>
@@ -154,7 +154,7 @@ export default function ProvidersPage() {
                         <div className={`w-1.5 h-1.5 rounded-full ${link.client.status === 'active' ? 'bg-emerald-500' : 'bg-slate-600'}`}></div>
                         {link.client.tradeName}
                         {isRepeated && link.role && (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#27272a] text-slate-400">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-[var(--border)] text-slate-400">
                             {link.role === 'ServiceProvider' ? provider.role : link.role}
                           </span>
                         )}
@@ -171,7 +171,7 @@ export default function ProvidersPage() {
         ))}
 
         {providers.length === 0 && (
-          <div className="col-span-full py-12 text-center text-slate-400 bg-[#09090b] rounded-xl border border-[#27272a] border-dashed">
+          <div className="col-span-full py-12 text-center text-slate-400 bg-[var(--card)] rounded-xl border border-[var(--border)] border-dashed">
             Nenhum prestador de serviço cadastrado.
           </div>
         )}
@@ -179,9 +179,9 @@ export default function ProvidersPage() {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#09090b] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-[#27272a] flex items-center justify-between">
-              <h2 className="text-lg font-bold text-[#fafafa]">Novo Prestador</h2>
+          <div className="bg-[var(--card)] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-[var(--border)] flex items-center justify-between">
+              <h2 className="text-lg font-bold text-[var(--foreground)]">Novo Prestador</h2>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-400 transition">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
