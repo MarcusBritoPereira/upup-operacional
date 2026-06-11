@@ -106,6 +106,30 @@ npm run build
 
 A pipeline em `.github/workflows/ci.yml` executa essas verificações com PostgreSQL 15 e também valida drift entre as migrations e o schema Prisma.
 
+
+## Produção
+
+Antes de publicar, copie `.env.production.example` para `.env.production` no ambiente de deploy e preencha todos os segredos com valores fortes. O compose de produção não aceita fallbacks para banco, JWT ou criptografia de credenciais.
+
+```bash
+npm run migration:check
+npm run lint
+npm run typecheck
+npm test
+npm run test:e2e
+npm run build
+./scripts/deploy.sh
+```
+
+O deploy cria backup do PostgreSQL, executa migrations antes de confirmar os serviços e valida os health checks locais. Consulte `docs/PRODUCTION_RUNBOOK.md` para rollback, backups e verificações pós-deploy.
+
+### Segurança em produção
+
+- `COOKIE_SECURE=true` e `REQUIRE_TRUSTED_ORIGIN=true` devem permanecer ativos.
+- `CREDENTIALS_ENCRYPTION_KEY` protege senhas de clientes em repouso e deve ficar em cofre seguro.
+- A visualização de senhas de clientes é auditada em `credential_access_logs`.
+- Não use valores padrão de banco, JWT ou secrets em VPS/staging/produção.
+
 ## Health checks
 
 - `GET /health/live` — processo da API está vivo.
@@ -162,9 +186,10 @@ A pipeline em `.github/workflows/ci.yml` executa essas verificações com Postgr
 - [x] Layout base do dashboard (responsivo)
 - [x] Sidebar no desktop / Bottom nav no mobile
 - [x] Rota de health check
-- [ ] Módulo de Clientes (Etapa 2)
-- [ ] Contratos e Entregáveis (Etapa 3)
-- [ ] Follow-up Semanal (Etapa 4)
-- [ ] Termômetro do Cliente (Etapa 5)
-- [ ] Dashboard Gerencial completo (Etapa 6)
-- [ ] Planos de Ação (Etapa 7)
+- [x] Módulo de Clientes (Etapa 2)
+- [x] Contratos e Entregáveis (Etapa 3)
+- [x] Follow-up Semanal (Etapa 4)
+- [x] Termômetro do Cliente (Etapa 5)
+- [x] Dashboard Gerencial completo (Etapa 6)
+- [x] Planos de Ação (Etapa 7)
+- [x] Hardening inicial para produção

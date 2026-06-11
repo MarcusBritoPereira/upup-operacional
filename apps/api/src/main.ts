@@ -4,9 +4,11 @@ import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { createOriginValidationMiddleware } from './common/middleware/origin-validation.middleware';
+import { createRequestContextMiddleware } from './common/middleware/request-context.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.getHttpAdapter().getInstance().set('trust proxy', 1);
   const configService = app.get(ConfigService);
   const allowedOrigins = configService
     .getOrThrow<string>('CORS_ORIGINS')
@@ -14,8 +16,14 @@ async function bootstrap() {
     .map((origin) => origin.trim())
     .filter(Boolean);
 
+  app.use(createRequestContextMiddleware());
   app.use(cookieParser());
-  app.use(createOriginValidationMiddleware(allowedOrigins));
+  app.use(
+    createOriginValidationMiddleware(
+      allowedOrigins,
+      configService.get<boolean>('REQUIRE_TRUSTED_ORIGIN') ?? false,
+    ),
+  );
 
   app.enableCors({
     origin: allowedOrigins,

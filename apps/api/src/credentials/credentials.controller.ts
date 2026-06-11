@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { CredentialsService } from './credentials.service';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
@@ -23,6 +34,15 @@ export class CredentialsController {
     return this.credentialsService.findAll(clientId);
   }
 
+  @Get(':id/reveal')
+  @Roles('admin', 'diretoria')
+  revealPassword(
+    @Param('id') id: string,
+    @Req() req: { user: { id: string } },
+  ) {
+    return this.credentialsService.revealPassword(id, req.user.id);
+  }
+
   @Get(':id')
   @Roles('admin', 'diretoria')
   findOne(@Param('id') id: string) {
@@ -31,7 +51,10 @@ export class CredentialsController {
 
   @Patch(':id')
   @Roles('admin', 'diretoria')
-  update(@Param('id') id: string, @Body() updateCredentialDto: UpdateCredentialDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateCredentialDto: UpdateCredentialDto,
+  ) {
     return this.credentialsService.update(id, updateCredentialDto);
   }
 
