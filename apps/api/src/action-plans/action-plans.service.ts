@@ -134,7 +134,7 @@ export class ActionPlansService {
     const where: Prisma.ActionPlanWhereInput = {};
     if (clientId) where.clientId = clientId;
     if (responsibleId) where.responsibleId = responsibleId;
-    if (status) where.status = status;
+    if (status) where.status = status as ActionPlanStatus;
 
     if (user && !['admin', 'diretoria', 'gerencia'].includes(user.role)) {
       const memberships = await this.prisma.clientTeamMember.findMany({

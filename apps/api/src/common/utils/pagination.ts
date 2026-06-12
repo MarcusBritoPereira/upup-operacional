@@ -20,8 +20,11 @@ const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 100;
 
 export function normalizePagination(query?: PaginationQuery) {
-  const page = Math.max(1, Math.trunc(query?.page ?? DEFAULT_PAGE));
-  const requestedLimit = Math.trunc(query?.limit ?? DEFAULT_LIMIT);
+  const pageRaw = query?.page ? Number(query.page) : DEFAULT_PAGE;
+  const limitRaw = query?.limit ? Number(query.limit) : DEFAULT_LIMIT;
+  
+  const page = Math.max(1, Math.trunc(isNaN(pageRaw) ? DEFAULT_PAGE : pageRaw));
+  const requestedLimit = Math.trunc(isNaN(limitRaw) ? DEFAULT_LIMIT : limitRaw);
   const limit = Math.min(MAX_LIMIT, Math.max(1, requestedLimit));
 
   return {
