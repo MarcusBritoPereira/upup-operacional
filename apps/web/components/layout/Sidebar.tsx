@@ -161,8 +161,8 @@ export default function Sidebar() {
           </svg>
         </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: '0.9rem', color: 'var(--foreground)' }}>
-          <img src="/logo-light.svg" alt="UP Logo" className="dark:hidden h-8 w-auto" />
-          <img src="/logo-dark.svg" alt="UP Logo" className="hidden dark:block h-8 w-auto" />
+          <img src="/logo-light.svg" alt="UP Logo" className="light-logo h-8 w-auto" />
+          <img src="/logo-dark.svg" alt="UP Logo" className="dark-logo h-8 w-auto" />
         </div>
         <div style={{
           width: 32, height: 32, borderRadius: '50%', background: 'var(--secondary)',
@@ -193,8 +193,8 @@ export default function Sidebar() {
 
         {/* Brand */}
         <div className="sb-brand" style={{ padding: '24px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
-          <img src="/logo-light.svg" alt="UP Logo" className="dark:hidden h-12 w-auto" />
-          <img src="/logo-dark.svg" alt="UP Logo" className="hidden dark:block h-12 w-auto" />
+          <img src="/logo-light.svg" alt="UP Logo" className="light-logo h-12 w-auto" />
+          <img src="/logo-dark.svg" alt="UP Logo" className="dark-logo h-12 w-auto" />
           {/* Mobile close */}
           <button
             onClick={() => setMobileOpen(false)}

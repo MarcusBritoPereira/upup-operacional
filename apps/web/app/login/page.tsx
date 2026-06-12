@@ -28,8 +28,8 @@ export default function LoginPage() {
       <div className="login-card">
         {/* Logo/Brand */}
         <div className="login-brand" style={{ display: 'flex', justifyContent: 'center', marginBottom: '36px' }}>
-          <img src="/logo-light.svg" alt="UP Gestão Operacional" className="dark:hidden h-20 w-auto" />
-          <img src="/logo-dark.svg" alt="UP Gestão Operacional" className="hidden dark:block h-20 w-auto" />
+          <img src="/logo-light.svg" alt="UP Gestão Operacional" className="light-logo h-20 w-auto" />
+          <img src="/logo-dark.svg" alt="UP Gestão Operacional" className="dark-logo h-20 w-auto" />
         </div>
 
         {/* Form */}

@@ -178,6 +178,12 @@
     font-weight: 600;
     border: 1px solid transparent;
   }
+
+  .light-logo { display: block; }
+  .dark-logo { display: none; }
+  
+  .dark .light-logo { display: none !important; }
+  .dark .dark-logo { display: block !important; }
 }
 
 /* ═══════════════════════════════════════════════
