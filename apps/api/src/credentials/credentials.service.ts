@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -15,7 +20,7 @@ export class CredentialsService {
     private readonly encryption: CredentialEncryptionService,
   ) {}
 
-  async create(createCredentialDto: CreateCredentialDto) {
+  async create(createCredentialDto: CreateCredentialDto, userId: string) {
     const credential = await this.prisma.credential.create({
       data: {
         ...createCredentialDto,
@@ -23,6 +28,7 @@ export class CredentialsService {
       },
     });
 
+    await this.logAccess(credential.id, userId, 'create');
     return this.sanitizeCredential(credential);
   }
 
@@ -40,21 +46,27 @@ export class CredentialsService {
     return this.sanitizeCredential(credential);
   }
 
-  async revealPassword(id: string, userId: string) {
+  async revealPassword(id: string, userId: string, currentPassword: string) {
     const credential = await this.getCredential(id);
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const isPasswordValid = user
+      ? await bcrypt.compare(currentPassword, user.passwordHash)
+      : false;
 
-    await this.prisma.credentialAccessLog.create({
-      data: {
-        credentialId: credential.id,
-        userId,
-        action: 'reveal_password',
-      },
-    });
+    if (!isPasswordValid) {
+      await this.logAccess(credential.id, userId, 'reveal_password_denied');
+      throw new UnauthorizedException('Senha atual inválida.');
+    }
 
+    await this.logAccess(credential.id, userId, 'reveal_password');
     return { password: this.encryption.decrypt(credential.password) };
   }
 
-  async update(id: string, updateCredentialDto: UpdateCredentialDto) {
+  async update(
+    id: string,
+    updateCredentialDto: UpdateCredentialDto,
+    userId: string,
+  ) {
     await this.getCredential(id);
     const data = {
       ...updateCredentialDto,
@@ -68,11 +80,14 @@ export class CredentialsService {
       data,
     });
 
+    await this.logAccess(credential.id, userId, 'update');
     return this.sanitizeCredential(credential);
   }
 
-  async remove(id: string) {
-    await this.getCredential(id);
+  async remove(id: string, userId: string) {
+    const existing = await this.getCredential(id);
+    await this.logAccess(existing.id, userId, 'delete');
+
     const credential = await this.prisma.credential.delete({
       where: { id },
     });
@@ -90,8 +105,21 @@ export class CredentialsService {
     return credential;
   }
 
+  private async logAccess(
+    credentialId: string,
+    userId: string,
+    action: string,
+  ) {
+    await this.prisma.credentialAccessLog.create({
+      data: {
+        credentialId,
+        userId,
+        action,
+      },
+    });
+  }
+
   private sanitizeCredential(credential: NonNullable<CredentialRecord>) {
-    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     const { password: _password, ...safeCredential } = credential;
     return safeCredential;
   }

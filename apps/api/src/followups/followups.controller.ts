@@ -39,6 +39,8 @@ export class FollowupsController {
   @Get()
   async findAll(
     @Query('clientId') clientId: string | undefined,
+    @Query('page') page: string | undefined,
+    @Query('limit') limit: string | undefined,
     @Req() req: RequestWithAuth,
   ) {
     if (clientId) {
@@ -48,6 +50,6 @@ export class FollowupsController {
         clientId,
       );
     }
-    return this.followupsService.findAll(clientId, req.user);
+    return this.followupsService.findAll(clientId, req.user, { page, limit });
   }
 }

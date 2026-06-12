@@ -3,7 +3,11 @@ import { AlertsController } from './alerts/alerts.controller';
 import { FollowupsController } from './followups/followups.controller';
 import { MonthlyCyclesController } from './monthly-cycles/monthly-cycles.controller';
 
-const user = { id: 'user-id', role: 'gestor_cliente' };
+const user = {
+  id: 'user-id',
+  email: 'user@example.com',
+  role: 'gestor_cliente',
+};
 const request = { user };
 
 describe('client-scoped controllers', () => {

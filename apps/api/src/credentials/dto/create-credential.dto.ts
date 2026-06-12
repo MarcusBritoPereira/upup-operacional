@@ -1,4 +1,11 @@
-import { IsString, IsOptional, IsNotEmpty, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNotEmpty,
+  IsUUID,
+  IsUrl,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateCredentialDto {
   @IsUUID()
@@ -9,8 +16,9 @@ export class CreateCredentialDto {
   @IsNotEmpty()
   systemName: string;
 
-  @IsString()
+  @IsUrl({ require_protocol: true })
   @IsOptional()
+  @MaxLength(2048)
   url?: string;
 
   @IsString()

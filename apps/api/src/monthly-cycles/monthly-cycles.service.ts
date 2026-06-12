@@ -3,14 +3,22 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { InitializeCycleDto } from './dto/initialize-cycle.dto';
 import { UpdateDeliverableDto } from './dto/update-deliverable.dto';
+import {
+  PaginationQuery,
+  normalizePagination,
+} from '../common/utils/pagination';
 
 @Injectable()
 export class MonthlyCyclesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(clientId: string) {
+  async findAll(clientId: string, pagination?: PaginationQuery) {
+    const { skip, take } = normalizePagination(pagination);
+
     return this.prisma.monthlyCycle.findMany({
       where: { clientId },
+      skip,
+      take,
       include: {
         monthlyDeliverables: {
           include: {
@@ -148,7 +156,7 @@ export class MonthlyCyclesService {
 
     return this.prisma.monthlyDeliverable.update({
       where: { id },
-      data: updateDeliverableDto as any, // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+      data: updateDeliverableDto,
       include: {
         deliverableType: true,
       },

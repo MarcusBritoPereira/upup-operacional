@@ -25,6 +25,8 @@ export class AlertsController {
   async findAll(
     @Query('clientId') clientId: string | undefined,
     @Query('status') status: string | undefined,
+    @Query('page') page: string | undefined,
+    @Query('limit') limit: string | undefined,
     @Req() req: RequestWithAuth,
   ) {
     if (clientId) {
@@ -34,7 +36,10 @@ export class AlertsController {
         clientId,
       );
     }
-    return this.alertsService.findAll(clientId, status, req.user);
+    return this.alertsService.findAll(clientId, status, req.user, {
+      page,
+      limit,
+    });
   }
 
   @Patch(':id/resolve')

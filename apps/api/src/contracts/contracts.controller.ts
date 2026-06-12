@@ -57,6 +57,8 @@ export class ContractsController {
   @Get()
   async findAll(
     @Query('clientId') clientId: string | undefined,
+    @Query('page') page: string | undefined,
+    @Query('limit') limit: string | undefined,
     @Req() req: RequestWithAuth,
   ) {
     if (clientId) {
@@ -66,7 +68,7 @@ export class ContractsController {
         clientId,
       );
     }
-    return this.contractsService.findAll(clientId, req.user);
+    return this.contractsService.findAll(clientId, req.user, { page, limit });
   }
 
   @Get(':id')

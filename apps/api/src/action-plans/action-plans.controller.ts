@@ -45,6 +45,8 @@ export class ActionPlansController {
     @Query('clientId') clientId: string | undefined,
     @Query('responsibleId') responsibleId: string | undefined,
     @Query('status') status: string | undefined,
+    @Query('page') page: string | undefined,
+    @Query('limit') limit: string | undefined,
     @Req() req: RequestWithAuth,
   ) {
     if (clientId) {
@@ -59,6 +61,7 @@ export class ActionPlansController {
       responsibleId,
       status,
       req.user,
+      { page, limit },
     );
   }
 

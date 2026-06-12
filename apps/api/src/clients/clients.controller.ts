@@ -50,9 +50,14 @@ export class ClientsController {
   findAll(
     @Query('status') status: string | undefined,
     @Query('managerId') managerId: string | undefined,
+    @Query('page') page: string | undefined,
+    @Query('limit') limit: string | undefined,
     @Req() req: RequestWithAuth,
   ) {
-    return this.clientsService.findAll({ status, managerId }, req.user);
+    return this.clientsService.findAll({ status, managerId }, req.user, {
+      page,
+      limit,
+    });
   }
 
   @Get(':id')

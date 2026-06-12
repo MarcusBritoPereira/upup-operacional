@@ -6,6 +6,8 @@ import {
   IsDateString,
   IsEmail,
   IsEnum,
+  IsUrl,
+  MaxLength,
 } from 'class-validator';
 import { ClientStatus } from '@prisma/client';
 
@@ -62,20 +64,24 @@ export class CreateClientDto {
   @IsOptional()
   state?: string;
 
-  @IsString()
+  @IsUrl({ require_protocol: true })
   @IsOptional()
+  @MaxLength(2048)
   instagramUrl?: string;
 
-  @IsString()
+  @IsUrl({ require_protocol: true })
   @IsOptional()
+  @MaxLength(2048)
   driveUrl?: string;
 
-  @IsString()
+  @IsUrl({ require_protocol: true })
   @IsOptional()
+  @MaxLength(2048)
   clickupUrl?: string;
 
-  @IsString()
+  @IsUrl({ require_protocol: true })
   @IsOptional()
+  @MaxLength(2048)
   whatsappGroupUrl?: string;
 
   @IsString()

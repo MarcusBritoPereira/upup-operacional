@@ -6,11 +6,54 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateActionPlanDto } from './dto/create-action-plan.dto';
 import { UpdateActionPlanDto } from './dto/update-action-plan.dto';
-import { ActionPlanPriority, ActionPlanStatus } from '@prisma/client';
+import { ActionPlanPriority, ActionPlanStatus, Prisma } from '@prisma/client';
+import {
+  PaginationQuery,
+  normalizePagination,
+} from '../common/utils/pagination';
 
 @Injectable()
 export class ActionPlansService {
   constructor(private readonly prisma: PrismaService) {}
+
+  private async assertEligibleResponsible(
+    tx: Prisma.TransactionClient,
+    clientId: string,
+    responsibleId: string,
+  ) {
+    const user = await tx.user.findUnique({
+      where: { id: responsibleId },
+      select: { id: true, isActive: true, role: true },
+    });
+
+    if (!user || !user.isActive) {
+      throw new BadRequestException('Responsável não encontrado ou inativo.');
+    }
+
+    if (['admin', 'diretoria', 'gerencia'].includes(user.role)) {
+      return;
+    }
+
+    const client = await tx.client.findUnique({
+      where: { id: clientId },
+      select: { managerId: true },
+    });
+
+    if (client?.managerId === responsibleId) {
+      return;
+    }
+
+    const membership = await tx.clientTeamMember.findFirst({
+      where: { clientId, userId: responsibleId },
+      select: { id: true },
+    });
+
+    if (!membership) {
+      throw new BadRequestException(
+        'Responsável deve pertencer à equipe do cliente.',
+      );
+    }
+  }
 
   async create(creatorId: string, dto: CreateActionPlanDto) {
     const { clientId, monthlyCycleId, responsibleId, dueDate, ...rest } = dto;
@@ -40,6 +83,10 @@ export class ActionPlansService {
             'O ciclo mensal não pertence ao cliente informado.',
           );
         }
+      }
+
+      if (responsibleId) {
+        await this.assertEligibleResponsible(tx, clientId, responsibleId);
       }
 
       // Create the Action Plan
@@ -81,8 +128,10 @@ export class ActionPlansService {
     responsibleId?: string,
     status?: string,
     user?: { id: string; role: string },
+    pagination?: PaginationQuery,
   ) {
-    const where: Record<string, any> = {};
+    const { skip, take } = normalizePagination(pagination);
+    const where: Prisma.ActionPlanWhereInput = {};
     if (clientId) where.clientId = clientId;
     if (responsibleId) where.responsibleId = responsibleId;
     if (status) where.status = status;
@@ -101,6 +150,8 @@ export class ActionPlansService {
 
     return this.prisma.actionPlan.findMany({
       where,
+      skip,
+      take,
       include: {
         client: {
           select: {
@@ -171,6 +222,14 @@ export class ActionPlansService {
       if (!actionPlan) {
         throw new NotFoundException(
           `Plano de ação com ID "${id}" não encontrado.`,
+        );
+      }
+
+      if (rest.responsibleId) {
+        await this.assertEligibleResponsible(
+          tx,
+          actionPlan.clientId,
+          rest.responsibleId,
         );
       }
 
