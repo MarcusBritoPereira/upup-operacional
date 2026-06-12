@@ -161,7 +161,8 @@ export default function Sidebar() {
           </svg>
         </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: '0.9rem', color: 'var(--foreground)' }}>
-          <Logo /><span>UP Gestão</span>
+          <img src="/logo-light.svg" alt="UP Logo" className="dark:hidden h-8 w-auto" />
+          <img src="/logo-dark.svg" alt="UP Logo" className="hidden dark:block h-8 w-auto" />
         </div>
         <div style={{
           width: 32, height: 32, borderRadius: '50%', background: 'var(--secondary)',
@@ -191,21 +192,16 @@ export default function Sidebar() {
       }} className={mobileOpen ? '' : 'sb-desktop-sidebar'}>
 
         {/* Brand */}
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 10,
-          padding: '18px 16px 16px',
-          borderBottom: '1px solid var(--border)',
-          flexShrink: 0,
-        }}>
-          <Logo />
-          <span style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--foreground)' }}>UP Gestão</span>
+        <div className="sb-brand" style={{ padding: '24px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
+          <img src="/logo-light.svg" alt="UP Logo" className="dark:hidden h-12 w-auto" />
+          <img src="/logo-dark.svg" alt="UP Logo" className="hidden dark:block h-12 w-auto" />
           {/* Mobile close */}
           <button
             onClick={() => setMobileOpen(false)}
             aria-label="Fechar"
             className="sb-close-btn"
             style={{
-              marginLeft: 'auto', background: 'none', border: 'none',
+              background: 'none', border: 'none',
               color: 'var(--muted-foreground)', cursor: 'pointer', padding: 4, borderRadius: 4,
               display: 'none', alignItems: 'center',
             }}
@@ -336,11 +332,3 @@ export default function Sidebar() {
   );
 }
 
-function Logo() {
-  return (
-    <svg width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-      <rect width="32" height="32" rx="7" fill="var(--foreground)" />
-      <path d="M8 22L12 10L16 18L20 13L24 22" stroke="var(--background)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}

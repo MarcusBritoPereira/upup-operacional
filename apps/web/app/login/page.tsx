@@ -27,23 +27,9 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-card">
         {/* Logo/Brand */}
-        <div className="login-brand">
-          <div className="login-logo">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="8" fill="#2563eb" />
-              <path
-                d="M8 22L12 10L16 18L20 13L24 22"
-                stroke="white"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-          <div>
-            <h1 className="login-title">UP Gestão Operacional</h1>
-            <p className="login-subtitle">Painel de controle da agência</p>
-          </div>
+        <div className="login-brand" style={{ display: 'flex', justifyContent: 'center', marginBottom: '36px' }}>
+          <img src="/logo-light.svg" alt="UP Gestão Operacional" className="dark:hidden h-20 w-auto" />
+          <img src="/logo-dark.svg" alt="UP Gestão Operacional" className="hidden dark:block h-20 w-auto" />
         </div>
 
         {/* Form */}
