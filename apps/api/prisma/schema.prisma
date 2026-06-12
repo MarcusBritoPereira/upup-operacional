@@ -161,13 +161,13 @@ model Credential {
 
 model CredentialAccessLog {
   id           String   @id @default(uuid()) @db.Uuid
-  credentialId String   @map("credential_id") @db.Uuid
+  credentialId String?  @map("credential_id") @db.Uuid
   userId       String?  @map("user_id") @db.Uuid
   action       String   @db.VarChar(80)
   createdAt    DateTime @default(now()) @map("created_at")
 
-  credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
-  user         User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  credential   Credential? @relation(fields: [credentialId], references: [id], onDelete: SetNull)
+  user         User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([credentialId, createdAt])
   @@index([userId, createdAt])

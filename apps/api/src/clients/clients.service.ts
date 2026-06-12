@@ -7,6 +7,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Prisma, ClientStatus } from '@prisma/client';
+import {
+  PaginationQuery,
+  normalizePagination,
+} from '../common/utils/pagination';
 
 @Injectable()
 export class ClientsService {
@@ -103,7 +107,9 @@ export class ClientsService {
   async findAll(
     filters: { status?: string; managerId?: string },
     user: { id: string; role: string },
+    pagination?: PaginationQuery,
   ) {
+    const { skip, take } = normalizePagination(pagination);
     const where: Prisma.ClientWhereInput = {};
 
     if (filters.status) {
@@ -126,6 +132,8 @@ export class ClientsService {
 
     return this.prisma.client.findMany({
       where,
+      skip,
+      take,
       include: {
         manager: {
           select: {

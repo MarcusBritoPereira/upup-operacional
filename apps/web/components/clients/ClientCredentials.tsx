@@ -132,8 +132,13 @@ export function ClientCredentials({ clientId }: { clientId: string }) {
                   <button 
                     onClick={async () => {
                       try {
-                        const res = await api.get<{password: string}>(`/credentials/${cred.id}/reveal`);
-                        navigator.clipboard.writeText(res.password);
+                        const currentPassword = window.prompt('Confirme sua senha atual para revelar esta credencial.');
+                        if (!currentPassword) return;
+
+                        const res = await api.post<{password: string}>(`/credentials/${cred.id}/reveal`, {
+                          password: currentPassword,
+                        });
+                        await navigator.clipboard.writeText(res.password);
                         alert('Senha copiada para a área de transferência!');
                       } catch {
                         alert('Erro ao buscar senha original.');

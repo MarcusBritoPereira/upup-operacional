@@ -7,6 +7,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { Prisma } from '@prisma/client';
+import {
+  PaginationQuery,
+  normalizePagination,
+} from '../common/utils/pagination';
 
 @Injectable()
 export class ContractsService {
@@ -65,7 +69,12 @@ export class ContractsService {
     });
   }
 
-  async findAll(clientId?: string, user?: { id: string; role: string }) {
+  async findAll(
+    clientId?: string,
+    user?: { id: string; role: string },
+    pagination?: PaginationQuery,
+  ) {
+    const { skip, take } = normalizePagination(pagination);
     const where: Prisma.ContractWhereInput = {};
     if (clientId) {
       where.clientId = clientId;
@@ -85,6 +94,8 @@ export class ContractsService {
 
     return this.prisma.contract.findMany({
       where,
+      skip,
+      take,
       orderBy: {
         startDate: 'desc',
       },

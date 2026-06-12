@@ -29,6 +29,8 @@ export class MonthlyCyclesController {
   @Get()
   async findAll(
     @Query('clientId') clientId: string,
+    @Query('page') page: string | undefined,
+    @Query('limit') limit: string | undefined,
     @Req() req: RequestWithAuth,
   ) {
     await this.clientAccessPolicy.assertCanViewClient(
@@ -36,7 +38,7 @@ export class MonthlyCyclesController {
       req.user.role,
       clientId,
     );
-    return this.monthlyCyclesService.findAll(clientId);
+    return this.monthlyCyclesService.findAll(clientId, { page, limit });
   }
 
   @Post('initialize')

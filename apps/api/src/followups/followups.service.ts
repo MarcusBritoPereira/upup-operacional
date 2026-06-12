@@ -6,6 +6,10 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateFollowupDto } from './dto/create-followup.dto';
 import { Prisma, AlertSeverity, HealthStatus } from '@prisma/client';
+import {
+  PaginationQuery,
+  normalizePagination,
+} from '../common/utils/pagination';
 
 @Injectable()
 export class FollowupsService {
@@ -160,7 +164,9 @@ export class FollowupsService {
   async findAll(
     clientId: string | undefined,
     user: { id: string; role: string },
+    pagination?: PaginationQuery,
   ) {
+    const { skip, take } = normalizePagination(pagination);
     const where: Prisma.WeeklyFollowupWhereInput = {};
     if (clientId) {
       where.clientId = clientId;
@@ -180,6 +186,8 @@ export class FollowupsService {
 
     return this.prisma.weeklyFollowup.findMany({
       where,
+      skip,
+      take,
       include: {
         manager: {
           select: {

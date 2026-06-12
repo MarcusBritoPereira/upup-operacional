@@ -1,6 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, AlertSeverity, AlertStatus } from '@prisma/client';
+import {
+  PaginationQuery,
+  normalizePagination,
+} from '../common/utils/pagination';
 
 @Injectable()
 export class AlertsService {
@@ -10,7 +14,9 @@ export class AlertsService {
     clientId: string | undefined,
     status: string | undefined,
     user: { id: string; role: string },
+    pagination?: PaginationQuery,
   ) {
+    const { skip, take } = normalizePagination(pagination);
     const where: Prisma.AlertWhereInput = {};
     if (clientId) where.clientId = clientId;
     if (status) where.status = status as AlertStatus;
@@ -29,6 +35,8 @@ export class AlertsService {
 
     return this.prisma.alert.findMany({
       where,
+      skip,
+      take,
       include: {
         client: {
           select: {
