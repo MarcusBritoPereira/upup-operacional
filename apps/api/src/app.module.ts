@@ -17,6 +17,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ServiceProvidersModule } from './service-providers/service-providers.module';
 import { CredentialsModule } from './credentials/credentials.module';
+import { ClickUpModule } from './clickup/clickup.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { CredentialsModule } from './credentials/credentials.module';
     AlertsModule,
     ServiceProvidersModule,
     CredentialsModule,
+    ClickUpModule,
   ],
   providers: [
     {

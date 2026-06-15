@@ -13,6 +13,8 @@ export interface Env {
   COOKIE_DOMAIN?: string;
   CREDENTIALS_ENCRYPTION_KEY?: string;
   REQUIRE_TRUSTED_ORIGIN: boolean;
+  CLICKUP_API_TOKEN?: string;
+  CLICKUP_TEAM_ID?: string;
 }
 
 function requireString(
@@ -133,6 +135,17 @@ export function validateEnv(config: Record<string, unknown>): Env {
       nodeEnv === 'production',
     );
 
+    const clickupApiToken =
+      typeof config.CLICKUP_API_TOKEN === 'string' &&
+      config.CLICKUP_API_TOKEN.trim()
+        ? config.CLICKUP_API_TOKEN.trim()
+        : undefined;
+
+    const clickupTeamId =
+      typeof config.CLICKUP_TEAM_ID === 'string' && config.CLICKUP_TEAM_ID.trim()
+        ? config.CLICKUP_TEAM_ID.trim()
+        : undefined;
+
     return {
       DATABASE_URL: databaseUrl,
       JWT_SECRET: jwtSecret,
@@ -147,6 +160,8 @@ export function validateEnv(config: Record<string, unknown>): Env {
       ...(credentialsEncryptionKey
         ? { CREDENTIALS_ENCRYPTION_KEY: credentialsEncryptionKey }
         : {}),
+      ...(clickupApiToken ? { CLICKUP_API_TOKEN: clickupApiToken } : {}),
+      ...(clickupTeamId ? { CLICKUP_TEAM_ID: clickupTeamId } : {}),
     };
   } catch (error) {
     const message =

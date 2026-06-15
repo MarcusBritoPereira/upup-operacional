@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ServiceProvidersController } from './service-providers.controller';
 import { ServiceProvidersService } from './service-providers.service';
+import { ClickUpModule } from '../clickup/clickup.module';
 
 @Module({
+  imports: [ClickUpModule],
   controllers: [ServiceProvidersController],
   providers: [ServiceProvidersService],
 })

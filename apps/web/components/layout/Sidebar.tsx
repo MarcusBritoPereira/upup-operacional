@@ -76,6 +76,15 @@ const mainNav = [
       </svg>
     ),
   },
+  {
+    href: '/clickup',
+    label: 'ClickUp',
+    icon: (
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 11l3-3 3 3" /><path d="M9 16l3 3 3-3" /><circle cx="12" cy="12" r="10" />
+      </svg>
+    ),
+  },
 ];
 
 const bottomNav = [

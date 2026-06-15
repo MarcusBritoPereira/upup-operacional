@@ -167,6 +167,12 @@ export default function ProvidersPage() {
                 </div>
               </details>
             </div>
+            
+            <div className="mt-4 pt-4 border-t border-[var(--border)]">
+              <a href={`/providers/${provider.id}`} className="w-full btn-secondary text-center block text-sm">
+                Ver Perfil e Produtividade
+              </a>
+            </div>
           </div>
         ))}
 

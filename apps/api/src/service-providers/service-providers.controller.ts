@@ -38,6 +38,11 @@ export class ServiceProvidersController {
     return this.serviceProvidersService.findOne(id);
   }
 
+  @Get(':id/profile')
+  getProfile(@Param('id') id: string) {
+    return this.serviceProvidersService.getProviderProfile(id);
+  }
+
   @Patch(':id')
   @Roles('admin', 'diretoria', 'gerencia')
   update(
