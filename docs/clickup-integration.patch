@@ -1,0 +1,121 @@
+diff --git a/.env.production.example b/.env.production.example
+index bf44063..29f1d93 100644
+--- a/.env.production.example
++++ b/.env.production.example
+@@ -13,3 +13,7 @@ COOKIE_SAME_SITE=lax
+ CREDENTIALS_ENCRYPTION_KEY=replace-with-at-least-32-random-characters
+ 
+ NEXT_PUBLIC_API_URL=https://operacional.upsystem.cloud/api
++
++# Integração ClickUp (token pessoal pk_...).
++CLICKUP_API_TOKEN=pk_seu_token_aqui
++# CLICKUP_TEAM_ID=
+diff --git a/apps/api/.env.example b/apps/api/.env.example
+index 29479b7..3828774 100644
+--- a/apps/api/.env.example
++++ b/apps/api/.env.example
+@@ -26,3 +26,11 @@ CREDENTIALS_ENCRYPTION_KEY="gere-uma-chave-forte-com-pelo-menos-32-caracteres"
+ # Opcionais, usados somente pelo seed em development/test.
+ # SEED_ADMIN_PASSWORD="gere-uma-senha-local"
+ # SEED_MANAGER_PASSWORD="gere-uma-senha-local"
++
++# ── Integração ClickUp ──
++# Token pessoal do ClickUp (começa com pk_). Gere em:
++# ClickUp → avatar (canto superior direito) → Settings → Apps → API Token.
++CLICKUP_API_TOKEN=""
++# Opcional. Se você tem mais de um workspace, fixe o ID do workspace alvo.
++# Sem isso, a API usa o primeiro workspace que o token enxergar.
++# CLICKUP_TEAM_ID=""
+diff --git a/apps/api/src/app.module.ts b/apps/api/src/app.module.ts
+index a83edb0..da05c42 100644
+--- a/apps/api/src/app.module.ts
++++ b/apps/api/src/app.module.ts
+@@ -17,6 +17,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+ import { APP_GUARD } from '@nestjs/core';
+ import { ServiceProvidersModule } from './service-providers/service-providers.module';
+ import { CredentialsModule } from './credentials/credentials.module';
++import { ClickUpModule } from './clickup/clickup.module';
+ 
+ @Module({
+   imports: [
+@@ -44,6 +45,7 @@ import { CredentialsModule } from './credentials/credentials.module';
+     AlertsModule,
+     ServiceProvidersModule,
+     CredentialsModule,
++    ClickUpModule,
+   ],
+   providers: [
+     {
+diff --git a/apps/api/src/common/config/env.validation.ts b/apps/api/src/common/config/env.validation.ts
+index edb0275..b5c88a6 100644
+--- a/apps/api/src/common/config/env.validation.ts
++++ b/apps/api/src/common/config/env.validation.ts
+@@ -13,6 +13,8 @@ export interface Env {
+   COOKIE_DOMAIN?: string;
+   CREDENTIALS_ENCRYPTION_KEY?: string;
+   REQUIRE_TRUSTED_ORIGIN: boolean;
++  CLICKUP_API_TOKEN?: string;
++  CLICKUP_TEAM_ID?: string;
+ }
+ 
+ function requireString(
+@@ -133,6 +135,17 @@ export function validateEnv(config: Record<string, unknown>): Env {
+       nodeEnv === 'production',
+     );
+ 
++    const clickupApiToken =
++      typeof config.CLICKUP_API_TOKEN === 'string' &&
++      config.CLICKUP_API_TOKEN.trim()
++        ? config.CLICKUP_API_TOKEN.trim()
++        : undefined;
++
++    const clickupTeamId =
++      typeof config.CLICKUP_TEAM_ID === 'string' && config.CLICKUP_TEAM_ID.trim()
++        ? config.CLICKUP_TEAM_ID.trim()
++        : undefined;
++
+     return {
+       DATABASE_URL: databaseUrl,
+       JWT_SECRET: jwtSecret,
+@@ -147,6 +160,8 @@ export function validateEnv(config: Record<string, unknown>): Env {
+       ...(credentialsEncryptionKey
+         ? { CREDENTIALS_ENCRYPTION_KEY: credentialsEncryptionKey }
+         : {}),
++      ...(clickupApiToken ? { CLICKUP_API_TOKEN: clickupApiToken } : {}),
++      ...(clickupTeamId ? { CLICKUP_TEAM_ID: clickupTeamId } : {}),
+     };
+   } catch (error) {
+     const message =
+diff --git a/apps/web/components/layout/Sidebar.tsx b/apps/web/components/layout/Sidebar.tsx
+index bdc6a0a..6650bf6 100644
+--- a/apps/web/components/layout/Sidebar.tsx
++++ b/apps/web/components/layout/Sidebar.tsx
+@@ -76,6 +76,15 @@ const mainNav = [
+       </svg>
+     ),
+   },
++  {
++    href: '/clickup',
++    label: 'ClickUp',
++    icon: (
++      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
++        <path d="M9 11l3-3 3 3" /><path d="M9 16l3 3 3-3" /><circle cx="12" cy="12" r="10" />
++      </svg>
++    ),
++  },
+ ];
+ 
+ const bottomNav = [
+diff --git a/docker-compose.prod.yml b/docker-compose.prod.yml
+index 7a9fa7e..89f387f 100644
+--- a/docker-compose.prod.yml
++++ b/docker-compose.prod.yml
+@@ -33,6 +33,8 @@ services:
+       COOKIE_SAME_SITE: ${COOKIE_SAME_SITE:-lax}
+       COOKIE_DOMAIN: ${COOKIE_DOMAIN:-}
+       CREDENTIALS_ENCRYPTION_KEY: ${CREDENTIALS_ENCRYPTION_KEY:?CREDENTIALS_ENCRYPTION_KEY is required}
++      CLICKUP_API_TOKEN: ${CLICKUP_API_TOKEN:-}
++      CLICKUP_TEAM_ID: ${CLICKUP_TEAM_ID:-}
+     ports:
+       - "127.0.0.1:3011:3011"
+     depends_on:

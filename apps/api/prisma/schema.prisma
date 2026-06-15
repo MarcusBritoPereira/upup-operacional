@@ -99,6 +99,7 @@ model Contract {
   taxPercentage  Decimal?       @map("tax_percentage") @db.Decimal(5, 2)
   geePercentage  Decimal?       @map("gee_percentage") @db.Decimal(5, 2)
   geeFixedValue  Decimal?       @map("gee_fixed_value") @db.Decimal(12, 2)
+  documentUrl    String?        @map("document_url") @db.Text
   status         ContractStatus @default(active)
   notes          String?        @db.Text
   createdAt      DateTime       @default(now()) @map("created_at")

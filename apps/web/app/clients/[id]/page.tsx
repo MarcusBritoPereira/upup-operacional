@@ -111,6 +111,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   const [contractGeePercentage, setContractGeePercentage] = useState('');
   const [contractGeeFixedValue, setContractGeeFixedValue] = useState('');
   const [contractNotes, setContractNotes] = useState('');
+  const [contractDocumentUrl, setContractDocumentUrl] = useState('');
 
   // 3. Edit Deliverable Fields
   const [editingDeliverable, setEditingDeliverable] = useState<MonthlyDeliverable | null>(null);
@@ -269,6 +270,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       geePercentage: (contractGeeType === 'percentage' && contractGeePercentage) ? parseFloat(contractGeePercentage) : undefined,
       geeFixedValue: (contractGeeType === 'fixed' && contractGeeFixedValue) ? unformatCurrency(contractGeeFixedValue) : undefined,
       notes: contractNotes || undefined,
+      documentUrl: contractDocumentUrl || undefined,
       status: 'active',
     };
 
@@ -280,6 +282,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       setContractGeePercentage('');
       setContractGeeFixedValue('');
       setContractNotes('');
+      setContractDocumentUrl('');
       setContractStart(new Date().toISOString().split('T')[0]);
       setContractEnd('');
       setContractModalOpen(false);
@@ -776,7 +779,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                   <table className="w-full text-left border-collapse text-sm">
                     <thead>
                       <tr className="bg-[var(--secondary)] text-[var(--muted-foreground)] text-xs font-semibold uppercase tracking-wider border-b border-[var(--border)]">
-                        <th className="px-4 py-3">Início</th><th className="px-4 py-3">Fim</th><th className="px-4 py-3">Valor Mensal</th><th className="px-4 py-3">% GEE</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Notas</th><th className="px-4 py-3 text-right">Ações</th>
+                        <th className="px-4 py-3">Início</th><th className="px-4 py-3">Fim</th><th className="px-4 py-3">Valor Mensal</th><th className="px-4 py-3">% GEE</th><th className="px-4 py-3">Status</th><th className="px-4 py-3 text-center">Anexo</th><th className="px-4 py-3">Notas</th><th className="px-4 py-3 text-right">Ações</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50 text-[var(--muted-foreground)]">
@@ -787,6 +790,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                           <td className="px-4 py-3 font-semibold text-[var(--foreground)]">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.monthlyValue)}</td>
                           <td className="px-4 py-3 font-medium text-[var(--muted-foreground)]">{c.geePercentage ? `${c.geePercentage}%` : '—'}</td>
                           <td className="px-4 py-3"><span className={`badge text-[10px] ${c.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-[var(--border)] text-[var(--muted-foreground)]'}`}>{c.status === 'active' ? 'Ativo' : 'Encerrado'}</span></td>
+                          <td className="px-4 py-3 text-center">{c.documentUrl ? <a href={c.documentUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800" title="Ver Anexo"><svg className="w-5 h-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg></a> : '—'}</td>
                           <td className="px-4 py-3 text-xs text-[var(--muted-foreground)] max-w-[200px] truncate">{c.notes || '—'}</td>
                           <td className="px-4 py-3 text-right"><button onClick={() => handleDeleteContract(c.id)} className="text-rose-600 hover:text-rose-800 text-xs font-bold">Remover</button></td>
                         </tr>
@@ -1178,8 +1182,9 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div><label className="form-label">Data de Início *</label><input type="date" required value={contractStart} onChange={(e) => setContractStart(e.target.value)} className="form-input" /></div>
-                    <div><label className="form-label">Data de Fim</label><input type="date" value={contractEnd} onChange={(e) => setContractEnd(e.target.value)} className="form-input" /></div>
+                    <div><label className="form-label">Data de Fim (Para alertas)</label><input type="date" value={contractEnd} onChange={(e) => setContractEnd(e.target.value)} className="form-input" /></div>
                   </div>
+                  <div><label className="form-label">Link do Contrato (Drive, Dropbox, etc)</label><input type="url" value={contractDocumentUrl} onChange={(e) => setContractDocumentUrl(e.target.value)} className="form-input" placeholder="https://..." /></div>
                   <div><label className="form-label">Notas</label><textarea rows={2} value={contractNotes} onChange={(e) => setContractNotes(e.target.value)} className="form-input resize-none" /></div>
                 </div>
                 <div className="px-6 py-4 bg-[var(--secondary)] border-t border-[var(--border)] flex justify-end gap-3">

@@ -31,4 +31,8 @@ export class UpdateContractDto {
   @IsString()
   @IsOptional()
   notes?: string;
+
+  @IsString()
+  @IsOptional()
+  documentUrl?: string;
 }

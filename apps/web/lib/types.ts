@@ -155,6 +155,7 @@ export interface Contract {
   taxPercentage?: number;
   geePercentage?: number;
   geeFixedValue?: number;
+  documentUrl?: string;
   status: string;
   notes?: string;
   createdAt: string;

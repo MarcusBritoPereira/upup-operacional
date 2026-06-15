@@ -45,4 +45,8 @@ export class CreateContractDto {
   @IsString()
   @IsOptional()
   notes?: string;
+
+  @IsString()
+  @IsOptional()
+  documentUrl?: string;
 }

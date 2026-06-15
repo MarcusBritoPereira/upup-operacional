@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
 import { validateEnv } from './common/config/env.validation';
 import { AuthModule } from './auth/auth.module';
@@ -25,6 +26,7 @@ import { ClickUpModule } from './clickup/clickup.module';
       isGlobal: true,
       validate: validateEnv,
     }),
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
