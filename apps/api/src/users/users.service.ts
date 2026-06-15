@@ -1,9 +1,11 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 
 const USER_SELECT = {
@@ -19,6 +21,22 @@ const USER_SELECT = {
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async updatePassword(userId: string, data: any) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+    const isMatch = await bcrypt.compare(data.currentPassword, user.passwordHash);
+    if (!isMatch) {
+      throw new BadRequestException('A senha atual está incorreta');
+    }
+    const newHash = await bcrypt.hash(data.newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash: newHash },
+    });
+  }
 
   async findAll(currentUser: { id: string; role: string }) {
     const where = await this.getUserScope(currentUser);
