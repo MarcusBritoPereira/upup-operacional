@@ -145,19 +145,19 @@ export default function SettingsPage() {
         </div>
 
         {/* Main Card */}
-        <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-8 sm:p-10">
+        <div className="bg-[var(--card)] rounded-[2rem] shadow-sm border border-[var(--border)] p-8 sm:p-10">
           
           <form onSubmit={handleGlobalSubmit} className="space-y-10">
-            {globalError && <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm font-medium">{globalError}</div>}
-            {globalSuccess && <div className="p-4 bg-green-50 text-green-600 rounded-xl text-sm font-medium">{globalSuccess}</div>}
+            {globalError && <div className="p-4 bg-red-500/10 text-red-500 rounded-xl text-sm font-medium">{globalError}</div>}
+            {globalSuccess && <div className="p-4 bg-green-500/10 text-green-500 rounded-xl text-sm font-medium">{globalSuccess}</div>}
 
             {/* Profile Section */}
             <div className="flex flex-col lg:flex-row gap-10">
               {/* Left Col */}
               <div className="lg:w-1/3 flex flex-col gap-6">
                 <div>
-                  <h2 className="text-lg font-bold text-gray-900 mb-2">Informações de contato</h2>
-                  <p className="text-sm text-gray-400 font-medium leading-relaxed">
+                  <h2 className="text-lg font-bold text-[var(--foreground)] mb-2">Informações de contato</h2>
+                  <p className="text-sm text-[var(--muted-foreground)] font-medium leading-relaxed">
                     Gerencie e atualize suas informações pessoais com facilidade.
                   </p>
                 </div>
@@ -165,7 +165,7 @@ export default function SettingsPage() {
                 {/* Profile Picture Upload */}
                 <div className="flex flex-col items-start mt-2">
                   <div 
-                    className="relative w-20 h-20 rounded-full border border-gray-100 shadow-sm overflow-hidden bg-gray-50 flex items-center justify-center cursor-pointer group"
+                    className="relative w-20 h-20 rounded-full border border-[var(--border)] shadow-sm overflow-hidden bg-[var(--secondary)] flex items-center justify-center cursor-pointer group"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     {avatarUrl ? (
@@ -195,65 +195,65 @@ export default function SettingsPage() {
               <div className="lg:w-2/3 space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <label className="block text-xs font-bold text-gray-400">Nome</label>
+                    <label className="block text-xs font-bold text-[var(--muted-foreground)]">Nome</label>
                     <input 
                       type="text" 
                       value={firstName} 
                       onChange={e => setFirstName(e.target.value)} 
-                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
+                      className="w-full px-4 py-3 bg-[var(--input)] border border-[var(--border)] rounded-xl text-sm text-[var(--foreground)] font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-xs font-bold text-gray-400">Sobrenome</label>
+                    <label className="block text-xs font-bold text-[var(--muted-foreground)]">Sobrenome</label>
                     <input 
                       type="text" 
                       value={lastName} 
                       onChange={e => setLastName(e.target.value)} 
-                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
+                      className="w-full px-4 py-3 bg-[var(--input)] border border-[var(--border)] rounded-xl text-sm text-[var(--foreground)] font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-xs font-bold text-gray-400">E-mail</label>
+                  <label className="block text-xs font-bold text-[var(--muted-foreground)]">E-mail</label>
                   <input 
                     type="email" 
                     value={email} 
                     onChange={e => setEmail(e.target.value)} 
-                    className="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl text-sm text-gray-500 font-medium focus:bg-white focus:border-gray-200 focus:ring-2 focus:ring-yellow-500/20 outline-none transition" 
+                    className="w-full px-4 py-3 bg-[var(--secondary)] border border-transparent rounded-xl text-sm text-[var(--muted-foreground)] font-medium focus:bg-[var(--input)] focus:border-[var(--border)] focus:ring-2 focus:ring-yellow-500/20 outline-none transition" 
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-xs font-bold text-gray-400">Telefone</label>
+                  <label className="block text-xs font-bold text-[var(--muted-foreground)]">Telefone</label>
                   <div className="flex gap-3">
                     <input 
                       type="text" 
                       value={ddd} 
                       onChange={e => setDdd(e.target.value)} 
                       placeholder="DDD"
-                      className="w-24 px-4 py-3 text-center bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
+                      className="w-24 px-4 py-3 text-center bg-[var(--input)] border border-[var(--border)] rounded-xl text-sm text-[var(--foreground)] font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
                     />
                     <input 
                       type="text" 
                       value={phonePart} 
                       onChange={e => setPhonePart(e.target.value)} 
                       placeholder="Exemplo: 99999-9999"
-                      className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
+                      className="flex-1 px-4 py-3 bg-[var(--input)] border border-[var(--border)] rounded-xl text-sm text-[var(--foreground)] font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
                     />
                   </div>
                 </div>
               </div>
             </div>
 
-            <hr className="border-gray-100" />
+            <hr className="border-[var(--border)]" />
 
             {/* Password Section */}
             <div className="flex flex-col lg:flex-row gap-10">
               {/* Left Col */}
               <div className="lg:w-1/3">
-                <h2 className="text-lg font-bold text-gray-900 mb-2">Senha</h2>
-                <p className="text-sm text-gray-400 font-medium leading-relaxed">
+                <h2 className="text-lg font-bold text-[var(--foreground)] mb-2">Senha</h2>
+                <p className="text-sm text-[var(--muted-foreground)] font-medium leading-relaxed">
                   Altere sua senha para manter sua conta segura. Preencha apenas se desejar alterá-la.
                 </p>
               </div>
@@ -261,24 +261,24 @@ export default function SettingsPage() {
               {/* Right Col */}
               <div className="lg:w-2/3 space-y-6">
                 <div className="space-y-2">
-                  <label className="block text-xs font-bold text-gray-400">Senha Atual</label>
+                  <label className="block text-xs font-bold text-[var(--muted-foreground)]">Senha Atual</label>
                   <input 
                     type="password" 
                     value={currentPassword} 
                     onChange={e => setCurrentPassword(e.target.value)} 
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
+                    className="w-full px-4 py-3 bg-[var(--input)] border border-[var(--border)] rounded-xl text-sm text-[var(--foreground)] font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-xs font-bold text-gray-400">Nova Senha</label>
+                  <label className="block text-xs font-bold text-[var(--muted-foreground)]">Nova Senha</label>
                   <input 
                     type="password" 
                     value={newPassword} 
                     onChange={e => setNewPassword(e.target.value)} 
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
+                    className="w-full px-4 py-3 bg-[var(--input)] border border-[var(--border)] rounded-xl text-sm text-[var(--foreground)] font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
                   />
                 </div>
               </div>
