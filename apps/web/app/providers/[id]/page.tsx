@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import DashboardLayout from '@/components/layout/DashboardLayout';
@@ -50,6 +50,13 @@ export default function ProviderProfilePage() {
   const [profile, setProfile] = useState<ProviderProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'done' | 'inProgress' | 'overdue'>('all');
+  const listRef = useRef<HTMLDivElement>(null);
+
+  const handleFilter = (type: 'all' | 'done' | 'inProgress' | 'overdue') => {
+    setFilter(type);
+    listRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   useEffect(() => {
     async function fetchProfile() {
@@ -83,6 +90,16 @@ export default function ProviderProfilePage() {
   // Calculates completion percentage
   const totalTasks = stats.open + stats.completed;
   const completionRate = totalTasks > 0 ? Math.round((stats.completed / totalTasks) * 100) : 0;
+
+  const filteredTasks = tasks.filter(task => {
+    const isOverdue = task.dueDate && new Date(parseInt(task.dueDate, 10)) < new Date() && task.statusType !== 'done' && task.statusType !== 'closed';
+    const isDone = task.statusType === 'done' || task.statusType === 'closed';
+    
+    if (filter === 'done') return isDone;
+    if (filter === 'inProgress') return !isDone;
+    if (filter === 'overdue') return isOverdue;
+    return true;
+  });
 
   return (
     <DashboardLayout>
@@ -191,36 +208,36 @@ export default function ProviderProfilePage() {
             
             {/* KPI Brutalist Fragment */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] flex flex-col justify-between relative overflow-hidden group">
+              <button onClick={() => handleFilter('all')} className={`text-left bg-[var(--card)] p-5 rounded-2xl border flex flex-col justify-between relative overflow-hidden group transition-all cursor-pointer hover:ring-2 hover:ring-blue-500/50 ${filter === 'all' ? 'border-blue-500 ring-2 ring-blue-500/50' : 'border-[var(--border)]'}`}>
                 <div className="absolute -right-4 -top-4 w-16 h-16 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-all"></div>
                 <p className="text-sm text-[var(--muted-foreground)] font-medium">Total de Tarefas</p>
                 <p className="text-4xl font-black text-[var(--foreground)] mt-2 font-mono tracking-tighter">{totalTasks}</p>
-              </div>
+              </button>
 
-              <div className="bg-[var(--card)] p-5 rounded-2xl border border-emerald-500/30 flex flex-col justify-between relative overflow-hidden group">
+              <button onClick={() => handleFilter('done')} className={`text-left bg-[var(--card)] p-5 rounded-2xl border flex flex-col justify-between relative overflow-hidden group transition-all cursor-pointer hover:ring-2 hover:ring-emerald-500/50 ${filter === 'done' ? 'border-emerald-500 ring-2 ring-emerald-500/50' : 'border-emerald-500/30'}`}>
                 <div className="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-all"></div>
                 <p className="text-sm text-emerald-500 font-medium">Concluídas</p>
                 <div className="flex items-end gap-2 mt-2">
                   <p className="text-4xl font-black text-emerald-400 font-mono tracking-tighter">{stats.completed}</p>
                   <p className="text-sm text-emerald-500/70 font-bold pb-1">{completionRate}%</p>
                 </div>
-              </div>
+              </button>
 
-              <div className="bg-[var(--card)] p-5 rounded-2xl border border-yellow-500/30 flex flex-col justify-between relative overflow-hidden group">
+              <button onClick={() => handleFilter('inProgress')} className={`text-left bg-[var(--card)] p-5 rounded-2xl border flex flex-col justify-between relative overflow-hidden group transition-all cursor-pointer hover:ring-2 hover:ring-yellow-500/50 ${filter === 'inProgress' ? 'border-yellow-500 ring-2 ring-yellow-500/50' : 'border-yellow-500/30'}`}>
                 <div className="absolute -right-4 -top-4 w-16 h-16 bg-yellow-500/10 rounded-full blur-xl group-hover:bg-yellow-500/20 transition-all"></div>
                 <p className="text-sm text-yellow-500 font-medium">Em Andamento</p>
                 <p className="text-4xl font-black text-yellow-400 mt-2 font-mono tracking-tighter">{stats.open}</p>
-              </div>
+              </button>
 
-              <div className="bg-[var(--card)] p-5 rounded-2xl border border-rose-500/30 flex flex-col justify-between relative overflow-hidden group">
+              <button onClick={() => handleFilter('overdue')} className={`text-left bg-[var(--card)] p-5 rounded-2xl border flex flex-col justify-between relative overflow-hidden group transition-all cursor-pointer hover:ring-2 hover:ring-rose-500/50 ${filter === 'overdue' ? 'border-rose-500 ring-2 ring-rose-500/50' : 'border-rose-500/30'}`}>
                 <div className="absolute -right-4 -top-4 w-16 h-16 bg-rose-500/10 rounded-full blur-xl group-hover:bg-rose-500/20 transition-all"></div>
                 <p className="text-sm text-rose-500 font-medium">Atrasadas</p>
                 <p className="text-4xl font-black text-rose-400 mt-2 font-mono tracking-tighter">{stats.overdue}</p>
-              </div>
+              </button>
             </div>
 
             {/* Task List Section */}
-            <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm">
+            <div ref={listRef} className="bg-[var(--card)] rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm scroll-mt-6">
               <div className="p-6 border-b border-[var(--border)] flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-[var(--foreground)]">Quadro de Tarefas (ClickUp)</h3>
@@ -244,13 +261,13 @@ export default function ProviderProfilePage() {
                     Não foi possível encontrar um usuário no ClickUp com o e-mail "{provider.email}". Verifique se o e-mail está correto em ambas as plataformas.
                   </p>
                 </div>
-              ) : tasks.length === 0 ? (
+              ) : filteredTasks.length === 0 ? (
                 <div className="p-12 text-center">
-                  <p className="text-[var(--muted-foreground)]">Nenhuma tarefa atribuída a este prestador no ClickUp.</p>
+                  <p className="text-[var(--muted-foreground)]">Nenhuma tarefa encontrada para este filtro.</p>
                 </div>
               ) : (
                 <div className="divide-y divide-[var(--border)] max-h-[600px] overflow-y-auto custom-scrollbar">
-                  {tasks.map(task => {
+                  {filteredTasks.map(task => {
                     const isOverdue = task.dueDate && new Date(parseInt(task.dueDate, 10)) < new Date() && task.statusType !== 'done' && task.statusType !== 'closed';
                     const isDone = task.statusType === 'done' || task.statusType === 'closed';
                     
