@@ -140,7 +140,7 @@ export default function SettingsPage() {
       <div className="max-w-5xl mx-auto space-y-6 pb-12 pt-4 px-4 sm:px-6">
         
         {/* Top Badge */}
-        <div suppressHydrationWarning className="inline-flex items-center px-4 py-2 rounded-xl bg-primary/10 text-primary text-xs font-bold tracking-wide">
+        <div suppressHydrationWarning className="inline-flex items-center px-4 py-2 rounded-xl bg-yellow-500/10 text-yellow-600 text-xs font-bold tracking-wide">
           Atualizado em {today}
         </div>
 
@@ -171,7 +171,7 @@ export default function SettingsPage() {
                     {avatarUrl ? (
                       <img src={`${process.env.NEXT_PUBLIC_API_URL}${avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-primary font-bold text-xl tracking-widest">{getInitials(firstName)}</span>
+                      <span className="text-yellow-600 font-bold text-xl tracking-widest">{getInitials(firstName)}</span>
                     )}
                     
                     <div className="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center transition-all">
@@ -185,7 +185,7 @@ export default function SettingsPage() {
                     accept="image/png, image/jpeg, image/webp" 
                     className="hidden" 
                   />
-                  <button type="button" onClick={() => fileInputRef.current?.click()} className="text-primary text-xs font-bold mt-3 hover:underline">
+                  <button type="button" onClick={() => fileInputRef.current?.click()} className="text-yellow-600 text-xs font-bold mt-3 hover:underline">
                     Alterar foto
                   </button>
                 </div>
@@ -200,7 +200,7 @@ export default function SettingsPage() {
                       type="text" 
                       value={firstName} 
                       onChange={e => setFirstName(e.target.value)} 
-                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition" 
+                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
                     />
                   </div>
                   <div className="space-y-2">
@@ -209,7 +209,7 @@ export default function SettingsPage() {
                       type="text" 
                       value={lastName} 
                       onChange={e => setLastName(e.target.value)} 
-                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition" 
+                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
                     />
                   </div>
                 </div>
@@ -220,7 +220,7 @@ export default function SettingsPage() {
                     type="email" 
                     value={email} 
                     onChange={e => setEmail(e.target.value)} 
-                    className="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl text-sm text-gray-500 font-medium focus:bg-white focus:border-gray-200 focus:ring-2 focus:ring-primary/20 outline-none transition" 
+                    className="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl text-sm text-gray-500 font-medium focus:bg-white focus:border-gray-200 focus:ring-2 focus:ring-yellow-500/20 outline-none transition" 
                   />
                 </div>
 
@@ -232,14 +232,14 @@ export default function SettingsPage() {
                       value={ddd} 
                       onChange={e => setDdd(e.target.value)} 
                       placeholder="DDD"
-                      className="w-24 px-4 py-3 text-center bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition" 
+                      className="w-24 px-4 py-3 text-center bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
                     />
                     <input 
                       type="text" 
                       value={phonePart} 
                       onChange={e => setPhonePart(e.target.value)} 
                       placeholder="Exemplo: 99999-9999"
-                      className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition" 
+                      className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
                     />
                   </div>
                 </div>
@@ -267,7 +267,7 @@ export default function SettingsPage() {
                     value={currentPassword} 
                     onChange={e => setCurrentPassword(e.target.value)} 
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition" 
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
                   />
                 </div>
 
@@ -278,7 +278,7 @@ export default function SettingsPage() {
                     value={newPassword} 
                     onChange={e => setNewPassword(e.target.value)} 
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition" 
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 font-medium focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition" 
                   />
                 </div>
               </div>
@@ -289,7 +289,7 @@ export default function SettingsPage() {
               <button 
                 type="submit" 
                 disabled={isLoading} 
-                className="px-10 py-3.5 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl text-sm transition disabled:opacity-50"
+                className="px-10 py-3.5 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-xl text-sm transition disabled:opacity-50"
               >
                 {isLoading ? 'Salvando...' : 'Salvar Alterações'}
               </button>
