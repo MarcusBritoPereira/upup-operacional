@@ -12,6 +12,8 @@ const USER_SELECT = {
   id: true,
   name: true,
   email: true,
+  phone: true,
+  avatarUrl: true,
   role: true,
   department: true,
   position: true,
@@ -35,6 +37,29 @@ export class UsersService {
     await this.prisma.user.update({
       where: { id: userId },
       data: { passwordHash: newHash },
+    });
+  }
+
+  async updateProfile(userId: string, data: any) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+      },
+      select: USER_SELECT,
+    });
+  }
+
+  async updateAvatar(userId: string, avatarUrl: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl },
+      select: USER_SELECT,
     });
   }
 

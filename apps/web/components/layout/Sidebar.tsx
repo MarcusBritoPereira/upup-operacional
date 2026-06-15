@@ -176,8 +176,14 @@ export default function Sidebar() {
         <div style={{
           width: 32, height: 32, borderRadius: '50%', background: 'var(--secondary)',
           color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '0.78rem', fontWeight: 700,
-        }}>{initial}</div>
+          fontSize: '0.78rem', fontWeight: 700, overflow: 'hidden'
+        }}>
+          {user?.avatarUrl ? (
+            <img src={`${process.env.NEXT_PUBLIC_API_URL}${user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
+          ) : (
+            initial
+          )}
+        </div>
       </header>
 
       {/* ── BACKDROP ── */}
@@ -298,8 +304,19 @@ export default function Sidebar() {
           <p style={{ fontSize: '0.6rem', fontWeight: 700, color: 'var(--muted-foreground)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>
             CONTA ATIVA
           </p>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <p style={{ fontSize: '0.78rem', color: 'var(--foreground)', fontWeight: 600, marginBottom: 10, wordBreak: 'break-all' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '10px' }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: '50%', background: 'var(--secondary)',
+              color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '0.85rem', fontWeight: 700, overflow: 'hidden', flexShrink: 0
+            }}>
+              {user?.avatarUrl ? (
+                <img src={`${process.env.NEXT_PUBLIC_API_URL}${user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                initial
+              )}
+            </div>
+            <p style={{ fontSize: '0.78rem', color: 'var(--foreground)', fontWeight: 600, wordBreak: 'break-all' }}>
               {user?.name ?? 'Usuário'}
               <br />
               <span style={{ fontSize: '0.7rem', color: 'var(--muted-foreground)', fontWeight: 500 }}>

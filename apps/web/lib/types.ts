@@ -16,6 +16,8 @@ export interface AuthUser {
   role: UserRole;
   department?: string;
   position?: string;
+  phone?: string;
+  avatarUrl?: string;
 }
 
 export interface Client {

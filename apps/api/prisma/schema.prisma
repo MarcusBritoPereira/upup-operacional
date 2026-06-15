@@ -13,6 +13,7 @@ model User {
   email           String        @unique @db.VarChar(150)
   passwordHash    String        @map("password_hash") @db.Text
   phone           String?       @db.VarChar(30)
+  avatarUrl       String?       @map("avatar_url") @db.Text
   role            UserRole
   department      String?       @db.VarChar(80)
   position        String?       @db.VarChar(100)

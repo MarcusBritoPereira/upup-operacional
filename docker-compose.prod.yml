@@ -37,6 +37,8 @@ services:
       CLICKUP_TEAM_ID: ${CLICKUP_TEAM_ID:-}
     ports:
       - "127.0.0.1:3011:3011"
+    volumes:
+      - uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -72,3 +74,4 @@ services:
 
 volumes:
   pgdata_operacional:
+  uploads:
