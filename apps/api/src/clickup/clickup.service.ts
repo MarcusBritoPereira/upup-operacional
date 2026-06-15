@@ -138,7 +138,9 @@ export class ClickUpService {
       if (match) return match;
     }
 
-    return teams[0];
+    // Fallback: tenta pegar o primeiro workspace que realmente tenha membros
+    const teamWithMembers = teams.find((t) => t.members && t.members.length > 0);
+    return teamWithMembers || teams[0];
   }
 
   private normalizeMember(user: ClickUpUser): NormalizedMember {
