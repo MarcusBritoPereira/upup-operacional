@@ -161,6 +161,18 @@ export interface Contract {
   status: string;
   notes?: string;
   createdAt: string;
+  deliverables?: ContractDeliverable[];
+}
+
+export interface ContractDeliverable {
+  id: string;
+  contractId: string;
+  deliverableTypeId: string;
+  quantity: number;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+  deliverableType?: DeliverableType;
 }
 
 export interface DeliverableType {

@@ -6,6 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
+import { UpdateContractDeliverablesDto } from './dto/update-contract-deliverables.dto';
 import { Prisma } from '@prisma/client';
 import {
   PaginationQuery,
@@ -176,6 +177,76 @@ export class ContractsService {
 
       await this.updateClientValue(existing.clientId, tx);
       return { success: true };
+    });
+  }
+
+  async getDeliverables(contractId: string) {
+    const contract = await this.prisma.contract.findUnique({
+      where: { id: contractId },
+    });
+
+    if (!contract) {
+      throw new NotFoundException(`Contrato com ID "${contractId}" não encontrado.`);
+    }
+
+    return this.prisma.contractDeliverable.findMany({
+      where: { contractId },
+      include: {
+        deliverableType: true,
+      },
+    });
+  }
+
+  async updateDeliverables(contractId: string, dto: UpdateContractDeliverablesDto) {
+    const contract = await this.prisma.contract.findUnique({
+      where: { id: contractId },
+    });
+
+    if (!contract) {
+      throw new NotFoundException(`Contrato com ID "${contractId}" não encontrado.`);
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      // Deletar todos os entregáveis do contrato que não estão na nova lista
+      const newDeliverableTypeIds = dto.deliverables.map((d) => d.deliverableTypeId);
+
+      await tx.contractDeliverable.deleteMany({
+        where: {
+          contractId,
+          deliverableTypeId: {
+            notIn: newDeliverableTypeIds,
+          },
+        },
+      });
+
+      // Upsert para cada entregável na nova lista
+      for (const deliverable of dto.deliverables) {
+        await tx.contractDeliverable.upsert({
+          where: {
+            contractId_deliverableTypeId: {
+              contractId,
+              deliverableTypeId: deliverable.deliverableTypeId,
+            },
+          },
+          update: {
+            quantity: deliverable.quantity,
+            notes: deliverable.notes,
+          },
+          create: {
+            contractId,
+            deliverableTypeId: deliverable.deliverableTypeId,
+            quantity: deliverable.quantity,
+            notes: deliverable.notes,
+          },
+        });
+      }
+
+      return tx.contractDeliverable.findMany({
+        where: { contractId },
+        include: {
+          deliverableType: true,
+        },
+      });
     });
   }
 }

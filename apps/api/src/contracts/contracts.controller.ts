@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Patch,
+  Put,
   Param,
   Delete,
   Query,
@@ -13,6 +14,7 @@ import {
 import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
+import { UpdateContractDeliverablesDto } from './dto/update-contract-deliverables.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -98,5 +100,27 @@ export class ContractsController {
     await this.assertAccessToContractClient(id, req.user);
     await this.clientAccessPolicy.assertCanArchiveClient(req.user.role);
     return this.contractsService.remove(id);
+  }
+
+  @Get(':id/deliverables')
+  async getDeliverables(@Param('id') id: string, @Req() req: RequestWithAuth) {
+    await this.assertAccessToContractClient(id, req.user);
+    return this.contractsService.getDeliverables(id);
+  }
+
+  @Put(':id/deliverables')
+  @Roles('admin', 'diretoria', 'gerencia')
+  async updateDeliverables(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateContractDeliverablesDto,
+    @Req() req: RequestWithAuth,
+  ) {
+    const contract = await this.assertAccessToContractClient(id, req.user);
+    await this.clientAccessPolicy.assertCanManageClient(
+      req.user.id,
+      req.user.role,
+      contract.clientId,
+    );
+    return this.contractsService.updateDeliverables(id, updateDto);
   }
 }

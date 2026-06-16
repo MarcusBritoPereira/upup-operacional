@@ -19,6 +19,7 @@ import {
   WeeklyFollowup,
   ActionPlan,
   ClientTimeline,
+  ContractDeliverable,
 } from '@/lib/types';
 
 const formatCurrencyInput = (value: string) => {
@@ -64,6 +65,9 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   const [actionPlanModalOpen, setActionPlanModalOpen] = useState(false);
   const [resolvePlanModalOpen, setResolvePlanModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<ActionPlan | null>(null);
+  const [contractDeliverablesModalOpen, setContractDeliverablesModalOpen] = useState(false);
+  const [selectedContractForDeliverables, setSelectedContractForDeliverables] = useState<Contract | null>(null);
+  const [contractDeliverablesList, setContractDeliverablesList] = useState<{deliverableTypeId: string, quantity: number, notes?: string}[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -304,6 +308,53 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
     } catch (err: any) {
       console.error(err);
       alert('Erro ao excluir contrato: ' + err.message);
+    }
+  };
+
+  // Manage Contract Deliverables
+  const handleOpenContractDeliverables = async (contract: Contract) => {
+    setFormError(null);
+    setSelectedContractForDeliverables(contract);
+    setContractDeliverablesModalOpen(true);
+    setLoading(true);
+    try {
+      const response = await api.get<ContractDeliverable[]>(`/contracts/${contract.id}/deliverables`);
+      
+      const initialList = deliverableTypes.map(type => {
+        const existing = response.find((r: any) => r.deliverableTypeId === type.id);
+        return {
+          deliverableTypeId: type.id,
+          quantity: existing ? existing.quantity : 0,
+          notes: existing?.notes || ''
+        };
+      });
+      setContractDeliverablesList(initialList);
+    } catch (err: any) {
+      console.error(err);
+      setFormError('Erro ao carregar os entregáveis do contrato.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveContractDeliverables = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedContractForDeliverables) return;
+    setSubmitting(true);
+    setFormError(null);
+    try {
+      const payload = {
+        deliverables: contractDeliverablesList.filter(d => d.quantity > 0)
+      };
+      await api.put(`/contracts/${selectedContractForDeliverables.id}/deliverables`, payload);
+      setContractDeliverablesModalOpen(false);
+      setSelectedContractForDeliverables(null);
+      fetchClientData();
+    } catch (err: any) {
+      console.error(err);
+      setFormError('Erro ao salvar entregáveis do contrato.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -792,7 +843,12 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                           <td className="px-4 py-3"><span className={`badge text-[10px] ${c.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-[var(--border)] text-[var(--muted-foreground)]'}`}>{c.status === 'active' ? 'Ativo' : 'Encerrado'}</span></td>
                           <td className="px-4 py-3 text-center">{c.documentUrl ? <a href={c.documentUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800" title="Ver Anexo"><svg className="w-5 h-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg></a> : '—'}</td>
                           <td className="px-4 py-3 text-xs text-[var(--muted-foreground)] max-w-[200px] truncate">{c.notes || '—'}</td>
-                          <td className="px-4 py-3 text-right"><button onClick={() => handleDeleteContract(c.id)} className="text-rose-600 hover:text-rose-800 text-xs font-bold">Remover</button></td>
+                          <td className="px-4 py-3 text-right">
+                            <div className="flex justify-end gap-3">
+                              <button onClick={() => handleOpenContractDeliverables(c)} className="text-blue-600 hover:text-blue-800 text-xs font-bold">Entregáveis</button>
+                              <button onClick={() => handleDeleteContract(c.id)} className="text-rose-600 hover:text-rose-800 text-xs font-bold">Remover</button>
+                            </div>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -1395,9 +1451,80 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 </div>
                 <div className="px-6 py-4 bg-[var(--secondary)] border-t border-[var(--border)] flex justify-end gap-3">
                   <button type="button" onClick={() => setResolvePlanModalOpen(false)} className="text-xs font-semibold">Cancelar</button>
-                  <button type="submit" disabled={submitting} className="btn-primary text-xs py-1.5 px-3">
+                  <button type="submit" disabled={submitting} className={planTargetStatus === 'completed' ? 'btn-primary text-xs py-1.5 px-3' : 'px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-xs transition'}>
                     {planTargetStatus === 'completed' ? 'Marcar como Concluído' : 'Confirmar Cancelamento'}
                   </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal: Editar Entregáveis do Contrato */}
+        {contractDeliverablesModalOpen && selectedContractForDeliverables && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div onClick={() => setContractDeliverablesModalOpen(false)} className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs"></div>
+            <div className="bg-[var(--card)] rounded-xl shadow-2xl border border-[var(--border)] max-w-2xl w-full z-10 flex flex-col max-h-[90vh]">
+              <form onSubmit={handleSaveContractDeliverables} className="flex flex-col flex-1 overflow-hidden">
+                <div className="px-6 py-5 bg-[var(--secondary)] border-b border-[var(--border)] flex justify-between items-center shrink-0">
+                  <h3 className="font-bold text-[var(--foreground)]">Escopo Contratual (Entregáveis)</h3>
+                  <button type="button" onClick={() => setContractDeliverablesModalOpen(false)} className="text-[var(--muted-foreground)] hover:text-slate-650">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </div>
+                <div className="p-6 overflow-y-auto space-y-4 flex-1">
+                  {formError && <div className="bg-rose-50 text-rose-800 p-2.5 rounded text-xs shrink-0">{formError}</div>}
+                  <p className="text-xs text-[var(--muted-foreground)] mb-4">
+                    Defina a quantidade mensal acordada no contrato para cada tipo de entregável. Ao inicializar novos ciclos, as quantidades contratadas serão importadas automaticamente a partir destas metas (somadas caso o cliente tenha mais de um contrato ativo).
+                  </p>
+                  
+                  <div className="space-y-3">
+                    {deliverableTypes.map((type, index) => {
+                      const current = contractDeliverablesList.find(d => d.deliverableTypeId === type.id);
+                      if (!current) return null;
+                      return (
+                        <div key={type.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-3 border border-[var(--border)] rounded-lg bg-[var(--secondary)]/30">
+                          <div className="flex-1 w-full">
+                            <span className="text-sm font-semibold text-[var(--foreground)] block">{type.name}</span>
+                          </div>
+                          <div className="flex gap-3 w-full sm:w-auto shrink-0">
+                            <div className="w-24">
+                              <label className="text-[10px] uppercase font-bold text-[var(--muted-foreground)] block mb-1">Qtd</label>
+                              <input 
+                                type="number" 
+                                min="0" 
+                                value={current.quantity} 
+                                onChange={(e) => {
+                                  const newList = [...contractDeliverablesList];
+                                  newList[index] = { ...newList[index], quantity: parseInt(e.target.value) || 0 };
+                                  setContractDeliverablesList(newList);
+                                }} 
+                                className="form-input py-1.5 px-2 text-sm" 
+                              />
+                            </div>
+                            <div className="flex-1 sm:w-48">
+                              <label className="text-[10px] uppercase font-bold text-[var(--muted-foreground)] block mb-1">Obs (opcional)</label>
+                              <input 
+                                type="text" 
+                                value={current.notes} 
+                                onChange={(e) => {
+                                  const newList = [...contractDeliverablesList];
+                                  newList[index] = { ...newList[index], notes: e.target.value };
+                                  setContractDeliverablesList(newList);
+                                }} 
+                                className="form-input py-1.5 px-2 text-sm" 
+                                placeholder="Limites, condições..."
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className="px-6 py-4 bg-[var(--secondary)] border-t border-[var(--border)] flex justify-end gap-3 shrink-0">
+                  <button type="button" onClick={() => setContractDeliverablesModalOpen(false)} className="text-xs font-semibold">Cancelar</button>
+                  <button type="submit" disabled={submitting} className="btn-primary text-xs py-1.5 px-3">Salvar Metas</button>
                 </div>
               </form>
             </div>

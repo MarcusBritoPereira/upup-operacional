@@ -84,12 +84,29 @@ export class MonthlyCyclesService {
           where: { isActive: true },
         });
 
+        // Fetch active contracts and their deliverables
+        const activeContracts = await tx.contract.findMany({
+          where: { clientId, status: 'active' },
+          include: {
+            deliverables: true,
+          },
+        });
+
+        // Calculate sum of contracted quantity per deliverable type
+        const typeQuantityMap = new Map<string, number>();
+        for (const contract of activeContracts) {
+          for (const d of contract.deliverables) {
+            const current = typeQuantityMap.get(d.deliverableTypeId) || 0;
+            typeQuantityMap.set(d.deliverableTypeId, current + d.quantity);
+          }
+        }
+
         if (deliverableTypes.length > 0) {
           await tx.monthlyDeliverable.createMany({
             data: deliverableTypes.map((type) => ({
               monthlyCycleId: newCycle.id,
               deliverableTypeId: type.id,
-              contractedQuantity: 0,
+              contractedQuantity: typeQuantityMap.get(type.id) || 0,
               deliveredQuantity: 0,
               inProgressQuantity: 0,
               delayedQuantity: 0,

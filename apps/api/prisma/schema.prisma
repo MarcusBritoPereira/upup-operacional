@@ -106,7 +106,8 @@ model Contract {
   createdAt      DateTime       @default(now()) @map("created_at")
   updatedAt      DateTime       @updatedAt @map("updated_at")
 
-  client         Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client         Client                @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  deliverables   ContractDeliverable[]
 
   @@index([clientId, status])
   @@map("contracts")
@@ -181,10 +182,28 @@ model DeliverableType {
   name               String               @unique @db.VarChar(120)
   description        String?              @db.Text
   isActive           Boolean              @default(true) @map("is_active")
-  createdAt          DateTime             @default(now()) @map("created_at")
+  createdAt          DateTime              @default(now()) @map("created_at")
   monthlyDeliverables MonthlyDeliverable[]
+  contractDeliverables ContractDeliverable[]
 
   @@map("deliverable_types")
+}
+
+model ContractDeliverable {
+  id                String          @id @default(uuid()) @db.Uuid
+  contractId        String          @map("contract_id") @db.Uuid
+  deliverableTypeId String          @map("deliverable_type_id") @db.Uuid
+  quantity          Int             @default(0)
+  notes             String?         @db.Text
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+
+  contract          Contract        @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  deliverableType   DeliverableType @relation(fields: [deliverableTypeId], references: [id], onDelete: Restrict)
+
+  @@unique([contractId, deliverableTypeId])
+  @@index([contractId])
+  @@map("contract_deliverables")
 }
 
 model MonthlyCycle {
