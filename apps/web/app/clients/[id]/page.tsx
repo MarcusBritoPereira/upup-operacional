@@ -60,6 +60,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   // Modals & Panels State
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [contractModalOpen, setContractModalOpen] = useState(false);
+  const [editingContract, setEditingContract] = useState<Contract | null>(null);
+  const [contractStatus, setContractStatus] = useState<'active' | 'paused' | 'inactive' | 'cancelled'>('active');
   const [deliverableModalOpen, setDeliverableModalOpen] = useState(false);
   const [followupModalOpen, setFollowupModalOpen] = useState(false);
   const [actionPlanModalOpen, setActionPlanModalOpen] = useState(false);
@@ -259,8 +261,42 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
     }
   };
 
-  // Add New Contract
-  const handleAddContract = async (e: React.FormEvent) => {
+  // Open Add Contract Modal
+  const handleOpenAddContract = () => {
+    setEditingContract(null);
+    setContractValue('');
+    setContractTaxPercentage('');
+    setContractGeeType('percentage');
+    setContractGeePercentage('');
+    setContractGeeFixedValue('');
+    setContractNotes('');
+    setContractDocumentUrl('');
+    setContractStart(new Date().toISOString().split('T')[0]);
+    setContractEnd('');
+    setContractStatus('active');
+    setFormError(null);
+    setContractModalOpen(true);
+  };
+
+  // Open Edit Contract Modal
+  const handleOpenEditContract = (contract: Contract) => {
+    setEditingContract(contract);
+    setContractValue(formatCurrencyInput((contract.monthlyValue * 100).toString()));
+    setContractTaxPercentage(contract.taxPercentage?.toString() || '');
+    setContractGeeType(contract.geeFixedValue ? 'fixed' : 'percentage');
+    setContractGeePercentage(contract.geePercentage?.toString() || '');
+    setContractGeeFixedValue(contract.geeFixedValue ? formatCurrencyInput((contract.geeFixedValue * 100).toString()) : '');
+    setContractStart(new Date(contract.startDate).toISOString().split('T')[0]);
+    setContractEnd(contract.endDate ? new Date(contract.endDate).toISOString().split('T')[0] : '');
+    setContractDocumentUrl(contract.documentUrl || '');
+    setContractNotes(contract.notes || '');
+    setContractStatus((contract.status as any) || 'active');
+    setFormError(null);
+    setContractModalOpen(true);
+  };
+
+  // Save Contract (Add or Edit)
+  const handleSaveContract = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     setFormError(null);
@@ -275,25 +311,21 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       geeFixedValue: (contractGeeType === 'fixed' && contractGeeFixedValue) ? unformatCurrency(contractGeeFixedValue) : undefined,
       notes: contractNotes || undefined,
       documentUrl: contractDocumentUrl || undefined,
-      status: 'active',
+      status: contractStatus,
     };
 
     try {
-      await api.post('/contracts', payload);
-      setContractValue('');
-      setContractTaxPercentage('');
-      setContractGeeType('percentage');
-      setContractGeePercentage('');
-      setContractGeeFixedValue('');
-      setContractNotes('');
-      setContractDocumentUrl('');
-      setContractStart(new Date().toISOString().split('T')[0]);
-      setContractEnd('');
+      if (editingContract) {
+        await api.patch(`/contracts/${editingContract.id}`, payload);
+      } else {
+        await api.post('/contracts', payload);
+      }
       setContractModalOpen(false);
+      setEditingContract(null);
       fetchClientData();
     } catch (err: any) {
       console.error(err);
-      setFormError(err.message || 'Erro ao cadastrar contrato.');
+      setFormError(err.message || 'Erro ao salvar contrato.');
     } finally {
       setSubmitting(false);
     }
@@ -823,7 +855,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6 space-y-4 shadow-xs">
               <div className="flex justify-between items-center pb-2 border-b border-slate-50">
                 <h3 className="font-bold text-[var(--foreground)] text-sm uppercase tracking-wider text-[var(--muted-foreground)]">Contratos Ativos e Histórico</h3>
-                <button onClick={() => setContractModalOpen(true)} className="btn-primary py-1.5 px-3 text-xs shadow-xs">Adicionar Contrato</button>
+                <button onClick={handleOpenAddContract} className="btn-primary py-1.5 px-3 text-xs shadow-xs">Adicionar Contrato</button>
               </div>
               {contracts.length === 0 ? <p className="text-[var(--muted-foreground)] text-sm italic py-2">Nenhum contrato cadastrado.</p> : (
                 <div className="overflow-x-auto">
@@ -845,8 +877,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                           <td className="px-4 py-3 text-xs text-[var(--muted-foreground)] max-w-[200px] truncate">{c.notes || '—'}</td>
                           <td className="px-4 py-3 text-right">
                             <div className="flex justify-end gap-3">
-                              <button onClick={() => handleOpenContractDeliverables(c)} className="text-blue-600 hover:text-blue-800 text-xs font-bold">Entregáveis</button>
-                              <button onClick={() => handleDeleteContract(c.id)} className="text-rose-600 hover:text-rose-800 text-xs font-bold">Remover</button>
+                              <button onClick={() => handleOpenEditContract(c)} className="text-[var(--foreground)] hover:text-yellow-600 text-xs font-bold transition">Editar</button>
+                              {c.status === 'active' && (
+                                <button onClick={() => handleOpenContractDeliverables(c)} className="text-blue-600 hover:text-blue-800 text-xs font-bold transition">Entregáveis</button>
+                              )}
+                              <button onClick={() => handleDeleteContract(c.id)} className="text-rose-600 hover:text-rose-800 text-xs font-bold transition">Remover</button>
                             </div>
                           </td>
                         </tr>
@@ -1211,13 +1246,13 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           </div>
         )}
 
-        {/* Modal: Adicionar Contrato */}
+        {/* Modal: Adicionar/Editar Contrato */}
         {contractModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div onClick={() => setContractModalOpen(false)} className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs"></div>
             <div className="bg-[var(--card)] rounded-xl shadow-2xl border border-[var(--border)] max-w-md w-full z-10 overflow-hidden">
-              <form onSubmit={handleAddContract}>
-                <div className="px-6 py-5 bg-[var(--secondary)] border-b border-[var(--border)] flex justify-between items-center"><h3 className="font-bold text-[var(--foreground)]">Novo Contrato</h3></div>
+              <form onSubmit={handleSaveContract}>
+                <div className="px-6 py-5 bg-[var(--secondary)] border-b border-[var(--border)] flex justify-between items-center"><h3 className="font-bold text-[var(--foreground)]">{editingContract ? 'Editar Contrato' : 'Novo Contrato'}</h3></div>
                 <div className="p-6 space-y-4">
                   {formError && <div className="bg-rose-50 text-rose-800 p-2.5 rounded text-xs">{formError}</div>}
                   <div className="grid grid-cols-2 gap-4">
@@ -1240,6 +1275,17 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     <div><label className="form-label">Data de Início *</label><input type="date" required value={contractStart} onChange={(e) => setContractStart(e.target.value)} className="form-input" /></div>
                     <div><label className="form-label">Data de Fim (Para alertas)</label><input type="date" value={contractEnd} onChange={(e) => setContractEnd(e.target.value)} className="form-input" /></div>
                   </div>
+                  {editingContract && (
+                    <div>
+                      <label className="form-label">Status do Contrato</label>
+                      <select value={contractStatus} onChange={(e) => setContractStatus(e.target.value as any)} className="form-input">
+                        <option value="active">Ativo</option>
+                        <option value="paused">Pausado</option>
+                        <option value="inactive">Inativo</option>
+                        <option value="cancelled">Cancelado</option>
+                      </select>
+                    </div>
+                  )}
                   <div><label className="form-label">Link do Contrato (Drive, Dropbox, etc)</label><input type="url" value={contractDocumentUrl} onChange={(e) => setContractDocumentUrl(e.target.value)} className="form-input" placeholder="https://..." /></div>
                   <div><label className="form-label">Notas</label><textarea rows={2} value={contractNotes} onChange={(e) => setContractNotes(e.target.value)} className="form-input resize-none" /></div>
                 </div>
