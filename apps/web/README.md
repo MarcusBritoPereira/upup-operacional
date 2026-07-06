@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Up&Up Operacional - Web (Frontend)
 
-## Getting Started
+Este é o frontend do sistema **Up&Up Operacional**, construído com [Next.js](https://nextjs.org/) (App Router), [React](https://react.dev/) e [Tailwind CSS](https://tailwindcss.com/).
 
-First, run the development server:
+## Tecnologias Principais
+
+- **Framework:** Next.js 16+ (App Router)
+- **Biblioteca UI:** React 19
+- **Estilização:** Tailwind CSS
+- **Linguagem:** TypeScript
+
+## Estrutura do Diretório
+
+A aplicação segue a estrutura padrão do App Router do Next.js:
+
+- `app/`: Contém as páginas (`page.tsx`), layouts (`layout.tsx`) e definições de rotas da aplicação.
+- `components/`: Componentes React reutilizáveis que compõem a UI.
+- `lib/`: Utilitários, funções auxiliares e configurações.
+- `public/`: Arquivos estáticos (imagens, ícones, fontes).
+
+## Rotas Principais
+
+- `/login` - Tela de autenticação
+- `/dashboard` - Visão gerencial e indicadores globais
+- `/clients` - Gestão de clientes
+- `/action-plans` - Planos de ação
+- `/followups` - Follow-ups semanais das squads
+- `/today` - Visão diária de atenção ("Hoje preciso olhar")
+
+## Configuração de Ambiente
+
+Crie um arquivo `.env.local` na raiz do diretório `apps/web` usando o arquivo de exemplo como base:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.local.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Certifique-se de configurar a URL da API para que o frontend consiga se comunicar com o backend local:
+- `NEXT_PUBLIC_API_URL=http://localhost:3001` (padrão local)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Rodando a Aplicação
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+A partir da raiz do monorepo, inicie o servidor de desenvolvimento:
 
-## Learn More
+```bash
+npm run dev:web
+```
 
-To learn more about Next.js, take a look at the following resources:
+A aplicação estará disponível em `http://localhost:3000`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Build para Produção
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Para gerar a versão otimizada de produção:
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build:web
+```

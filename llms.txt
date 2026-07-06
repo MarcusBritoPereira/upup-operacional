@@ -1,0 +1,33 @@
+# Up&Up Operacional
+
+> Sistema interno da agência Up&Up para centralizar o acompanhamento de clientes, controle de entregáveis, follow-up semanal, termômetro de saúde, planos de ação e dashboard gerencial.
+
+## System Architecture
+The system is a monorepo containing a frontend Next.js application and a backend NestJS application.
+
+### Monorepo Structure
+- `apps/web`: Frontend built with Next.js 16 (App Router), React 19, Tailwind CSS.
+- `apps/api`: Backend built with NestJS, using Prisma ORM to connect to a PostgreSQL database.
+- `docs/`: Product and technical documentation.
+- `.agents/`: Agent configuration and tools.
+
+### Tech Stack
+- Frontend: Next.js, React, Tailwind CSS.
+- Backend: NestJS, TypeScript, Prisma.
+- Database: PostgreSQL 15.
+- Authentication: JWT + bcrypt.
+- Infrastructure: Docker Compose for local development.
+
+### Core Features
+- User Authentication & Role Management.
+- Client Tracking & Thermometer (Health Score).
+- Deliverables Control.
+- Weekly Follow-ups.
+- Action Plans.
+- Managerial Dashboard.
+
+### Getting Started for AI Agents
+- The database schema is located at `apps/api/prisma/schema.prisma`.
+- Frontend code is primarily inside `apps/web/app` and `apps/web/components`.
+- Backend code is primarily inside `apps/api/src` structured into modules (users, auth, clients, alerts, dashboard, followups).
+- See `apps/api/README.md` and `apps/web/README.md` for specific app documentation.

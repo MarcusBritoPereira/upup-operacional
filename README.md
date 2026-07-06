@@ -193,3 +193,12 @@ O deploy cria backup do PostgreSQL, executa migrations antes de confirmar os ser
 - [x] Dashboard Gerencial completo (Etapa 6)
 - [x] Planos de Ação (Etapa 7)
 - [x] Hardening inicial para produção
+
+---
+
+## Documentação Detalhada
+
+Para mais detalhes sobre as partes específicas do sistema, consulte:
+- [Documentação da API (Backend)](./apps/api/README.md)
+- [Documentação do Web (Frontend)](./apps/web/README.md)
+- [Documentação para IA (LLMs)](./llms.txt)
