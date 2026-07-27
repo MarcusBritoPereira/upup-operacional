@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: upup_admin
+          POSTGRES_PASSWORD: upup_secure_password
+          POSTGRES_DB: upup_operacional_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U upup_admin -d upup_operacional_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://upup_admin:upup_secure_password@localhost:5432/upup_operacional_test?schema=public
+      JWT_SECRET: ci-only-secret-with-at-least-thirty-two-characters
+      JWT_EXPIRES_IN: 1h
+      PORT: 3001
+      NODE_ENV: test
+      CORS_ORIGINS: http://localhost:3000
+      COOKIE_SAME_SITE: lax
+      COOKIE_SECURE: 'false'
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run migration:check
+      - run: npm run db:migrate
+      - run: npm run db:seed
+      - run: npm run db:drift
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run test:e2e
+      - run: npm run build
+      - run: npm run audit:prod

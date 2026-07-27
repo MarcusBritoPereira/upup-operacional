@@ -1,0 +1,1066 @@
+# UP&UP OPERACIONAL — DOCUMENTO BASE (.bd)
+# Sistema web/mobile para gestão operacional de agência de marketing
+# Versão: 2.0 MVP orientado a SaaS
+# Data: 2026-06-05
+
+=====================================================================
+1. VISÃO DO PRODUTO
+=====================================================================
+
+O UP&UP Operacional será um sistema interno para centralizar o acompanhamento da saúde dos clientes, controle de entregáveis, rotina de follow-up, planos de ação e visão gerencial da operação da agência.
+
+O sistema não nasce para substituir ClickUp, CRM, Google Drive, WhatsApp ou ferramentas de relatório. Ele nasce para ser o painel de controle da liderança: mostrar quais clientes estão saudáveis, quais estão em atenção, quais estão em risco e o que precisa ser feito.
+
+Objetivo principal:
+Reduzir gargalos operacionais, evitar churn, controlar entregas contratadas x realizadas e dar à liderança clareza para agir antes que os problemas virem cancelamentos.
+
+Princípio do MVP:
+Construir primeiro o que será usado toda semana pela gestão. Evitar super app na primeira versão.
+
+=====================================================================
+2. POSICIONAMENTO INTERNO
+=====================================================================
+
+Nome sugerido:
+- UP Radar
+- UP Control
+- UP Gestão Operacional
+
+Descrição curta:
+Um painel interno para acompanhar clientes, entregas, comunicação, riscos e planos de ação da operação da Up&Up.
+
+Mensagem-chave:
+O sistema deve responder diariamente à pergunta: “Quais clientes e gestores precisam da minha atenção hoje?”
+
+=====================================================================
+3. PERFIS DE USUÁRIO
+=====================================================================
+
+3.1 Administrador
+Acesso completo ao sistema.
+Pode cadastrar clientes, colaboradores, squads, contratos, entregáveis, planos de ação, metas e configurações.
+
+3.2 Liderança/Gerência
+Acompanha dashboards, termômetro dos clientes, planos de ação, follow-ups, entregáveis e desempenho dos gestores.
+Pode criar e editar planos de ação.
+
+3.3 Gestor de Cliente / Consultora / GEE
+Acompanha apenas os clientes sob sua responsabilidade.
+Preenche follow-up semanal.
+Atualiza status de entregáveis.
+Registra observações, pendências e riscos.
+
+3.4 Produção / Social Media / Audiovisual / Design
+Acesso limitado aos clientes e demandas associadas ao setor.
+Pode visualizar entregáveis e atualizar status quando necessário.
+
+3.5 Diretoria
+Visão macro: clientes ativos, churn, carteira, valor de contrato, risco, entregas e produtividade.
+
+=====================================================================
+4. FASES DO PRODUTO
+=====================================================================
+
+---------------------------------------------------------------------
+FASE 1 — MVP OPERACIONAL
+---------------------------------------------------------------------
+Obrigatório na primeira versão:
+
+1. Login e permissões
+2. Cadastro de colaboradores
+3. Cadastro de clientes
+4. Cadastro de contratos e entregáveis
+5. Ciclo mensal de acompanhamento
+6. Follow-up semanal
+7. Termômetro do cliente
+8. Dashboard gerencial
+9. Planos de ação
+10. Histórico do cliente
+11. Alertas básicos
+12. Layout responsivo web/mobile
+
+---------------------------------------------------------------------
+FASE 2 — INTELIGÊNCIA OPERACIONAL
+---------------------------------------------------------------------
+1. Playbook de problemas resolvidos
+2. Motivos de churn
+3. Base de soluções por tipo de problema
+4. Recomendações automáticas de plano de ação
+5. Relatório gerencial mensal
+
+---------------------------------------------------------------------
+FASE 3 — GESTÃO DE PESSOAS
+---------------------------------------------------------------------
+1. Roda da GEE
+2. Autoavaliação
+3. Avaliação da liderança
+4. Avaliação entre pares
+5. PDI individual
+6. Matriz motivação x resultado
+7. Recomendações de treinamento
+
+---------------------------------------------------------------------
+FASE 4 — TREINAMENTOS E ONBOARDING
+---------------------------------------------------------------------
+1. Biblioteca interna
+2. Checklists
+3. Playbooks por cargo
+4. Trilhas de onboarding
+5. Cursos internos
+6. Documentos da cultura da empresa
+
+---------------------------------------------------------------------
+FASE 5 — INTEGRAÇÕES E IA
+---------------------------------------------------------------------
+1. Integração com ClickUp
+2. Integração com Google Drive
+3. Integração com WhatsApp
+4. Integração com relatórios de tráfego
+5. Integração com Meta Ads
+6. Assistente de IA para diagnóstico operacional
+7. Sugestões automáticas de plano de ação
+
+=====================================================================
+5. MÓDULOS DA FASE 1 — MVP
+=====================================================================
+
+---------------------------------------------------------------------
+5.1 LOGIN E PERMISSÕES
+---------------------------------------------------------------------
+
+Funções:
+- Login por e-mail e senha.
+- Recuperação de senha.
+- Controle por perfil de acesso.
+- Usuário ativo/inativo.
+- Histórico de ações importantes.
+
+Perfis iniciais:
+- admin
+- diretoria
+- gerencia
+- gestor_cliente
+- producao
+
+Regras:
+- Usuário gestor_cliente só vê clientes vinculados a ele.
+- Gerência vê todos os clientes e planos de ação.
+- Admin vê e edita tudo.
+
+---------------------------------------------------------------------
+5.2 COLABORADORES
+---------------------------------------------------------------------
+
+Campos:
+- Nome
+- E-mail
+- Telefone
+- Cargo
+- Setor
+- Perfil de acesso
+- Status: ativo/inativo
+- Data de entrada
+- Data de saída
+- Observações
+
+Objetivo:
+Mapear quem cuida de cada cliente e permitir análise de carga por pessoa.
+
+---------------------------------------------------------------------
+5.3 SQUADS
+---------------------------------------------------------------------
+
+Campos:
+- Nome do squad
+- Líder do squad
+- Membros
+- Setores envolvidos
+- Clientes vinculados
+- Status
+
+Objetivo:
+Permitir que a liderança veja quantos clientes cada squad atende e onde pode existir sobrecarga.
+
+---------------------------------------------------------------------
+5.4 CLIENTES
+---------------------------------------------------------------------
+
+Campos obrigatórios:
+- Nome do cliente
+- Nome da empresa
+- Segmento
+- Status: ativo, pausado, inativo, cancelado
+- Data de entrada
+- Data de saída
+- Motivo de saída
+- Valor do contrato mensal
+- Gestor responsável
+- Squad responsável
+- Link do Instagram
+- Link do Drive
+- Link do ClickUp
+- Link do grupo de WhatsApp
+- Observações estratégicas
+
+Campos opcionais:
+- Cidade
+- Estado
+- Nome do decisor
+- Telefone do decisor
+- E-mail do decisor
+- Perfil do cliente: tranquilo, exigente, estratégico, operacional, risco alto
+- Nível de maturidade em marketing: baixo, médio, alto
+
+Visões necessárias:
+- Lista de clientes ativos
+- Lista de clientes em risco
+- Lista de clientes inativos
+- Clientes por gestor
+- Clientes por squad
+- Clientes por valor de contrato
+
+---------------------------------------------------------------------
+5.5 CONTRATOS E ENTREGÁVEIS
+---------------------------------------------------------------------
+
+Objetivo:
+Controlar o que foi contratado e o que foi entregue em cada mês.
+
+Contrato:
+- Cliente
+- Data de início
+- Data de fim
+- Valor mensal
+- Status do contrato
+- Observações
+
+Entregáveis cadastráveis:
+- Vídeo/Reels
+- Carrossel
+- Arte estática
+- Stories
+- Planejamento mensal
+- Reunião estratégica
+- Relatório
+- Gestão de tráfego
+- Captação audiovisual
+- Landing page
+- Site
+- Outro
+
+Campos do entregável mensal:
+- Cliente
+- Ciclo mensal
+- Tipo de entregável
+- Quantidade contratada
+- Quantidade entregue
+- Quantidade em andamento
+- Quantidade atrasada
+- Status: em dia, atenção, atrasado, excedido
+
+Regras:
+- Se entregue < 70% próximo ao fim do mês: alerta vermelho.
+- Se entregue entre 70% e 99%: alerta amarelo.
+- Se entregue = 100%: status em dia.
+- Se entregue > 120%: alerta de excesso de escopo.
+
+---------------------------------------------------------------------
+5.6 CICLO MENSAL
+---------------------------------------------------------------------
+
+Cada cliente terá um ciclo mensal de acompanhamento.
+
+Campos:
+- Cliente
+- Mês/ano
+- Gestor responsável
+- Status do ciclo: aberto, em andamento, fechado
+- Nota média do termômetro
+- Total contratado
+- Total entregue
+- Total excedido
+- Total atrasado
+- Observação de fechamento
+
+Objetivo:
+Permitir histórico mês a mês da relação com o cliente.
+
+---------------------------------------------------------------------
+5.7 FOLLOW-UP SEMANAL
+---------------------------------------------------------------------
+
+O follow-up é o principal formulário de alimentação do sistema.
+Deve ser rápido, simples e obrigatório para clientes ativos.
+
+Frequência sugerida:
+1 vez por semana, preferencialmente sexta-feira ou segunda-feira.
+
+Perguntas do follow-up:
+
+1. O grupo do cliente foi ativado esta semana?
+Resposta: sim/não/parcialmente
+
+2. O cliente respondeu aos contatos?
+Resposta: sim/não/parcialmente
+
+3. A agência respondeu o cliente dentro de um prazo adequado?
+Resposta: sim/não/parcialmente
+
+4. O calendário/postagens estão seguindo o contrato?
+Resposta: sim/não/parcialmente
+
+5. Existe alguma entrega atrasada?
+Resposta: sim/não
+
+6. O cliente demonstrou insatisfação?
+Resposta: sim/não
+
+7. Existe risco de cancelamento?
+Resposta: sim/não/talvez
+
+8. Nota da saúde do cliente na semana
+Resposta: 1 a 5
+
+9. Observação do gestor
+Campo aberto
+
+10. Ação recomendada
+Campo aberto ou selecionar: reunião, alinhamento, entrega extra estratégica, revisão de calendário, contato da liderança, renegociação, suporte técnico, outro.
+
+Regras:
+- Se não houver follow-up na semana: alerta cinza.
+- Nota 1 ou 2: cliente vermelho.
+- Nota 3: cliente amarelo.
+- Nota 4 ou 5: cliente verde.
+- Duas semanas consecutivas com nota 3 ou menor: cliente vermelho.
+- Cliente com risco de cancelamento = sim: cliente vermelho.
+- Cliente com insatisfação = sim: cliente amarelo ou vermelho, dependendo da nota.
+
+---------------------------------------------------------------------
+5.8 TERMÔMETRO DO CLIENTE
+---------------------------------------------------------------------
+
+Objetivo:
+Mostrar rapidamente a saúde do cliente.
+
+Status:
+- Verde: saudável
+- Amarelo: atenção
+- Vermelho: risco
+- Cinza: sem dados suficientes
+
+Indicadores considerados:
+- Nota do follow-up
+- Frequência de contato
+- Resposta do cliente
+- Resposta da equipe
+- Entregáveis no prazo
+- Reclamações/insatisfação
+- Risco declarado de cancelamento
+- Plano de ação em aberto
+
+Fórmula inicial sugerida:
+
+Pontuação máxima: 100 pontos
+
+- Nota do follow-up: até 30 pontos
+- Entregas em dia: até 25 pontos
+- Comunicação ativa: até 20 pontos
+- Cliente respondendo: até 10 pontos
+- Sem reclamação: até 10 pontos
+- Sem plano vencido: até 5 pontos
+
+Classificação:
+- 80 a 100: verde
+- 60 a 79: amarelo
+- 0 a 59: vermelho
+- Sem follow-up: cinza
+
+---------------------------------------------------------------------
+5.9 DASHBOARD GERENCIAL
+---------------------------------------------------------------------
+
+Tela principal para liderança.
+
+Cards superiores:
+- Clientes ativos
+- Clientes em risco
+- Clientes em atenção
+- Clientes saudáveis
+- Clientes sem follow-up
+- Planos de ação vencidos
+- Valor total da carteira ativa
+- Churn do mês
+
+Bloco “Hoje preciso olhar”:
+- Clientes vermelhos
+- Clientes sem follow-up
+- Clientes com entregas atrasadas
+- Clientes com excesso de escopo
+- Planos de ação vencidos
+- Clientes sem contato recente
+
+Gráficos/tabelas:
+- Clientes por gestor
+- Clientes por squad
+- Termômetro por gestor
+- Evolução de churn
+- Entregas contratadas x entregues
+- Ranking de clientes com maior risco
+
+---------------------------------------------------------------------
+5.10 PLANOS DE AÇÃO
+---------------------------------------------------------------------
+
+Sempre que um cliente estiver vermelho, o sistema deve sugerir ou exigir um plano de ação.
+
+Campos:
+- Cliente
+- Ciclo mensal
+- Problema identificado
+- Causa provável
+- Ação definida
+- Responsável
+- Prazo
+- Prioridade: baixa, média, alta, crítica
+- Status: aberto, em andamento, concluído, cancelado
+- Resultado da ação
+- Aprendizado gerado
+- Pode virar playbook? sim/não
+
+Regras:
+- Cliente vermelho sem plano de ação deve aparecer no dashboard.
+- Plano vencido deve gerar alerta.
+- Plano concluído deve pedir resultado/aprendizado.
+
+---------------------------------------------------------------------
+5.11 HISTÓRICO DO CLIENTE
+---------------------------------------------------------------------
+
+Cada cliente deve ter uma linha do tempo:
+- Entrada do cliente
+- Mudanças de gestor
+- Follow-ups
+- Alterações de contrato
+- Alertas gerados
+- Planos de ação
+- Reclamações
+- Melhorias realizadas
+- Saída/cancelamento
+
+Objetivo:
+Evitar perda de contexto quando trocar gestor ou quando a liderança precisar intervir.
+
+=====================================================================
+6. REGRAS DE NEGÓCIO PRINCIPAIS
+=====================================================================
+
+RN001 — Todo cliente ativo deve ter gestor responsável.
+RN002 — Todo cliente ativo deve pertencer a um squad ou ter squad “não definido”.
+RN003 — Todo cliente ativo deve ter pelo menos um contrato ativo.
+RN004 — Todo contrato ativo deve possuir entregáveis cadastrados.
+RN005 — Todo cliente ativo deve ter follow-up semanal.
+RN006 — Cliente sem follow-up deve aparecer no dashboard.
+RN007 — Cliente vermelho deve ter plano de ação aberto.
+RN008 — Plano de ação vencido deve aparecer no dashboard.
+RN009 — Entrega acima de 120% do contratado gera alerta de excesso de escopo.
+RN010 — Cliente cancelado deve ter data de saída e motivo de saída.
+RN011 — Churn deve considerar clientes cancelados no período.
+RN012 — Tempo de vida do cliente deve ser calculado entre data de entrada e data de saída ou data atual.
+RN013 — Usuário gestor só pode visualizar clientes vinculados a ele.
+RN014 — Admin pode visualizar e editar todos os dados.
+RN015 — Histórico do cliente não deve ser apagado; apenas complementado.
+
+=====================================================================
+7. BANCO DE DADOS — POSTGRESQL
+=====================================================================
+
+Sugestão de banco:
+PostgreSQL
+
+ORM sugerido:
+Prisma ou TypeORM
+
+---------------------------------------------------------------------
+7.1 TABELA users
+---------------------------------------------------------------------
+
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    phone VARCHAR(30),
+    role VARCHAR(50) NOT NULL,
+    department VARCHAR(80),
+    position VARCHAR(100),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+---------------------------------------------------------------------
+7.2 TABELA squads
+---------------------------------------------------------------------
+
+CREATE TABLE squads (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(120) NOT NULL,
+    leader_id UUID REFERENCES users(id),
+    status VARCHAR(30) DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+---------------------------------------------------------------------
+7.3 TABELA squad_members
+---------------------------------------------------------------------
+
+CREATE TABLE squad_members (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    squad_id UUID REFERENCES squads(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+---------------------------------------------------------------------
+7.4 TABELA clients
+---------------------------------------------------------------------
+
+CREATE TABLE clients (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    trade_name VARCHAR(150) NOT NULL,
+    legal_name VARCHAR(180),
+    segment VARCHAR(100),
+    status VARCHAR(40) DEFAULT 'active',
+    entry_date DATE NOT NULL,
+    exit_date DATE,
+    exit_reason TEXT,
+    monthly_contract_value NUMERIC(12,2) DEFAULT 0,
+    manager_id UUID REFERENCES users(id),
+    squad_id UUID REFERENCES squads(id),
+    decision_maker_name VARCHAR(150),
+    decision_maker_phone VARCHAR(30),
+    decision_maker_email VARCHAR(150),
+    city VARCHAR(100),
+    state VARCHAR(50),
+    instagram_url TEXT,
+    drive_url TEXT,
+    clickup_url TEXT,
+    whatsapp_group_url TEXT,
+    client_profile VARCHAR(80),
+    marketing_maturity VARCHAR(40),
+    strategic_notes TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+---------------------------------------------------------------------
+7.5 TABELA contracts
+---------------------------------------------------------------------
+
+CREATE TABLE contracts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    client_id UUID REFERENCES clients(id) ON DELETE CASCADE,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    monthly_value NUMERIC(12,2) NOT NULL,
+    status VARCHAR(40) DEFAULT 'active',
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+---------------------------------------------------------------------
+7.6 TABELA deliverable_types
+---------------------------------------------------------------------
+
+CREATE TABLE deliverable_types (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(120) NOT NULL,
+    description TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+---------------------------------------------------------------------
+7.7 TABELA monthly_cycles
+---------------------------------------------------------------------
+
+CREATE TABLE monthly_cycles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    client_id UUID REFERENCES clients(id) ON DELETE CASCADE,
+    month INTEGER NOT NULL,
+    year INTEGER NOT NULL,
+    manager_id UUID REFERENCES users(id),
+    status VARCHAR(40) DEFAULT 'open',
+    health_score INTEGER,
+    health_status VARCHAR(30) DEFAULT 'gray',
+    closing_notes TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(client_id, month, year)
+);
+
+---------------------------------------------------------------------
+7.8 TABELA monthly_deliverables
+---------------------------------------------------------------------
+
+CREATE TABLE monthly_deliverables (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    monthly_cycle_id UUID REFERENCES monthly_cycles(id) ON DELETE CASCADE,
+    deliverable_type_id UUID REFERENCES deliverable_types(id),
+    contracted_quantity INTEGER DEFAULT 0,
+    delivered_quantity INTEGER DEFAULT 0,
+    in_progress_quantity INTEGER DEFAULT 0,
+    delayed_quantity INTEGER DEFAULT 0,
+    status VARCHAR(40) DEFAULT 'pending',
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+---------------------------------------------------------------------
+7.9 TABELA weekly_followups
+---------------------------------------------------------------------
+
+CREATE TABLE weekly_followups (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    client_id UUID REFERENCES clients(id) ON DELETE CASCADE,
+    monthly_cycle_id UUID REFERENCES monthly_cycles(id) ON DELETE CASCADE,
+    manager_id UUID REFERENCES users(id),
+    week_start DATE NOT NULL,
+    week_end DATE NOT NULL,
+    group_activated VARCHAR(30),
+    client_responded VARCHAR(30),
+    agency_responded_on_time VARCHAR(30),
+    calendar_on_track VARCHAR(30),
+    has_delayed_delivery BOOLEAN DEFAULT FALSE,
+    client_showed_dissatisfaction BOOLEAN DEFAULT FALSE,
+    churn_risk VARCHAR(30),
+    weekly_score INTEGER CHECK (weekly_score >= 1 AND weekly_score <= 5),
+    manager_notes TEXT,
+    recommended_action TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+---------------------------------------------------------------------
+7.10 TABELA client_health_snapshots
+---------------------------------------------------------------------
+
+CREATE TABLE client_health_snapshots (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    client_id UUID REFERENCES clients(id) ON DELETE CASCADE,
+    monthly_cycle_id UUID REFERENCES monthly_cycles(id) ON DELETE CASCADE,
+    score INTEGER NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    reason TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+---------------------------------------------------------------------
+7.11 TABELA action_plans
+---------------------------------------------------------------------
+
+CREATE TABLE action_plans (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    client_id UUID REFERENCES clients(id) ON DELETE CASCADE,
+    monthly_cycle_id UUID REFERENCES monthly_cycles(id) ON DELETE SET NULL,
+    problem TEXT NOT NULL,
+    probable_cause TEXT,
+    action TEXT NOT NULL,
+    responsible_id UUID REFERENCES users(id),
+    due_date DATE,
+    priority VARCHAR(30) DEFAULT 'medium',
+    status VARCHAR(40) DEFAULT 'open',
+    result TEXT,
+    learning TEXT,
+    can_become_playbook BOOLEAN DEFAULT FALSE,
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+---------------------------------------------------------------------
+7.12 TABELA alerts
+---------------------------------------------------------------------
+
+CREATE TABLE alerts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    client_id UUID REFERENCES clients(id) ON DELETE CASCADE,
+    alert_type VARCHAR(80) NOT NULL,
+    severity VARCHAR(30) NOT NULL,
+    title VARCHAR(180) NOT NULL,
+    description TEXT,
+    status VARCHAR(40) DEFAULT 'open',
+    created_at TIMESTAMP DEFAULT NOW(),
+    resolved_at TIMESTAMP
+);
+
+---------------------------------------------------------------------
+7.13 TABELA client_timeline
+---------------------------------------------------------------------
+
+CREATE TABLE client_timeline (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    client_id UUID REFERENCES clients(id) ON DELETE CASCADE,
+    event_type VARCHAR(80) NOT NULL,
+    title VARCHAR(180) NOT NULL,
+    description TEXT,
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+---------------------------------------------------------------------
+7.14 TABELA churn_reasons
+---------------------------------------------------------------------
+
+CREATE TABLE churn_reasons (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    client_id UUID REFERENCES clients(id) ON DELETE CASCADE,
+    exit_date DATE NOT NULL,
+    reason_category VARCHAR(100),
+    detailed_reason TEXT,
+    could_have_been_prevented BOOLEAN,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+=====================================================================
+8. TELAS DO SISTEMA
+=====================================================================
+
+---------------------------------------------------------------------
+8.1 WEB — DESKTOP
+---------------------------------------------------------------------
+
+1. Login
+2. Dashboard geral
+3. Hoje preciso olhar
+4. Clientes
+5. Detalhe do cliente
+6. Contrato e entregáveis
+7. Follow-up semanal
+8. Termômetro
+9. Planos de ação
+10. Colaboradores
+11. Squads
+12. Relatórios
+13. Configurações
+
+---------------------------------------------------------------------
+8.2 MOBILE
+---------------------------------------------------------------------
+
+O mobile deve ser pensado para consulta rápida e alimentação simples, não para gestão complexa.
+
+Telas prioritárias no mobile:
+1. Login
+2. Dashboard resumido
+3. Hoje preciso olhar
+4. Meus clientes
+5. Detalhe rápido do cliente
+6. Preencher follow-up
+7. Atualizar plano de ação
+8. Ver alertas
+
+O que evitar no mobile:
+- Tabelas muito largas
+- Cadastros longos
+- Relatórios complexos
+- Gráficos pesados
+
+=====================================================================
+9. UX/UI — DIRETRIZES DE INTERFACE
+=====================================================================
+
+Estilo visual:
+- SaaS moderno
+- Fundo cinza claro
+- Cards brancos
+- Bordas arredondadas
+- Sombra leve
+- Tipografia sem serifa
+- Uso de cores por status
+
+Cores funcionais:
+- Verde: saudável
+- Amarelo: atenção
+- Vermelho: risco
+- Cinza: sem dados
+- Azul: informação/ação principal
+
+Dashboard:
+- Deve ser visual e direto.
+- Evitar excesso de gráficos na primeira versão.
+- Priorizar cards, listas e status.
+
+Mobile:
+- Botões grandes
+- Campos simples
+- Formulários em etapas curtas
+- Navegação inferior com 4 abas: Início, Clientes, Alertas, Planos
+
+=====================================================================
+10. ESTRUTURA TÉCNICA RECOMENDADA
+=====================================================================
+
+---------------------------------------------------------------------
+10.1 STACK RECOMENDADA
+---------------------------------------------------------------------
+
+Frontend:
+- Next.js ou React
+- TailwindCSS
+- Shadcn/UI ou Material UI
+- React Hook Form
+- Zod para validação
+- TanStack Query para consumo de API
+
+Mobile:
+Opção 1 — Responsivo/PWA
+- Usar o mesmo Next.js com PWA
+- Melhor custo-benefício para primeira versão
+
+Opção 2 — App futuro
+- React Native ou Expo
+- Só faz sentido depois que o sistema web estiver validado
+
+Backend:
+- NestJS
+- PostgreSQL
+- Prisma ORM
+- JWT para autenticação
+- RBAC para permissões
+
+Infraestrutura:
+- VPS ou Render/Railway/Fly.io
+- Banco PostgreSQL gerenciado ou Docker
+- Backup automático diário
+- Logs de erro
+
+---------------------------------------------------------------------
+10.2 ARQUITETURA DE PASTAS — FRONTEND
+---------------------------------------------------------------------
+
+frontend/
+  src/
+    app/
+      login/
+      dashboard/
+      clients/
+      clients/[id]/
+      followups/
+      action-plans/
+      teams/
+      settings/
+    components/
+      ui/
+      layout/
+      dashboard/
+      clients/
+      forms/
+      mobile/
+    hooks/
+    lib/
+    services/
+    schemas/
+    types/
+    utils/
+
+---------------------------------------------------------------------
+10.3 ARQUITETURA DE PASTAS — BACKEND
+---------------------------------------------------------------------
+
+backend/
+  src/
+    modules/
+      auth/
+      users/
+      squads/
+      clients/
+      contracts/
+      deliverables/
+      monthly-cycles/
+      followups/
+      health/
+      action-plans/
+      alerts/
+      dashboard/
+      timeline/
+    common/
+      guards/
+      decorators/
+      filters/
+      pipes/
+    database/
+      prisma/
+    main.ts
+
+---------------------------------------------------------------------
+10.4 ENDPOINTS PRINCIPAIS
+---------------------------------------------------------------------
+
+AUTH
+POST /auth/login
+POST /auth/forgot-password
+POST /auth/reset-password
+
+USERS
+GET /users
+POST /users
+GET /users/:id
+PATCH /users/:id
+DELETE /users/:id
+
+CLIENTS
+GET /clients
+POST /clients
+GET /clients/:id
+PATCH /clients/:id
+DELETE /clients/:id
+GET /clients/:id/timeline
+GET /clients/:id/health
+
+CONTRACTS
+GET /clients/:id/contracts
+POST /clients/:id/contracts
+PATCH /contracts/:id
+
+MONTHLY CYCLES
+GET /monthly-cycles?month=&year=
+POST /monthly-cycles
+GET /monthly-cycles/:id
+PATCH /monthly-cycles/:id
+
+DELIVERABLES
+GET /monthly-cycles/:id/deliverables
+POST /monthly-cycles/:id/deliverables
+PATCH /monthly-deliverables/:id
+
+FOLLOWUPS
+GET /followups
+POST /followups
+GET /clients/:id/followups
+PATCH /followups/:id
+
+HEALTH
+GET /health/clients
+POST /health/recalculate/:clientId
+
+ACTION PLANS
+GET /action-plans
+POST /action-plans
+GET /action-plans/:id
+PATCH /action-plans/:id
+
+ALERTS
+GET /alerts
+PATCH /alerts/:id/resolve
+
+DASHBOARD
+GET /dashboard/overview
+GET /dashboard/today
+GET /dashboard/managers
+GET /dashboard/churn
+
+=====================================================================
+11. RESPONSIVIDADE WEB/MOBILE
+=====================================================================
+
+Breakpoints sugeridos:
+- Mobile: até 640px
+- Tablet: 641px a 1024px
+- Desktop: acima de 1024px
+
+Componentes adaptáveis:
+
+Desktop:
+- Sidebar lateral fixa
+- Tabelas completas
+- Cards em grid
+- Filtros avançados
+
+Mobile:
+- Menu inferior
+- Cards empilhados
+- Filtros simplificados
+- Tabelas convertidas em cards
+- Ações principais visíveis
+
+Exemplo:
+Na web, a lista de clientes pode ser uma tabela com colunas.
+No mobile, cada cliente vira um card com:
+- Nome
+- Gestor
+- Termômetro
+- Entregas
+- Último follow-up
+- Botão “ver cliente”
+
+=====================================================================
+12. MÉTRICAS PRINCIPAIS DO SISTEMA
+=====================================================================
+
+Métricas de operação:
+- Número de clientes ativos
+- Clientes por gestor
+- Clientes por squad
+- Clientes sem follow-up
+- Clientes em risco
+- Planos de ação abertos
+- Planos de ação vencidos
+- Entregas atrasadas
+- Entregas excedidas
+
+Métricas de negócio:
+- Valor total da carteira
+- Ticket médio
+- Churn mensal
+- Tempo médio de vida do cliente
+- Receita em risco
+
+Métricas de gestão:
+- Gestores com mais clientes vermelhos
+- Gestores com follow-up em dia
+- Squads sobrecarregados
+- Clientes com mais planos de ação
+
+=====================================================================
+13. CRITÉRIOS DE ACEITE DO MVP
+=====================================================================
+
+O MVP estará pronto quando:
+
+1. Admin conseguir cadastrar usuários, clientes e squads.
+2. Gestor conseguir visualizar seus clientes.
+3. Gestor conseguir preencher follow-up semanal.
+4. Sistema conseguir calcular termômetro do cliente.
+5. Gerência conseguir ver dashboard geral.
+6. Gerência conseguir ver “Hoje preciso olhar”.
+7. Gerência conseguir criar plano de ação.
+8. Cliente vermelho aparecer como prioridade.
+9. Cliente sem follow-up aparecer como pendência.
+10. Sistema funcionar bem em desktop e mobile.
+
+=====================================================================
+14. BACKLOG FUTURO
+=====================================================================
+
+1. Roda da GEE
+2. PDI
+3. Avaliação interna
+4. Playbooks automáticos
+5. Biblioteca de treinamentos
+6. Integração com ClickUp
+7. Integração com WhatsApp
+8. Integração com Google Drive
+9. Integração com relatórios de tráfego
+10. IA para recomendações de ação
+11. Exportação de relatórios PDF
+12. Painel financeiro da carteira
+13. Gestão de metas comerciais
+14. Controle de indicações
+15. Portal do cliente
+

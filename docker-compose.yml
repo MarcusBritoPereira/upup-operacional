@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "${POSTGRES_PORT:-5437}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-upup_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-upup_secure_password}
+      POSTGRES_DB: ${POSTGRES_DB:-upup_operacional}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
