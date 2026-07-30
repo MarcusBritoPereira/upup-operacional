@@ -29,9 +29,9 @@
     "audit:prod": "npm audit --omit=dev --audit-level=high"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "@prisma/client": "^7.9.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
     "prisma": "^5.22.0"
